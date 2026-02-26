@@ -1,0 +1,69 @@
+---
+title: "Building My Portfolio with Next.js and Three.js"
+date: "2024-02-01"
+excerpt: "A deep dive into the architecture and design decisions behind my developer portfolio, featuring 3D particles, smooth animations, and a modern tech stack."
+coverImage: "/images/blog/portfolio.jpg"
+coverImageAlt: "Portfolio website screenshot with 3D particle effects"
+tags: ["next-js", "three-js", "portfolio", "tutorial"]
+published: true
+---
+
+# Building My Portfolio with Next.js and Three.js
+
+When I set out to build my portfolio, I wanted it to be more than just a static page. I wanted something that would showcase both my technical skills and my eye for design.
+
+## The Tech Stack
+
+Here's what I chose and why:
+
+- **Next.js 15** — App Router, SSG, great DX
+- **Tailwind CSS v4** — Utility-first, design system with CSS custom properties
+- **Framer Motion** — Smooth component animations
+- **GSAP** — Scroll-driven animations
+- **Three.js (R3F)** — 3D particle background in the hero
+- **Lenis** — Buttery smooth scrolling
+
+## Architecture Decisions
+
+### Animation Responsibility Split
+
+One of the key decisions was splitting animation responsibilities clearly:
+
+```
+Lenis    → Smooth scrolling only
+GSAP     → Scroll-driven animations (timeline, parallax)
+Framer   → Component animations (enter/exit/hover/layout)
+CSS      → Transitions (theme, hover states, marquee)
+```
+
+This prevents conflicts and keeps each library doing what it does best.
+
+### Design System
+
+I built a comprehensive design system using CSS custom properties:
+
+```css
+:root {
+  --primary: 239 84% 67%;
+  --secondary: 271 81% 66%;
+  --background: 240 10% 4%;
+}
+```
+
+These HSL values work perfectly with Tailwind v4's `@theme` block and support smooth theme transitions.
+
+## Performance Considerations
+
+- **Dynamic imports** for Three.js (no SSR)
+- **Image optimization** via Next.js Image component
+- **Static generation** for all pages
+- **Font optimization** with `next/font`
+
+## Key Takeaways
+
+1. Plan your animation architecture before writing code
+2. Use CSS custom properties for a flexible design system
+3. Dynamic import heavy 3D libraries
+4. Keep accessibility in mind from the start
+
+The result is a portfolio that's fast, accessible, and visually impressive.
