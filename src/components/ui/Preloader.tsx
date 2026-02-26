@@ -69,7 +69,7 @@ export function Preloader() {
               fill="currentColor"
               fontSize="16"
               fontWeight="700"
-              fontFamily="var(--font-sans)"
+              fontFamily="var(--font-heading)"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.2 }}

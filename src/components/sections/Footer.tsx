@@ -22,7 +22,7 @@ export function Footer() {
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           {/* Branding */}
           <div>
-            <p className="text-lg font-bold text-foreground">
+            <p className="font-heading text-lg font-bold text-foreground">
               {siteConfig.name.split(" ")[0]}
               <span className="text-primary">.</span>
             </p>

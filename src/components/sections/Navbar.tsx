@@ -88,7 +88,7 @@ export function Navbar() {
           <a
             href="#home"
             onClick={(e) => handleNavClick(e, "#home")}
-            className="text-lg font-bold text-foreground transition-colors hover:text-primary"
+            className="font-heading text-lg font-bold text-foreground transition-colors hover:text-primary"
           >
             {siteConfig.name.split(" ")[0]}
             <span className="text-primary">.</span>

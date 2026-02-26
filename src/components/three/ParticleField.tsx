@@ -54,7 +54,7 @@ function Particles({ count = 2000 }: { count?: number }) {
     <Points ref={ref} positions={positions} stride={3} frustumCulled={false}>
       <PointMaterial
         transparent
-        color="#6366f1"
+        color="#2dd4bf"
         size={0.015}
         sizeAttenuation
         depthWrite={false}

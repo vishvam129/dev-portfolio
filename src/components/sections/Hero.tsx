@@ -83,7 +83,7 @@ export function Hero() {
           <motion.p
             custom={0}
             variants={heroTextReveal}
-            className="mb-4 text-sm font-medium uppercase tracking-widest text-primary"
+            className="mb-4 font-heading text-sm font-medium uppercase tracking-widest text-primary"
           >
             Hello, I&apos;m
           </motion.p>

@@ -18,7 +18,7 @@ export function BlogPreview({ posts }: BlogPreviewProps) {
         <AnimateOnScroll>
           <div className="flex items-end justify-between">
             <div>
-              <p className="text-sm font-medium uppercase tracking-widest text-primary">
+              <p className="font-heading text-sm font-medium uppercase tracking-widest text-primary">
                 Blog
               </p>
               <h2 className="text-h2 mt-2 text-foreground">

@@ -12,7 +12,7 @@ export function About() {
     <section id="about" className="py-20 lg:py-28">
       <div className="mx-auto max-w-7xl px-6">
         <AnimateOnScroll>
-          <p className="text-sm font-medium uppercase tracking-widest text-primary">
+          <p className="font-heading text-sm font-medium uppercase tracking-widest text-primary">
             About Me
           </p>
           <h2 className="text-h2 mt-2 text-foreground">

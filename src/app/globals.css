@@ -6,19 +6,19 @@
 
 /* ── Dark Mode (default) ── */
 :root {
-  --background: 240 10% 4%;
-  --foreground: 240 5% 90%;
-  --card: 240 6% 10%;
-  --card-foreground: 0 0% 98%;
-  --primary: 239 84% 67%;
-  --primary-foreground: 0 0% 100%;
-  --primary-hover: 239 84% 74%;
-  --secondary: 271 81% 66%;
-  --secondary-foreground: 0 0% 100%;
-  --muted: 240 4% 16%;
-  --muted-foreground: 240 5% 65%;
-  --border: 240 4% 26%;
-  --ring: 239 84% 67%;
+  --background: 220 20% 4%;
+  --foreground: 214 32% 91%;
+  --card: 240 15% 8%;
+  --card-foreground: 210 40% 96%;
+  --primary: 174 72% 51%;
+  --primary-foreground: 220 20% 4%;
+  --primary-hover: 174 83% 65%;
+  --secondary: 38 92% 50%;
+  --secondary-foreground: 220 20% 4%;
+  --muted: 230 17% 12%;
+  --muted-foreground: 215 20% 65%;
+  --border: 228 24% 15%;
+  --ring: 174 72% 51%;
   --destructive: 0 84% 60%;
   --success: 142 71% 45%;
   --warning: 38 92% 50%;
@@ -30,19 +30,19 @@
 /* ── Light Mode ── */
 .light,
 [data-theme="light"] {
-  --background: 0 0% 100%;
-  --foreground: 240 6% 10%;
-  --card: 240 5% 96%;
-  --card-foreground: 240 6% 10%;
-  --primary: 239 84% 56%;
+  --background: 210 20% 98%;
+  --foreground: 222 47% 11%;
+  --card: 0 0% 100%;
+  --card-foreground: 222 47% 11%;
+  --primary: 174 72% 33%;
   --primary-foreground: 0 0% 100%;
-  --primary-hover: 239 84% 67%;
-  --secondary: 271 81% 56%;
+  --primary-hover: 174 72% 40%;
+  --secondary: 32 95% 44%;
   --secondary-foreground: 0 0% 100%;
-  --muted: 240 5% 96%;
-  --muted-foreground: 240 4% 46%;
-  --border: 240 5% 90%;
-  --ring: 239 84% 56%;
+  --muted: 210 40% 96%;
+  --muted-foreground: 215 16% 47%;
+  --border: 214 32% 91%;
+  --ring: 174 72% 33%;
   --destructive: 0 72% 51%;
   --success: 142 76% 36%;
   --warning: 32 95% 44%;
@@ -81,6 +81,7 @@
 
   /* Fonts */
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
 
   /* Shadows */
@@ -120,17 +121,28 @@ section[id] {
 }
 
 /* ═══════════════════════════════════════════════════════
+   HEADING FONT UTILITY
+   ═══════════════════════════════════════════════════════ */
+
+.font-heading {
+  font-family: var(--font-heading);
+}
+
+
+/* ═══════════════════════════════════════════════════════
    TYPOGRAPHY — Fluid Scale
    ═══════════════════════════════════════════════════════ */
 
 .text-hero {
+  font-family: var(--font-heading);
   font-size: clamp(3rem, 6vw, 5rem);
   line-height: 1.1;
-  letter-spacing: -0.025em;
-  font-weight: 800;
+  letter-spacing: -0.03em;
+  font-weight: 700;
 }
 
 .text-h1 {
+  font-family: var(--font-heading);
   font-size: clamp(2.5rem, 5vw, 4rem);
   line-height: 1.1;
   letter-spacing: -0.025em;
@@ -138,13 +150,15 @@ section[id] {
 }
 
 .text-h2 {
+  font-family: var(--font-heading);
   font-size: clamp(2rem, 4vw, 3rem);
   line-height: 1.2;
   letter-spacing: -0.02em;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .text-h3 {
+  font-family: var(--font-heading);
   font-size: clamp(1.25rem, 2vw, 1.75rem);
   line-height: 1.3;
   letter-spacing: -0.015em;
@@ -175,11 +189,11 @@ section[id] {
    ═══════════════════════════════════════════════════════ */
 
 .gradient-primary {
-  background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)));
+  background: linear-gradient(135deg, #2dd4bf, #34d399);
 }
 
 .gradient-text {
-  background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)));
+  background: linear-gradient(135deg, #2dd4bf, #34d399);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
