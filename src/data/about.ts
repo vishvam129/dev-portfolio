@@ -6,9 +6,9 @@ export const aboutData: AboutData = {
     "I have hands-on experience developing and customizing Odoo ERP modules, engineering PostgreSQL database schemas, and integrating RESTful APIs for real-world business applications in manufacturing and retail. I'm passionate about writing clean, efficient code and always eager to learn new technologies.",
   ],
   stats: [
-    { label: "Projects Built", value: 10, suffix: "+" },
+    { label: "Projects Built", value: 2, suffix: "+" },
     { label: "Technologies", value: 15, suffix: "+" },
-    { label: "Months Experience", value: 18, suffix: "+" },
+    { label: "Years Experience", value: 2, suffix: "+" },
     { label: "Cups of Coffee", value: 500, suffix: "+" },
   ],
   funFacts: [

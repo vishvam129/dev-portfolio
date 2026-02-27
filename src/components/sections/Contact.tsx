@@ -36,14 +36,18 @@ export function Contact() {
     if (data.website) return;
 
     setLoading(true);
-    const { success, message } = await sendContactEmail(data);
-    setLoading(false);
-
-    if (success) {
-      toast.success(message);
-      reset();
-    } else {
-      toast.error(message);
+    try {
+      const { success, message } = await sendContactEmail(data);
+      if (success) {
+        toast.success(message);
+        reset();
+      } else {
+        toast.error(message);
+      }
+    } catch {
+      toast.error("Something went wrong. Please try again later.");
+    } finally {
+      setLoading(false);
     }
   }
 

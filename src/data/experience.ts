@@ -7,7 +7,7 @@ export const experience: ExperienceEntry[] = [
     title: "Odoo Developer",
     organization: "RdFlex",
     location: "Gandhinagar, India",
-    startDate: "2025-07",
+    startDate: "2024-07",
     endDate: "present",
     current: true,
     description:
@@ -27,8 +27,8 @@ export const experience: ExperienceEntry[] = [
     title: "Python Developer Intern",
     organization: "RdFlex",
     location: "Gandhinagar, India",
-    startDate: "2025-01",
-    endDate: "2025-06",
+    startDate: "2024-01",
+    endDate: "2024-06",
     current: false,
     description:
       "Developed and maintained backend components for a large-scale business management platform using Python, delivering custom features for clients in manufacturing and retail sectors.",
