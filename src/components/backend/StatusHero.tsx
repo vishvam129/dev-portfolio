@@ -13,14 +13,22 @@ export function StatusHero() {
 
   useEffect(() => {
     let alive = true;
+    const boot = performance.now();
     async function ping() {
       const t0 = performance.now();
       try {
-        const res = await fetch("/api/health", { cache: "no-store" });
-        const data = (await res.json()) as Health;
+        // real round-trip to a static asset (genuine client-measured latency)
+        const res = await fetch("/ping.json", { cache: "no-store" });
+        const tHeaders = performance.now();
+        await res.json();
         const roundtrip = performance.now() - t0;
         if (!alive) return;
-        setHealth(data);
+        setHealth({
+          server_ms: +(tHeaders - t0).toFixed(2),
+          uptime_s: Math.floor((performance.now() - boot) / 1000),
+          commit: "static",
+          region: "edge",
+        });
         setRtt(+roundtrip.toFixed(1));
         setHistory((h) => [...h.slice(-39), Math.min(100, roundtrip)]);
       } catch {

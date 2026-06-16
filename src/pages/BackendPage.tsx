@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import { useTitle } from "@/lib/useTitle";
 import { StatusHero } from "@/components/backend/StatusHero";
 import { TraceDiagram } from "@/components/backend/TraceDiagram";
 import { BackendSections } from "@/components/backend/sections";
@@ -6,13 +6,11 @@ import { CommandPalette } from "@/components/backend/CommandPalette";
 import { ContactTerminal } from "@/components/backend/ContactTerminal";
 import { PROFILE } from "@/data/content";
 
-export const metadata: Metadata = {
-  title: "Backend Developer · Production",
-  description:
-    "Vishvam Patel — backend engineer. Reliable APIs, data layers and infra. Python, FastAPI, PostgreSQL, Celery, Kubernetes. A portfolio built like a status page.",
-};
-
 export default function BackendPage() {
+  useTitle(
+    "Backend Developer · Production",
+    "Vishvam Patel — backend engineer. Reliable APIs, data layers and infra. Python, FastAPI, PostgreSQL, Celery, Kubernetes. A portfolio built like a status page.",
+  );
   return (
     <main data-theme="backend" className="grain min-h-screen" style={{ background: "var(--bg)" }}>
       <CommandPalette />

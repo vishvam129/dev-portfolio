@@ -32,7 +32,7 @@ export function CommandPalette() {
       { id: "resume", label: "Download resume", hint: "pdf", run: () => { window.open(RESUME_PDF.backend, "_blank"); setOpen(false); } },
       { id: "github", label: "Open GitHub", hint: PROFILE.githubHandle, run: () => { window.open(PROFILE.github, "_blank"); setOpen(false); } },
       { id: "linkedin", label: "Open LinkedIn", hint: "in/vishvam129", run: () => { window.open(PROFILE.linkedin, "_blank"); setOpen(false); } },
-      { id: "health", label: "Run health check", hint: "GET /api/health", run: () => { window.open("/api/health", "_blank"); setOpen(false); } },
+      { id: "health", label: "Run health check", hint: "GET /ping.json", run: () => { window.open("/ping.json", "_blank"); setOpen(false); } },
     ];
   }, []);
 
