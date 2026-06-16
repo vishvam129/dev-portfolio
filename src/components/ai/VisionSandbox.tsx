@@ -81,7 +81,7 @@ export function VisionSandbox() {
           {original && (
             <div className="relative h-full w-full select-none" style={{ minHeight: 340 }}>
               {/* checkerboard for transparency */}
-              <div className="absolute inset-0" style={{ backgroundImage: "conic-gradient(#1a2226 90deg, transparent 90deg 180deg, #1a2226 180deg 270deg, transparent 270deg)", backgroundSize: "20px 20px" }} />
+              <div className="absolute inset-0" style={{ backgroundImage: "conic-gradient(#231d14 90deg, transparent 90deg 180deg, #231d14 180deg 270deg, transparent 270deg)", backgroundSize: "20px 20px" }} />
               {/* cutout (full) */}
               {cutout && <img src={cutout} alt="background removed" className="absolute inset-0 h-full w-full object-contain" />}
               {/* original clipped to the left of the slider */}

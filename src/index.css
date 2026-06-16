@@ -1,36 +1,36 @@
 @import "tailwindcss";
 
 /* ----------------------------------------------------------------------------
-   Vishvam Patel — three portfolios, one engineer.
-   AI = browser-native inference dashboard (this is the default theme).
+   Vishvam Patel — "Precision Instrument"
+   Warm graphite dark · editorial serif display in tension with technical mono.
+   Anthropic-academic restraint × Vercel-dev density. One confident accent.
 ---------------------------------------------------------------------------- */
 
 :root {
-  --font-display: "Space Grotesk";
+  --font-serif: "Instrument Serif";
   --font-geist: "Geist";
-  --font-geist-mono: "Geist Mono";
-  --font-jb: "JetBrains Mono";
+  --font-mono: "Geist Mono";
 
-  --f-display: var(--font-display), system-ui, sans-serif;
+  --f-display: var(--font-serif), Georgia, serif;
   --f-body: var(--font-geist), system-ui, sans-serif;
-  --f-mono: var(--font-geist-mono), var(--font-jb), ui-monospace, monospace;
+  --f-mono: var(--font-mono), ui-monospace, monospace;
 
-  /* AI lab palette */
-  --bg: #060809;
-  --bg-soft: #0a0e10;
-  --panel: #0c1214;
-  --panel-2: #0f171a;
-  --line: #18242a;
-  --line-2: #213138;
-  --fg: #dbeae8;
-  --muted: #7d9a96;
-  --faint: #46605c;
-  --accent: #00e5b0;      /* inference mint */
-  --accent-2: #36d0ff;    /* signal cyan */
-  --accent-deep: #06bd92;
-  --ok: #00e5b0;
-  --warn: #ffcb6b;
-  --err: #ff6b6b;
+  /* warm graphite palette */
+  --bg: #100e0b;
+  --bg-soft: #15120d;
+  --panel: #191510;
+  --panel-2: #211c14;
+  --line: #2a2319;
+  --line-2: #382f21;
+  --fg: #efe7d6;
+  --muted: #a99a82;
+  --faint: #6e6350;
+  --accent: #f0a93f;       /* marigold — the single brand accent */
+  --accent-soft: #ffcd7e;
+  --accent-deep: #d68a23;
+  --ok: #9fc587;           /* sage — semantic "live/ready" only */
+  --warn: #f0a93f;
+  --err: #e08760;
 }
 
 * { box-sizing: border-box; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
@@ -40,18 +40,33 @@ body {
   background: var(--bg);
   color: var(--fg);
   font-family: var(--f-body);
+  font-size: 16px;
+  line-height: 1.55;
   overflow-x: hidden;
 }
 ::selection { background: var(--accent); color: var(--bg); }
 a { color: inherit; text-decoration: none; }
 
-/* utilities */
-.font-display { font-family: var(--f-display); }
+/* warm film grain over everything (premium texture) */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ------------------------------- utilities ------------------------------- */
+.font-display { font-family: var(--f-display); font-weight: 400; letter-spacing: -0.01em; }
 .font-mono { font-family: var(--f-mono); }
+.serif-italic { font-family: var(--f-display); font-style: italic; }
+
 .mono-label {
   font-family: var(--f-mono);
   font-size: 0.66rem;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--muted);
 }
@@ -60,32 +75,33 @@ a { color: inherit; text-decoration: none; }
   background-image:
     linear-gradient(var(--line) 1px, transparent 1px),
     linear-gradient(90deg, var(--line) 1px, transparent 1px);
-  background-size: 26px 26px;
-  -webkit-mask-image: radial-gradient(120% 90% at 50% 0%, #000 30%, transparent 75%);
-  mask-image: radial-gradient(120% 90% at 50% 0%, #000 30%, transparent 75%);
+  background-size: 30px 30px;
+  -webkit-mask-image: radial-gradient(125% 95% at 50% 0%, #000 25%, transparent 72%);
+  mask-image: radial-gradient(125% 95% at 50% 0%, #000 25%, transparent 72%);
+  opacity: 0.5;
 }
 
-.glow { box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 30%, transparent), 0 0 40px -12px var(--accent); }
+.hair { border: 1px solid var(--line-2); }
+.glow {
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--accent) 22%, transparent),
+    0 30px 80px -40px color-mix(in srgb, var(--accent) 45%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--fg) 6%, transparent);
+}
 
-/* keyframes */
+/* ------------------------------- keyframes ------------------------------- */
 @keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
 .caret::after { content: "▋"; margin-left: 1px; color: var(--accent); animation: blink 1.05s steps(1) infinite; }
 
 @keyframes pulse-ring {
   0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 55%, transparent); }
-  70% { box-shadow: 0 0 0 7px transparent; }
+  70% { box-shadow: 0 0 0 6px transparent; }
   100% { box-shadow: 0 0 0 0 transparent; }
 }
-.live-dot { width: 7px; height: 7px; border-radius: 999px; background: var(--accent); animation: pulse-ring 2s ease-out infinite; }
+.live-dot { width: 7px; height: 7px; border-radius: 999px; background: var(--accent); animation: pulse-ring 2.4s ease-out infinite; }
 
-@keyframes flow { to { stroke-dashoffset: -1000; } }
 @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
-.rise { animation: rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) both; }
-
-@keyframes scan {
-  0% { transform: translateY(-100%); }
-  100% { transform: translateY(2400%); }
-}
+.rise { animation: rise 0.8s cubic-bezier(0.16, 1, 0.3, 1) both; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
@@ -96,7 +112,7 @@ a { color: inherit; text-decoration: none; }
   }
 }
 
-::-webkit-scrollbar { width: 9px; height: 9px; }
+::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
-::-webkit-scrollbar-thumb { background: var(--line-2); border-radius: 9px; }
+::-webkit-scrollbar-thumb { background: var(--line-2); border-radius: 10px; border: 2px solid var(--bg); }
 ::-webkit-scrollbar-thumb:hover { background: var(--faint); }

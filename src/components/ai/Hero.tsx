@@ -11,9 +11,9 @@ export function Hero() {
           <div className="mono-label mb-5 flex items-center gap-2" style={{ color: "var(--accent)" }}>
             <span>◆</span> edge inference · paradigm III
           </div>
-          <h1 className="font-display font-bold leading-[0.98] tracking-[-0.02em]" style={{ fontSize: "clamp(2.4rem, 5.5vw, 4.2rem)", color: "var(--fg)" }}>
+          <h1 className="font-display leading-[1.0] tracking-[-0.005em]" style={{ fontSize: "clamp(2.9rem, 6.4vw, 5.4rem)", color: "var(--fg)" }}>
             An AI portfolio,<br />
-            <span style={{ color: "var(--accent)" }}>powered by AI.</span>
+            <em className="serif-italic" style={{ color: "var(--accent)" }}>powered by&nbsp;AI.</em>
           </h1>
           <p className="mt-6 max-w-md text-lg leading-relaxed" style={{ color: "var(--muted)" }}>
             I&apos;m <span style={{ color: "var(--fg)" }}>{PROFILE.name}</span> — an AI engineer. This page runs a real
