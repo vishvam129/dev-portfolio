@@ -1,54 +1,44 @@
 "use client";
 
-import { LatentField } from "./LatentField";
+import { DiffusionName } from "./DiffusionName";
+import { GenHUD } from "./GenHUD";
 import { StreamText } from "@/components/primitives/StreamText";
-import { TAGLINES } from "@/data/content";
+import { Magnetic } from "@/components/primitives/Magnetic";
+import { TAGLINES, RESUME_PDF } from "@/data/content";
 
 const META = [
   { k: "base", v: "Vishvam Patel" },
-  { k: "role", v: "AI Developer" },
-  { k: "context", v: "full-stack" },
+  { k: "params", v: "22 yrs" },
+  { k: "context", v: "AI · full-stack" },
   { k: "status", v: "available" },
 ];
 
 export function Hero() {
   return (
-    <section className="relative flex min-h-[100svh] flex-col justify-center overflow-hidden px-5">
-      <div className="pointer-events-none absolute inset-0">
-        <LatentField className="h-full w-full opacity-70" />
+    <section className="relative flex min-h-[100svh] flex-col overflow-hidden">
+      {/* the model denoises its own name into existence */}
+      <div className="absolute inset-0">
+        <DiffusionName text="VISHVAM-1" className="h-full w-full" />
       </div>
-      {/* vignette */}
+      {/* readability vignette toward the bottom */}
       <div
         className="pointer-events-none absolute inset-0"
-        style={{
-          background:
-            "radial-gradient(120% 80% at 50% 40%, transparent 40%, var(--bg) 100%)",
-        }}
+        style={{ background: "linear-gradient(to bottom, color-mix(in srgb, var(--bg) 35%, transparent) 0%, transparent 28%, transparent 60%, var(--bg) 100%)" }}
       />
 
-      <div className="relative mx-auto w-full max-w-6xl">
-        <div className="mono-label mb-5 flex items-center gap-3">
-          <span style={{ color: "var(--accent)" }}>◆</span> model&nbsp;card&nbsp;/&nbsp;v1.0
-          <span className="h-px flex-1" style={{ background: "var(--line)" }} />
-          <span>2026</span>
-        </div>
+      {/* top HUD */}
+      <div className="relative mx-auto flex w-full max-w-6xl items-start justify-between px-5 pt-24">
+        <GenHUD />
+        <span className="mono-label hidden sm:block" style={{ color: "var(--faint)" }}>model card / v1.0</span>
+      </div>
 
-        <h1
-          className="font-display font-bold tracking-[-0.03em] leading-[0.92]"
-          style={{ fontSize: "clamp(3rem, 11vw, 9rem)", color: "var(--fg)" }}
-        >
-          VISHVAM<span style={{ color: "var(--accent)" }}>-1</span>
-        </h1>
-
-        <p
-          className="mt-6 max-w-2xl font-body text-lg sm:text-xl"
-          style={{ color: "var(--muted)" }}
-        >
-          <StreamText text={TAGLINES.ai} speed={22} />
+      {/* bottom content layer */}
+      <div className="relative mt-auto mx-auto w-full max-w-6xl px-5 pb-14">
+        <p className="max-w-2xl font-display text-2xl font-semibold tracking-tight sm:text-4xl" style={{ color: "var(--fg)" }}>
+          <StreamText text={TAGLINES.ai} speed={20} />
         </p>
 
-        {/* model meta strip */}
-        <dl className="mt-10 grid max-w-2xl grid-cols-2 gap-x-8 gap-y-3 sm:grid-cols-4">
+        <dl className="mt-8 grid max-w-2xl grid-cols-2 gap-x-8 gap-y-3 sm:grid-cols-4">
           {META.map((m) => (
             <div key={m.k} className="border-t pt-2" style={{ borderColor: "var(--line)" }}>
               <dt className="mono-label">{m.k}</dt>
@@ -57,8 +47,17 @@ export function Hero() {
           ))}
         </dl>
 
-        <div className="mono-label mt-14 flex items-center gap-2 animate-pulse" style={{ color: "var(--faint)" }}>
-          ↓ scroll to run inference
+        <div className="mt-9 flex flex-wrap items-center gap-4">
+          <Magnetic>
+            <a href="#work" className="inline-block rounded-full px-6 py-2.5 font-mono text-[13px]" style={{ background: "var(--accent)", color: "var(--bg)" }}>
+              run inference ↓
+            </a>
+          </Magnetic>
+          <Magnetic strength={0.25}>
+            <a href={RESUME_PDF.ai} className="inline-block rounded-full border px-6 py-2.5 font-mono text-[13px]" style={{ borderColor: "var(--line)", color: "var(--fg)" }}>
+              weights.pdf ↓
+            </a>
+          </Magnetic>
         </div>
       </div>
     </section>
