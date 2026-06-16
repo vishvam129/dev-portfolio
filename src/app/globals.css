@@ -1,0 +1,187 @@
+@import "tailwindcss";
+
+/* ----------------------------------------------------------------------------
+   Vishvam Patel — three sibling sites, one engineer.
+   AI = VISHVAM-1 (cold lab) · Backend = Production (blueprint) · FS = Product
+---------------------------------------------------------------------------- */
+
+@theme inline {
+  --font-display: var(--f-display);
+  --font-mono: var(--f-mono);
+  --font-body: var(--f-body);
+}
+
+:root {
+  --f-mono: var(--font-jetbrains), ui-monospace, monospace;
+  --f-display: var(--font-sora), system-ui, sans-serif;
+  --f-body: var(--font-sora), system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--bg, #07070d);
+  color: var(--fg, #e9e9f2);
+  font-family: var(--f-body);
+  overflow-x: hidden;
+}
+
+::selection {
+  background: var(--accent, #8b8bff);
+  color: var(--bg, #07070d);
+}
+
+a { color: inherit; text-decoration: none; }
+
+/* ============================ THEME: AI / VISHVAM-1 ======================= */
+[data-theme="ai"] {
+  --bg: #07070d;
+  --bg-soft: #0d0d18;
+  --panel: #0f0f1d;
+  --line: #20203a;
+  --fg: #e9e9f2;
+  --muted: #8888a6;
+  --faint: #55556e;
+  --accent: #8b8bff;       /* cold iris */
+  --accent-deep: #6d6df0;
+  --signal: #c6ff5e;        /* acid signal for "locked" states */
+  --ok: #4ade80;
+  --warn: #fbbf24;
+  --f-display: var(--font-sora), system-ui, sans-serif;
+  --f-body: var(--font-sora), system-ui, sans-serif;
+  --f-mono: var(--font-jetbrains), ui-monospace, monospace;
+}
+
+/* ============================ THEME: BACKEND / PRODUCTION ================= */
+[data-theme="backend"] {
+  --bg: #06080a;
+  --bg-soft: #0a0e12;
+  --panel: #0b1015;
+  --line: #18222b;
+  --fg: #d7e2e6;
+  --muted: #6f8794;
+  --faint: #3c4d58;
+  --accent: #2dd4a7;        /* operational green */
+  --accent-deep: #16a37e;
+  --signal: #2dd4a7;
+  --ok: #2dd4a7;
+  --warn: #f5b14c;
+  --err: #f76d6d;
+  --f-display: var(--font-geist-sans), system-ui, sans-serif;
+  --f-body: var(--font-geist-sans), system-ui, sans-serif;
+  --f-mono: var(--font-geist-mono), ui-monospace, monospace;
+}
+
+/* ============================ THEME: FULL-STACK / PRODUCT ================= */
+[data-theme="fullstack"] {
+  --bg: #0b0a09;
+  --bg-soft: #121010;
+  --panel: #171413;
+  --line: #2a2422;
+  --fg: #f3ece4;
+  --muted: #a99a8d;
+  --faint: #6a5d52;
+  --accent: #ff6a3d;        /* warm signal orange */
+  --accent-deep: #e5481f;
+  --signal: #ffd6a0;
+  --ok: #8fd694;
+  --f-display: var(--font-bricolage), Georgia, serif;
+  --f-body: var(--font-hanken), system-ui, sans-serif;
+  --f-mono: var(--font-jetbrains), ui-monospace, monospace;
+}
+
+/* ------------------------------- utilities ------------------------------- */
+.font-display { font-family: var(--f-display); }
+.font-mono { font-family: var(--f-mono); }
+.font-body { font-family: var(--f-body); }
+
+.mono-label {
+  font-family: var(--f-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.grain::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  pointer-events: none;
+  opacity: 0.045;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  mix-blend-mode: overlay;
+}
+
+.blueprint {
+  background-image:
+    linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 28px 28px;
+  background-position: -1px -1px;
+  opacity: 1;
+}
+
+.dotgrid {
+  background-image: radial-gradient(var(--line) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+/* ------------------------------- keyframes ------------------------------- */
+@keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+.caret::after {
+  content: "▋";
+  margin-left: 1px;
+  color: var(--accent);
+  animation: blink 1.05s steps(1) infinite;
+}
+
+@keyframes pulse-ring {
+  0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 55%, transparent); }
+  70% { box-shadow: 0 0 0 7px transparent; }
+  100% { box-shadow: 0 0 0 0 transparent; }
+}
+.live-dot {
+  width: 7px; height: 7px; border-radius: 999px;
+  background: var(--accent);
+  animation: pulse-ring 2s ease-out infinite;
+}
+
+@keyframes dash { to { stroke-dashoffset: 0; } }
+@keyframes flow { to { stroke-dashoffset: -1000; } }
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.rise { animation: rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+@keyframes sheen {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* thin scrollbar that matches the theme */
+::-webkit-scrollbar { width: 9px; height: 9px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--line); border-radius: 9px; }
+::-webkit-scrollbar-thumb:hover { background: var(--faint); }
