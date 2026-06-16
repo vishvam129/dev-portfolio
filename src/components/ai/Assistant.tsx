@@ -40,12 +40,12 @@ export function Assistant() {
   const ready = status === "ready";
 
   return (
-    <div className="overflow-hidden rounded-[3px] border" style={{ borderColor: "var(--line-2)", background: "var(--panel)", boxShadow: "0 24px 60px -40px color-mix(in srgb, var(--accent) 40%, transparent)" }}>
+    <div className="overflow-hidden rounded-[3px] border" style={{ borderColor: "var(--line-2)", background: "var(--surface)", boxShadow: "0 24px 60px -40px color-mix(in srgb, var(--accent) 40%, transparent)" }}>
       {/* header */}
-      <div className="flex items-center gap-3 border-b px-5 py-3.5" style={{ borderColor: "var(--line)", background: "var(--bg-soft)" }}>
+      <div className="flex items-center gap-3 border-b px-5 py-3.5" style={{ borderColor: "var(--line)", background: "var(--bg-2)" }}>
         <span className="live-dot" style={{ background: ready ? "var(--ok)" : "var(--warn)" }} />
         <span className="font-mono text-[13px] font-semibold" style={{ color: "var(--fg)" }}>VISHVAM&#8209;1</span>
-        <span className="mono-label">on&#8209;device RAG</span>
+        <span className="kicker">on&#8209;device RAG</span>
         <span className="ml-auto font-mono text-[11px]" style={{ color: "var(--faint)" }}>
           {ready ? `${meta.docs} docs · ${meta.dims}-dim · all-MiniLM-L6-v2` : "loading model…"}
         </span>
@@ -55,7 +55,7 @@ export function Assistant() {
       <div className="relative h-[360px]">
         {!ready && status !== "error" && (
           <div className="flex h-full flex-col p-5">
-            <div className="mono-label mb-3" style={{ color: "var(--accent)" }}>
+            <div className="kicker mb-3" style={{ color: "var(--accent)" }}>
               cold-starting inference engine · running locally in your browser
             </div>
             <div ref={logRef} className="flex-1 overflow-y-auto font-mono text-[11.5px] leading-relaxed" style={{ color: "var(--muted)" }}>
@@ -73,7 +73,7 @@ export function Assistant() {
                 <span>{progress.pct}%</span>
               </div>
               <div className="h-1.5 overflow-hidden rounded-full" style={{ background: "var(--line)" }}>
-                <div className="h-full rounded-full transition-all duration-300" style={{ width: `${progress.pct}%`, background: "linear-gradient(90deg, var(--accent-deep), var(--accent))" }} />
+                <div className="h-full rounded-full transition-all duration-300" style={{ width: `${progress.pct}%`, background: "linear-gradient(90deg, var(--accent-press), var(--accent))" }} />
               </div>
             </div>
           </div>
@@ -103,7 +103,7 @@ export function Assistant() {
               {turns.map((t, i) =>
                 t.role === "user" ? (
                   <div key={i} className="flex justify-end">
-                    <div className="max-w-[80%] rounded-xl rounded-br-sm px-3.5 py-2 font-mono text-[12.5px]" style={{ background: "var(--panel-2)", color: "var(--fg)", border: "1px solid var(--line-2)" }}>
+                    <div className="max-w-[80%] rounded-xl rounded-br-sm px-3.5 py-2 font-mono text-[12.5px]" style={{ background: "var(--surface-2)", color: "var(--fg)", border: "1px solid var(--line-2)" }}>
                       {t.text}
                     </div>
                   </div>
@@ -114,7 +114,7 @@ export function Assistant() {
                     </div>
                     {t.retrieval && t.retrieval.length > 0 && (
                       <div className="flex flex-wrap items-center gap-1.5">
-                        <span className="mono-label" style={{ color: "var(--faint)" }}>retrieved</span>
+                        <span className="kicker" style={{ color: "var(--faint)" }}>retrieved</span>
                         {t.retrieval.map((r, j) => (
                           <span key={j} className="rounded-full border px-2 py-0.5 font-mono text-[10px]" style={{ borderColor: "var(--line-2)", color: "var(--accent)" }}>
                             {r.source} · {r.score.toFixed(2)}
