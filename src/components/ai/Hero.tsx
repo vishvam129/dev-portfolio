@@ -1,63 +1,52 @@
-"use client";
-
-import { DiffusionName } from "./DiffusionName";
-import { GenHUD } from "./GenHUD";
-import { StreamText } from "@/components/primitives/StreamText";
-import { Magnetic } from "@/components/primitives/Magnetic";
-import { TAGLINES, RESUME_PDF } from "@/data/content";
-
-const META = [
-  { k: "base", v: "Vishvam Patel" },
-  { k: "params", v: "22 yrs" },
-  { k: "context", v: "AI · full-stack" },
-  { k: "status", v: "available" },
-];
+import { Assistant } from "./Assistant";
+import { PROFILE } from "@/data/content";
 
 export function Hero() {
   return (
-    <section className="relative flex min-h-[100svh] flex-col overflow-hidden">
-      {/* the model denoises its own name into existence */}
-      <div className="absolute inset-0">
-        <DiffusionName text="VISHVAM-1" className="h-full w-full" />
-      </div>
-      {/* readability vignette toward the bottom */}
-      <div
-        className="pointer-events-none absolute inset-0"
-        style={{ background: "linear-gradient(to bottom, color-mix(in srgb, var(--bg) 35%, transparent) 0%, transparent 28%, transparent 60%, var(--bg) 100%)" }}
-      />
-
-      {/* top HUD */}
-      <div className="relative mx-auto flex w-full max-w-6xl items-start justify-between px-5 pt-24">
-        <GenHUD />
-        <span className="mono-label hidden sm:block" style={{ color: "var(--faint)" }}>model card / v1.0</span>
-      </div>
-
-      {/* bottom content layer */}
-      <div className="relative mt-auto mx-auto w-full max-w-6xl px-5 pb-14">
-        <p className="max-w-2xl font-display text-2xl font-semibold tracking-tight sm:text-4xl" style={{ color: "var(--fg)" }}>
-          <StreamText text={TAGLINES.ai} speed={20} />
-        </p>
-
-        <dl className="mt-8 grid max-w-2xl grid-cols-2 gap-x-8 gap-y-3 sm:grid-cols-4">
-          {META.map((m) => (
-            <div key={m.k} className="border-t pt-2" style={{ borderColor: "var(--line)" }}>
-              <dt className="mono-label">{m.k}</dt>
-              <dd className="font-mono text-[13px]" style={{ color: "var(--fg)" }}>{m.v}</dd>
-            </div>
-          ))}
-        </dl>
-
-        <div className="mt-9 flex flex-wrap items-center gap-4">
-          <Magnetic>
-            <a href="#work" className="inline-block rounded-full px-6 py-2.5 font-mono text-[13px]" style={{ background: "var(--accent)", color: "var(--bg)" }}>
-              run inference ↓
+    <section className="relative overflow-hidden">
+      <div className="pointer-events-none absolute inset-0 grid-bg opacity-60" aria-hidden />
+      <div className="relative mx-auto grid max-w-6xl gap-10 px-5 pt-16 pb-20 lg:grid-cols-[1fr_1.05fr] lg:pt-24">
+        {/* left: pitch */}
+        <div className="flex flex-col justify-center">
+          <div className="mono-label mb-5 flex items-center gap-2" style={{ color: "var(--accent)" }}>
+            <span>◆</span> edge inference · paradigm III
+          </div>
+          <h1 className="font-display font-bold leading-[0.98] tracking-[-0.02em]" style={{ fontSize: "clamp(2.4rem, 5.5vw, 4.2rem)", color: "var(--fg)" }}>
+            An AI portfolio,<br />
+            <span style={{ color: "var(--accent)" }}>powered by AI.</span>
+          </h1>
+          <p className="mt-6 max-w-md text-lg leading-relaxed" style={{ color: "var(--muted)" }}>
+            I&apos;m <span style={{ color: "var(--fg)" }}>{PROFILE.name}</span> — an AI engineer. This page runs a real
+            language model <span style={{ color: "var(--fg)" }}>in your browser</span>: ask it anything and it
+            retrieves the answer from my résumé and generates it on your device. No server, no API keys.
+          </p>
+          <div className="mt-8 flex flex-wrap items-center gap-3">
+            <a href="#sandbox" className="rounded-full px-5 py-2.5 font-mono text-[13px]" style={{ background: "var(--accent)", color: "var(--bg)" }}>
+              try the vision sandbox ↓
             </a>
-          </Magnetic>
-          <Magnetic strength={0.25}>
-            <a href={RESUME_PDF.ai} className="inline-block rounded-full border px-6 py-2.5 font-mono text-[13px]" style={{ borderColor: "var(--line)", color: "var(--fg)" }}>
-              weights.pdf ↓
+            <a href={`mailto:${PROFILE.email}`} className="rounded-full border px-5 py-2.5 font-mono text-[13px]" style={{ borderColor: "var(--line-2)", color: "var(--fg)" }}>
+              hire me
             </a>
-          </Magnetic>
+          </div>
+          <dl className="mt-10 grid max-w-md grid-cols-3 gap-4">
+            {[
+              { k: "inference", v: "100% local" },
+              { k: "model", v: "MiniLM-L6" },
+              { k: "grad", v: PROFILE.graduating.split(" ")[1] },
+            ].map((m) => (
+              <div key={m.k} className="border-t pt-2" style={{ borderColor: "var(--line)" }}>
+                <dt className="mono-label">{m.k}</dt>
+                <dd className="font-mono text-[13px]" style={{ color: "var(--fg)" }}>{m.v}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+
+        {/* right: the live assistant */}
+        <div className="flex items-center">
+          <div className="w-full">
+            <Assistant />
+          </div>
         </div>
       </div>
     </section>

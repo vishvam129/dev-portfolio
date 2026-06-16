@@ -1,17 +1,18 @@
-import { useTitle } from "@/lib/useTitle";
-import { StatusBar } from "@/components/ai/StatusBar";
+import { useEffect } from "react";
+import { TopBar } from "@/components/ai/TopBar";
 import { Hero } from "@/components/ai/Hero";
+import { VisionSandbox } from "@/components/ai/VisionSandbox";
 import { AiSections } from "@/components/ai/sections";
 
 export default function AiPage() {
-  useTitle(
-    "VISHVAM-1 · AI Developer",
-    "VISHVAM-1 — an AI-developer portfolio that behaves like a live model. Vishvam Patel: LLM platforms, vision pipelines, Python, FastAPI, Next.js.",
-  );
+  useEffect(() => {
+    document.title = "Vishvam Patel — AI Engineer · runs ML in your browser";
+  }, []);
   return (
-    <main data-theme="ai" className="grain min-h-screen" style={{ background: "var(--bg)" }}>
-      <StatusBar />
+    <main className="min-h-screen" style={{ background: "var(--bg)" }}>
+      <TopBar />
       <Hero />
+      <VisionSandbox />
       <AiSections />
     </main>
   );

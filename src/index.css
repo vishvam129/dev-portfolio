@@ -1,176 +1,90 @@
 @import "tailwindcss";
 
 /* ----------------------------------------------------------------------------
-   Vishvam Patel — three sibling sites, one engineer.
-   AI = VISHVAM-1 (cold lab) · Backend = Production (blueprint) · FS = Product
+   Vishvam Patel — three portfolios, one engineer.
+   AI = browser-native inference dashboard (this is the default theme).
 ---------------------------------------------------------------------------- */
 
 :root {
-  /* font families (loaded via Google Fonts in index.html) */
-  --font-sora: "Sora";
-  --font-jetbrains: "JetBrains Mono";
-  --font-geist-sans: "Geist";
+  --font-display: "Space Grotesk";
+  --font-geist: "Geist";
   --font-geist-mono: "Geist Mono";
-  --font-bricolage: "Bricolage Grotesque";
-  --font-hanken: "Hanken Grotesk";
+  --font-jb: "JetBrains Mono";
 
-  --f-mono: var(--font-jetbrains), ui-monospace, monospace;
-  --f-display: var(--font-sora), system-ui, sans-serif;
-  --f-body: var(--font-sora), system-ui, sans-serif;
+  --f-display: var(--font-display), system-ui, sans-serif;
+  --f-body: var(--font-geist), system-ui, sans-serif;
+  --f-mono: var(--font-geist-mono), var(--font-jb), ui-monospace, monospace;
+
+  /* AI lab palette */
+  --bg: #060809;
+  --bg-soft: #0a0e10;
+  --panel: #0c1214;
+  --panel-2: #0f171a;
+  --line: #18242a;
+  --line-2: #213138;
+  --fg: #dbeae8;
+  --muted: #7d9a96;
+  --faint: #46605c;
+  --accent: #00e5b0;      /* inference mint */
+  --accent-2: #36d0ff;    /* signal cyan */
+  --accent-deep: #06bd92;
+  --ok: #00e5b0;
+  --warn: #ffcb6b;
+  --err: #ff6b6b;
 }
 
-* {
-  box-sizing: border-box;
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
-}
-
-html {
-  scroll-behavior: smooth;
-}
-
+* { box-sizing: border-box; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+html { scroll-behavior: smooth; }
 body {
   margin: 0;
-  background: var(--bg, #07070d);
-  color: var(--fg, #e9e9f2);
+  background: var(--bg);
+  color: var(--fg);
   font-family: var(--f-body);
   overflow-x: hidden;
 }
-
-::selection {
-  background: var(--accent, #8b8bff);
-  color: var(--bg, #07070d);
-}
-
+::selection { background: var(--accent); color: var(--bg); }
 a { color: inherit; text-decoration: none; }
 
-/* ============================ THEME: AI / VISHVAM-1 ======================= */
-[data-theme="ai"] {
-  --bg: #07070d;
-  --bg-soft: #0d0d18;
-  --panel: #0f0f1d;
-  --line: #20203a;
-  --fg: #e9e9f2;
-  --muted: #8888a6;
-  --faint: #55556e;
-  --accent: #8b8bff;
-  --accent-deep: #6d6df0;
-  --signal: #c6ff5e;
-  --ok: #4ade80;
-  --warn: #fbbf24;
-  --f-display: var(--font-sora), system-ui, sans-serif;
-  --f-body: var(--font-sora), system-ui, sans-serif;
-  --f-mono: var(--font-jetbrains), ui-monospace, monospace;
-}
-
-/* ============================ THEME: BACKEND / PRODUCTION ================= */
-[data-theme="backend"] {
-  --bg: #06080a;
-  --bg-soft: #0a0e12;
-  --panel: #0b1015;
-  --line: #18222b;
-  --fg: #d7e2e6;
-  --muted: #6f8794;
-  --faint: #3c4d58;
-  --accent: #2dd4a7;
-  --accent-deep: #16a37e;
-  --signal: #2dd4a7;
-  --ok: #2dd4a7;
-  --warn: #f5b14c;
-  --err: #f76d6d;
-  --f-display: var(--font-geist-sans), system-ui, sans-serif;
-  --f-body: var(--font-geist-sans), system-ui, sans-serif;
-  --f-mono: var(--font-geist-mono), ui-monospace, monospace;
-}
-
-/* ============================ THEME: FULL-STACK / PRODUCT ================= */
-[data-theme="fullstack"] {
-  --bg: #0b0a09;
-  --bg-soft: #121010;
-  --panel: #171413;
-  --line: #2a2422;
-  --fg: #f3ece4;
-  --muted: #a99a8d;
-  --faint: #6a5d52;
-  --accent: #ff6a3d;
-  --accent-deep: #e5481f;
-  --signal: #ffd6a0;
-  --ok: #8fd694;
-  --f-display: var(--font-bricolage), Georgia, serif;
-  --f-body: var(--font-hanken), system-ui, sans-serif;
-  --f-mono: var(--font-jetbrains), ui-monospace, monospace;
-}
-
-/* ------------------------------- utilities ------------------------------- */
+/* utilities */
 .font-display { font-family: var(--f-display); }
 .font-mono { font-family: var(--f-mono); }
-.font-body { font-family: var(--f-body); }
-
 .mono-label {
   font-family: var(--f-mono);
-  font-size: 0.68rem;
-  letter-spacing: 0.18em;
+  font-size: 0.66rem;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--muted);
 }
 
-.grain::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: 90;
-  pointer-events: none;
-  opacity: 0.045;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  mix-blend-mode: overlay;
-}
-
-.blueprint {
+.grid-bg {
   background-image:
     linear-gradient(var(--line) 1px, transparent 1px),
     linear-gradient(90deg, var(--line) 1px, transparent 1px);
-  background-size: 28px 28px;
-  background-position: -1px -1px;
-  opacity: 1;
+  background-size: 26px 26px;
+  -webkit-mask-image: radial-gradient(120% 90% at 50% 0%, #000 30%, transparent 75%);
+  mask-image: radial-gradient(120% 90% at 50% 0%, #000 30%, transparent 75%);
 }
 
-.dotgrid {
-  background-image: radial-gradient(var(--line) 1px, transparent 1px);
-  background-size: 22px 22px;
-}
+.glow { box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 30%, transparent), 0 0 40px -12px var(--accent); }
 
-/* ------------------------------- keyframes ------------------------------- */
+/* keyframes */
 @keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
-.caret::after {
-  content: "▋";
-  margin-left: 1px;
-  color: var(--accent);
-  animation: blink 1.05s steps(1) infinite;
-}
+.caret::after { content: "▋"; margin-left: 1px; color: var(--accent); animation: blink 1.05s steps(1) infinite; }
 
 @keyframes pulse-ring {
   0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 55%, transparent); }
   70% { box-shadow: 0 0 0 7px transparent; }
   100% { box-shadow: 0 0 0 0 transparent; }
 }
-.live-dot {
-  width: 7px; height: 7px; border-radius: 999px;
-  background: var(--accent);
-  animation: pulse-ring 2s ease-out infinite;
-}
+.live-dot { width: 7px; height: 7px; border-radius: 999px; background: var(--accent); animation: pulse-ring 2s ease-out infinite; }
 
-@keyframes dash { to { stroke-dashoffset: 0; } }
 @keyframes flow { to { stroke-dashoffset: -1000; } }
-
-@keyframes rise {
-  from { opacity: 0; transform: translateY(14px); }
-  to { opacity: 1; transform: translateY(0); }
-}
+@keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
 .rise { animation: rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) both; }
 
-@keyframes sheen {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+@keyframes scan {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(2400%); }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -184,5 +98,5 @@ a { color: inherit; text-decoration: none; }
 
 ::-webkit-scrollbar { width: 9px; height: 9px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
-::-webkit-scrollbar-thumb { background: var(--line); border-radius: 9px; }
+::-webkit-scrollbar-thumb { background: var(--line-2); border-radius: 9px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--faint); }
