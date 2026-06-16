@@ -2,31 +2,65 @@ import { Link, useLocation } from "react-router-dom";
 import { PROFILE } from "@/data/content";
 
 const NAV = [
-  { to: "/", label: "AI" },
-  { to: "/backend", label: "Backend" },
-  { to: "/full-stack", label: "Full-Stack" },
+  { to: "/", label: "AI", n: "01" },
+  { to: "/backend", label: "Backend", n: "02" },
+  { to: "/full-stack", label: "Full-Stack", n: "03" },
+];
+
+const TICKER = [
+  "ON-DEVICE INFERENCE",
+  "RAG + VISION · NO SERVER",
+  "GANDHINAGAR · IST (UTC+5:30)",
+  "OPEN TO REMOTE AI / BACKEND / FULL-STACK ROLES",
+  "B.E. COMPUTER SCIENCE · LJ UNIVERSITY",
+  "GRADUATING JUNE 2026",
+  "PYTHON · FASTAPI · PYTORCH · NEXT.JS · KUBERNETES",
 ];
 
 export function TopBar() {
   const { pathname } = useLocation();
   return (
-    <header className="sticky top-0 z-50 border-b backdrop-blur-md" style={{ borderColor: "var(--line)", background: "color-mix(in srgb, var(--bg) 72%, transparent)" }}>
-      <div className="mx-auto flex max-w-6xl items-center gap-4 px-5 py-3">
-        <span className="live-dot" />
-        <span className="font-mono text-[13px] font-semibold tracking-tight" style={{ color: "var(--fg)" }}>VISHVAM&#8209;1</span>
-        <nav className="ml-2 hidden items-center gap-1 sm:flex">
-          {NAV.map((n) => (
-            <Link key={n.to} to={n.to} className="rounded-md px-2.5 py-1 font-mono text-[12px] transition-colors"
-              style={{ color: pathname === n.to ? "var(--accent)" : "var(--muted)", background: pathname === n.to ? "var(--panel)" : "transparent" }}>
-              {n.label}
-            </Link>
+    <header className="sticky top-0 z-50" style={{ background: "color-mix(in srgb, var(--bg) 80%, transparent)", backdropFilter: "blur(8px)" }}>
+      {/* masthead */}
+      <div className="border-b" style={{ borderColor: "var(--line-2)" }}>
+        <div className="mx-auto flex max-w-[1240px] items-center gap-4 px-6 py-3">
+          <span className="live-dot" />
+          <span className="font-mono text-[12px] font-medium tracking-[0.16em]" style={{ color: "var(--fg)" }}>
+            VISHVAM&nbsp;PATEL
+          </span>
+          <span className="mono-label hidden sm:inline" style={{ color: "var(--faint)" }}>AI&nbsp;Engineer</span>
+
+          <nav className="ml-auto flex items-center gap-1">
+            {NAV.map((n) => {
+              const active = pathname === n.to;
+              return (
+                <Link key={n.to} to={n.to} className="group flex items-baseline gap-1 px-2.5 py-1 font-mono text-[12px]"
+                  style={{ color: active ? "var(--accent)" : "var(--muted)" }}>
+                  <span className="text-[9px]" style={{ color: active ? "var(--accent)" : "var(--faint)" }}>{n.n}</span>
+                  <span className="ulink">{n.label}</span>
+                </Link>
+              );
+            })}
+            <span className="mx-2 hidden h-4 w-px sm:block" style={{ background: "var(--line-2)" }} />
+            <a href={PROFILE.resume} className="hidden px-2 py-1 font-mono text-[12px] sm:inline" style={{ color: "var(--fg)" }}>
+              <span className="ulink">résumé ↓</span>
+            </a>
+          </nav>
+        </div>
+      </div>
+      {/* ticker */}
+      <div className="overflow-hidden border-b" style={{ borderColor: "var(--line)" }}>
+        <div className="ticker-track py-1.5">
+          {[0, 1].map((dup) => (
+            <span key={dup} className="flex shrink-0">
+              {TICKER.map((t, i) => (
+                <span key={i} className="mono-label flex items-center" style={{ color: "var(--faint)", fontSize: "0.6rem" }}>
+                  <span className="px-5">{t}</span>
+                  <span style={{ color: "var(--accent)" }}>✳</span>
+                </span>
+              ))}
+            </span>
           ))}
-        </nav>
-        <div className="ml-auto flex items-center gap-3">
-          <a href={PROFILE.github} target="_blank" rel="noopener noreferrer" className="mono-label hover:opacity-80">github</a>
-          <a href={PROFILE.resume} className="rounded-md border px-2.5 py-1 font-mono text-[11px] transition-colors hover:opacity-80" style={{ borderColor: "var(--line-2)", color: "var(--accent)" }}>
-            resume.pdf ↓
-          </a>
         </div>
       </div>
     </header>

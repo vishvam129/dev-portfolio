@@ -40,7 +40,7 @@ export function Assistant() {
   const ready = status === "ready";
 
   return (
-    <div className="overflow-hidden rounded-2xl border glow" style={{ borderColor: "var(--line-2)", background: "color-mix(in srgb, var(--panel) 92%, transparent)" }}>
+    <div className="overflow-hidden rounded-[3px] border" style={{ borderColor: "var(--line-2)", background: "var(--panel)", boxShadow: "0 24px 60px -40px color-mix(in srgb, var(--accent) 40%, transparent)" }}>
       {/* header */}
       <div className="flex items-center gap-3 border-b px-5 py-3.5" style={{ borderColor: "var(--line)", background: "var(--bg-soft)" }}>
         <span className="live-dot" style={{ background: ready ? "var(--ok)" : "var(--warn)" }} />

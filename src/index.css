@@ -89,6 +89,78 @@ body::after {
     inset 0 1px 0 color-mix(in srgb, var(--fg) 6%, transparent);
 }
 
+/* ----------------------------- editorial system -------------------------- */
+/* the page reads like a precise engineering journal: ruled, gridded, indexed */
+
+.rule { height: 1px; width: 100%; background: var(--line-2); }
+.rule-2 { height: 1px; width: 100%; background: var(--line); }
+
+/* full-bleed faint column guides behind a container */
+.colguides {
+  background-image: repeating-linear-gradient(
+    to right,
+    transparent, transparent calc((100% - 11 * 1px) / 12 - 1px),
+    var(--line) calc((100% - 11 * 1px) / 12 - 1px), var(--line) calc((100% - 11 * 1px) / 12)
+  );
+}
+
+/* a "specimen plate" — sharp-cornered ruled block, the card replacement */
+.plate {
+  border: 1px solid var(--line-2);
+  background: linear-gradient(180deg, var(--panel) 0%, var(--bg-soft) 100%);
+  position: relative;
+}
+.plate-tick::before, .plate-tick::after {
+  content: "+";
+  position: absolute;
+  font-family: var(--f-mono);
+  font-size: 11px;
+  color: var(--faint);
+  line-height: 1;
+}
+.plate-tick::before { top: 6px; left: 7px; }
+.plate-tick::after { bottom: 4px; right: 7px; }
+
+/* marginalia row: sticky mono label in the left margin, content on the right */
+.entry { display: grid; grid-template-columns: 1fr; gap: 0.75rem; }
+@media (min-width: 900px) {
+  .entry { grid-template-columns: 180px 1fr; gap: 2.5rem; }
+}
+.entry-label { position: sticky; top: 90px; align-self: start; }
+
+/* index / table-of-contents rows */
+.idx-row {
+  display: grid;
+  grid-template-columns: 2.2rem 1fr auto;
+  gap: 1rem;
+  align-items: baseline;
+  padding: 0.7rem 0;
+  border-top: 1px solid var(--line);
+  transition: color 0.25s, padding 0.25s;
+}
+.idx-row:hover { padding-left: 0.5rem; color: var(--accent); }
+
+/* big editorial section number */
+.bignum {
+  font-family: var(--f-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  color: var(--accent);
+}
+
+/* running ticker */
+.ticker-track { display: inline-flex; white-space: nowrap; animation: ticker 38s linear infinite; }
+@keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+/* link with animated underline */
+.ulink { position: relative; }
+.ulink::after {
+  content: ""; position: absolute; left: 0; bottom: -2px; height: 1px; width: 100%;
+  background: currentColor; transform: scaleX(0); transform-origin: right;
+  transition: transform 0.4s cubic-bezier(0.16,1,0.3,1);
+}
+.ulink:hover::after { transform: scaleX(1); transform-origin: left; }
+
 /* ------------------------------- keyframes ------------------------------- */
 @keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
 .caret::after { content: "▋"; margin-left: 1px; color: var(--accent); animation: blink 1.05s steps(1) infinite; }

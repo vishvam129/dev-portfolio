@@ -52,19 +52,22 @@ export function VisionSandbox() {
   }, [stage, original, cutout]);
 
   return (
-    <section id="sandbox" className="mx-auto max-w-6xl px-5 py-20">
-      <div className="mb-8 flex items-end justify-between border-b pb-4" style={{ borderColor: "var(--line)" }}>
-        <div className="flex items-baseline gap-4">
-          <span className="mono-label" style={{ color: "var(--accent)" }}>vision sandbox</span>
-          <h2 className="font-display text-2xl font-bold sm:text-3xl" style={{ color: "var(--fg)" }}>Run a vision model</h2>
+    <section id="sandbox" className="mx-auto max-w-[1240px] px-6">
+      <div className="rule-2" />
+      <div className="entry py-14">
+        <div className="entry-label">
+          <div className="bignum">§ 02</div>
+          <h2 className="mt-2 font-display text-3xl leading-none" style={{ color: "var(--fg)" }}>Vision sandbox</h2>
+          <p className="mt-3 font-mono text-[11px] leading-relaxed" style={{ color: "var(--faint)" }}>
+            Fig. 02 — RMBG-1.4 background removal, client-side. The kind of model Vrixo runs.
+          </p>
         </div>
-        <span className="mono-label hidden sm:block">RMBG-1.4 · on-device · à la Vrixo</span>
-      </div>
+        <div>
 
       <div className="grid gap-6 lg:grid-cols-[1.2fr_1fr]">
         {/* canvas */}
         <div
-          className="relative grid min-h-[340px] place-items-center overflow-hidden rounded-2xl border"
+          className="relative grid min-h-[340px] place-items-center overflow-hidden rounded-[3px] border"
           style={{ borderColor: "var(--line-2)", background: "var(--panel)" }}
           onDragOver={(e) => e.preventDefault()}
           onDrop={(e) => { e.preventDefault(); const f = e.dataTransfer.files[0]; if (f) handleFile(f); }}
@@ -106,7 +109,7 @@ export function VisionSandbox() {
         </div>
 
         {/* control panel */}
-        <div className="rounded-2xl border p-6" style={{ borderColor: "var(--line-2)", background: "var(--panel)" }}>
+        <div className="rounded-[3px] border p-6" style={{ borderColor: "var(--line-2)", background: "var(--panel)" }}>
           <p className="text-sm leading-relaxed" style={{ color: "var(--muted)" }}>
             Vrixo strips backgrounds with <span style={{ color: "var(--fg)" }}>RemBG / U²-Net</span> behind a job queue.
             Here the same class of model (<span style={{ color: "var(--fg)" }}>RMBG-1.4</span>) runs <span style={{ color: "var(--accent)" }}>entirely in your browser</span> via
@@ -148,6 +151,8 @@ export function VisionSandbox() {
               <li>4 · render to canvas</li>
             </ol>
           </div>
+        </div>
+        </div>
         </div>
       </div>
     </section>
