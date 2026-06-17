@@ -20,14 +20,43 @@
   --line: #1d2026; --line-2: #2c3038;
   --fg: #f3f4ef; --muted: #888d98; --faint: #4a4f59;
   --accent: #ceff2e; --accent-press: #b9ec00; --accent-ink: #0a0b07;
+  --accent-2: #36e0ff;
   --ok: #ceff2e; --warn: #ffcf5e; --err: #ff6a5a;
 }
+
+/* ---------------------------- techie overlays ---------------------------- */
+/* scanlines / CRT veil for the motion build */
+.scanlines::before {
+  content: ""; position: fixed; inset: 0; z-index: 190; pointer-events: none; opacity: 0.5;
+  background: repeating-linear-gradient(to bottom, transparent 0 2px, rgba(0,0,0,0.18) 2px 3px);
+  mix-blend-mode: multiply;
+}
+/* dotted technical grid backdrop */
+.techgrid {
+  background-image: radial-gradient(var(--line) 1px, transparent 1px);
+  background-size: 24px 24px;
+  -webkit-mask-image: radial-gradient(120% 90% at 50% 0%, #000 20%, transparent 78%);
+  mask-image: radial-gradient(120% 90% at 50% 0%, #000 20%, transparent 78%);
+}
+/* corner crop marks */
+.crop { position: relative; }
+.crop::before, .crop::after {
+  content: ""; position: absolute; width: 9px; height: 9px; border-color: var(--accent); pointer-events: none;
+}
+.crop::before { top: -1px; left: -1px; border-top: 1px solid; border-left: 1px solid; }
+.crop::after { bottom: -1px; right: -1px; border-bottom: 1px solid; border-right: 1px solid; }
+
+/* top scroll-progress bar */
+.scrollbar-prog { position: fixed; top: 0; left: 0; height: 2px; z-index: 170; background: var(--accent); transform-origin: 0 50%; }
+
+@keyframes flicker { 0%,100%{opacity:1} 92%{opacity:1} 93%{opacity:0.7} 94%{opacity:1} }
 
 [data-variant="motion"] {
   --bg: #070709; --bg-2: #0b0c0f; --surface: #101216; --surface-2: #16191f;
   --line: #1d2026; --line-2: #2c3038;
   --fg: #f3f4ef; --muted: #888d98; --faint: #4a4f59;
   --accent: #ceff2e; --accent-press: #b9ec00; --accent-ink: #0a0b07;
+  --accent-2: #36e0ff; /* secondary electric-cyan for data/telemetry */
   --f-display: "Bricolage Grotesque", sans-serif; --disp-weight: 800; --disp-track: -0.03em; --disp-lh: 0.9;
 }
 
