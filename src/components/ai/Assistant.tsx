@@ -52,7 +52,7 @@ export function Assistant() {
       </div>
 
       {/* body */}
-      <div className="relative h-[360px]">
+      <div className="relative h-[420px]">
         {!ready && status !== "error" && (
           <div className="flex h-full flex-col p-5">
             <div className="kicker mb-3" style={{ color: "var(--accent)" }}>

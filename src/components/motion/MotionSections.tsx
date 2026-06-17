@@ -31,12 +31,12 @@ function Console() {
   return (
     <section id="ask" className="wrap scroll-mt-20 py-24">
       <Head n="01" title="Ask the model" note="rag · minilm-l6 · on-device" />
-      <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr]">
+      <div className="grid items-center gap-x-12 gap-y-8 lg:grid-cols-[0.62fr_1.38fr]">
         <Reveal>
-          <h2 className="font-display" style={{ fontSize: "clamp(2.2rem,4.5vw,3.6rem)", color: "var(--fg)" }}>
+          <h2 className="font-display" style={{ fontSize: "clamp(2rem,3.6vw,3rem)", color: "var(--fg)" }}>
             It answers from<br />my <span style={{ color: "var(--accent)" }}>résumé.</span>
           </h2>
-          <p className="mt-6 max-w-sm text-[15px] leading-relaxed" style={{ color: "var(--muted)" }}>
+          <p className="mt-5 max-w-sm text-[14.5px] leading-relaxed" style={{ color: "var(--muted)" }}>
             A real embedding model runs in a Web Worker, vectorizes my history, and answers by
             cosine retrieval — streamed and <span style={{ color: "var(--fg)" }}>cited</span>, fully client-side.
           </p>
@@ -59,37 +59,43 @@ function Work() {
         {PROJECTS.map((p, i) => {
           const active = open === p.id;
           return (
-            <div key={p.id} data-hover onMouseEnter={() => setOpen(p.id)} onMouseMove={spotMove}
-              className="spot group cursor-pointer border-t transition-all" style={{ borderColor: "var(--line)" }}>
-              <div className="grid grid-cols-[auto_1fr_auto] items-center gap-5 py-6">
+            <div key={p.id} onMouseMove={spotMove} className="spot border-t" style={{ borderColor: "var(--line)" }}>
+              <button data-hover onClick={() => setOpen(active ? null : p.id)} aria-expanded={active}
+                className="grid w-full grid-cols-[auto_1fr_auto] items-center gap-5 py-6 text-left">
                 <span className="font-mono text-[12px]" style={{ color: active ? "var(--accent)" : "var(--faint)" }}>{String(i + 1).padStart(2, "0")}</span>
-                <h3 className="font-display transition-transform" style={{ fontSize: "clamp(1.7rem,3.4vw,2.6rem)", color: active ? "var(--fg)" : "var(--muted)", transform: active ? "translateX(8px)" : "none" }}>{p.name}</h3>
-                <div className="flex items-center gap-3">
+                <h3 className="font-display transition-all duration-300" style={{ fontSize: "clamp(1.7rem,3.4vw,2.6rem)", color: active ? "var(--accent)" : "var(--fg)", transform: active ? "translateX(8px)" : "none" }}>{p.name}</h3>
+                <div className="flex items-center gap-4">
                   <span className="hidden font-mono text-[11px] uppercase tracking-wider sm:inline" style={{ color: STATUS[p.status].color }}>{STATUS[p.status].label}</span>
-                  <span className="transition-transform" style={{ color: "var(--accent)", transform: active ? "rotate(90deg)" : "none" }}>→</span>
+                  <span className="grid h-7 w-7 place-items-center rounded-full border text-[13px] transition-all" style={{ borderColor: active ? "var(--accent)" : "var(--line-2)", color: "var(--accent)", transform: active ? "rotate(45deg)" : "none" }}>+</span>
                 </div>
-              </div>
-              <div className="grid transition-all duration-300" style={{ gridTemplateRows: active ? "1fr" : "0fr" }}>
+              </button>
+              <div className="grid transition-all duration-500" style={{ gridTemplateRows: active ? "1fr" : "0fr" }}>
                 <div className="overflow-hidden">
-                  <div className="grid gap-6 pb-8 lg:grid-cols-[1.4fr_1fr] lg:pl-12">
+                  <div className="grid gap-8 pb-10 lg:grid-cols-[1.5fr_1fr] lg:pl-[3.4rem]">
                     <div>
-                      <p className="max-w-lg text-[14px] leading-relaxed" style={{ color: "var(--muted)" }}>{p.blurb}</p>
+                      <p className="max-w-xl text-[15.5px] leading-relaxed" style={{ color: "var(--fg)" }}>{p.blurb}</p>
                       {p.models && (
-                        <div className="mt-4 flex flex-wrap gap-x-3 gap-y-1 font-mono text-[11px]" style={{ color: "var(--accent-2)" }}>
-                          {p.models.map((m) => <span key={m}>{m}</span>)}
+                        <div className="mt-6">
+                          <div className="kicker mb-2" style={{ color: "var(--faint)", fontSize: "0.58rem" }}>models</div>
+                          <div className="flex flex-wrap gap-2">{p.models.map((m) => <span key={m} className="chip" style={{ color: "var(--accent-2)", borderColor: "var(--line-2)" }}>{m}</span>)}</div>
                         </div>
                       )}
-                      <div className="mt-4 flex flex-wrap gap-x-4 font-mono text-[10.5px]" style={{ color: "var(--faint)" }}>
-                        {p.stack.map((s) => <span key={s}>{s}</span>)}
+                      <div className="mt-5">
+                        <div className="kicker mb-2" style={{ color: "var(--faint)", fontSize: "0.58rem" }}>stack</div>
+                        <div className="flex flex-wrap gap-2">{p.stack.map((s) => <span key={s} className="chip">{s}</span>)}</div>
                       </div>
-                      {p.url && <a href={p.url} data-hover target="_blank" rel="noopener noreferrer" className="ulink mt-4 inline-block font-mono text-[12px]" style={{ color: "var(--accent)" }}>visit live ↗</a>}
+                      {p.url && <a href={p.url} data-hover target="_blank" rel="noopener noreferrer" className="btn-lime mt-7">visit live ↗</a>}
                     </div>
-                    <div className="grid grid-cols-3 gap-2 lg:grid-cols-1">
-                      {p.metrics.map((m) => (
-                        <div key={m.label} className="flex items-baseline justify-between gap-2 border-b pb-1 font-mono text-[11px]" style={{ borderColor: "var(--line)" }}>
-                          <span style={{ color: "var(--faint)" }}>{m.label}</span><span className="tnum" style={{ color: "var(--fg)" }}>{m.value}</span>
-                        </div>
-                      ))}
+                    <div className="self-start rounded-[4px] border p-5" style={{ borderColor: "var(--line-2)", background: "var(--surface)" }}>
+                      <div className="kicker mb-3" style={{ color: "var(--faint)", fontSize: "0.58rem" }}>metrics</div>
+                      <dl className="space-y-3">
+                        {p.metrics.map((m) => (
+                          <div key={m.label} className="flex items-baseline justify-between gap-3 border-b pb-2" style={{ borderColor: "var(--line)" }}>
+                            <dt className="font-mono text-[11px]" style={{ color: "var(--muted)" }}>{m.label}</dt>
+                            <dd className="font-display tnum" style={{ fontSize: "1.15rem", color: "var(--accent)" }}>{m.value}</dd>
+                          </div>
+                        ))}
+                      </dl>
                     </div>
                   </div>
                 </div>

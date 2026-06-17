@@ -13,8 +13,8 @@ const NODES = [
 function Flow() {
   return (
     <div className="relative h-6 w-px shrink-0 self-center overflow-hidden lg:h-px lg:w-auto lg:flex-1" style={{ background: "var(--line-2)" }} aria-hidden>
-      <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, transparent, var(--accent), transparent)", backgroundSize: "100% 200%", animation: "ticker 1.5s linear infinite" }} />
-      <div className="absolute inset-0 hidden lg:block" style={{ background: "linear-gradient(90deg, transparent, var(--accent), transparent)", backgroundSize: "200% 100%", animation: "ticker 1.5s linear infinite" }} />
+      <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, transparent, var(--accent), transparent)", backgroundSize: "100% 200%", animation: "ticker 2.8s linear infinite" }} />
+      <div className="absolute inset-0 hidden lg:block" style={{ background: "linear-gradient(90deg, transparent, var(--accent), transparent)", backgroundSize: "200% 100%", animation: "ticker 2.8s linear infinite" }} />
     </div>
   );
 }

@@ -2,13 +2,13 @@ import { useRef } from "react";
 import { motion, useScroll, useVelocity, useSpring, useTransform, useMotionValue, useAnimationFrame } from "framer-motion";
 
 /** A marquee whose speed + skew respond to scroll velocity. */
-export function VelocityText({ text, baseSpeed = 1.2 }: { text: string; baseSpeed?: number }) {
+export function VelocityText({ text, baseSpeed = 0.4 }: { text: string; baseSpeed?: number }) {
   const x = useMotionValue(0);
   const { scrollY } = useScroll();
   const vel = useVelocity(scrollY);
   const smooth = useSpring(vel, { damping: 50, stiffness: 380 });
-  const factor = useTransform(smooth, [-1500, 0, 1500], [-4, 1, 4], { clamp: false });
-  const skew = useTransform(smooth, [-1500, 0, 1500], [-5, 0, 5], { clamp: true });
+  const factor = useTransform(smooth, [-2000, 0, 2000], [-2.2, 1, 2.2], { clamp: false });
+  const skew = useTransform(smooth, [-2000, 0, 2000], [-3, 0, 3], { clamp: true });
   const dir = useRef(1);
   useAnimationFrame((_, dt) => {
     let m = dir.current * baseSpeed * (dt / 16);
