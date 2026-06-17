@@ -4,7 +4,6 @@ import { MotionHero } from "@/components/motion/MotionHero";
 import { MotionSections } from "@/components/motion/MotionSections";
 import { Cursor } from "@/components/fx/Cursor";
 import { Spotlight } from "@/components/fx/Spotlight";
-import { Sound } from "@/components/fx/Sound";
 import { ScrollProgress } from "@/components/fx/ScrollProgress";
 import { CommandPalette } from "@/components/fx/CommandPalette";
 import { VelocityText } from "@/components/fx/VelocityText";
@@ -31,13 +30,12 @@ function TopBar() {
 export default function MotionPage() {
   useEffect(() => { document.title = "Vishvam Patel — AI Engineer · runs ML in your browser"; }, []);
   return (
-    <main data-variant="motion" className="scanlines min-h-screen pb-10" style={{ background: "var(--bg)" }}>
+    <main data-variant="motion" className="min-h-screen pb-10" style={{ background: "var(--bg)" }}>
       <Boot />
       <Spotlight />
       <ScrollProgress />
       <CommandPalette />
       <Cursor />
-      <Sound />
       <TopBar />
       <MotionHero />
       <VelocityText text="PYTHON · FASTAPI · PYTORCH · NEXT.JS · KUBERNETES · TRANSFORMERS.JS" />

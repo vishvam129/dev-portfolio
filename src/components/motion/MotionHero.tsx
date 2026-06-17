@@ -1,42 +1,61 @@
-import { FlowField } from "@/components/ai/FlowField";
+import { WireframeCore } from "./WireframeCore";
+import { Reticle } from "./Reticle";
 import { Magnetic } from "@/components/fx/Magnetic";
 import { Scramble } from "@/components/fx/Scramble";
-import { Hud } from "./Hud";
 import { PROFILE } from "@/data/content";
+
+function Corner({ pos, children }: { pos: string; children: React.ReactNode }) {
+  return <span className={`absolute ${pos} font-mono text-[10px] tracking-wide`} style={{ color: "var(--faint)" }}>{children}</span>;
+}
 
 export function MotionHero() {
   return (
-    <section className="relative flex min-h-[100svh] flex-col overflow-hidden">
-      <div className="absolute inset-0"><FlowField className="h-full w-full" /></div>
-      <div className="pointer-events-none absolute inset-0" style={{ background: "radial-gradient(125% 85% at 50% -5%, transparent 28%, var(--bg) 92%)" }} />
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-2/3" style={{ background: "linear-gradient(to top, var(--bg) 6%, transparent)" }} />
+    <section className="relative flex min-h-[100svh] items-center overflow-hidden">
+      <div className="pointer-events-none absolute inset-0 techgrid opacity-40" aria-hidden />
 
-      {/* top HUD row */}
-      <div className="relative z-10 flex items-start justify-between gap-4 px-6 pt-7" style={{ maxWidth: "var(--maxw)", marginInline: "auto", width: "100%" }}>
-        <Hud />
-        <span className="kicker hidden text-right sm:inline" style={{ color: "var(--faint)", fontSize: "0.58rem" }}>FLOW FIELD<br />CURL NOISE · 2.4K AGENTS</span>
-      </div>
-
-      {/* statement */}
-      <div className="relative z-10 mt-auto w-full" style={{ maxWidth: "var(--maxw)", marginInline: "auto" }}>
-        <div className="px-6 pb-24">
-          <div className="kicker mb-6 flex items-center gap-3" style={{ color: "var(--accent)" }}>
-            <span className="live-dot" /> <Scramble text="EDGE INFERENCE · RAG + VISION · ON-DEVICE" start="mount" speed={2.4} />
-          </div>
-          <h1 className="font-display" style={{ fontSize: "clamp(3.2rem, 12vw, 10rem)", color: "var(--fg)" }}>
+      <div className="relative z-10 grid w-full items-center gap-12 px-6 lg:grid-cols-12" style={{ maxWidth: "var(--maxw)", marginInline: "auto" }}>
+        {/* left: statement */}
+        <div className="lg:col-span-6">
+          <div className="kicker mb-6" style={{ color: "var(--accent)" }}>[ SYS.01 / EDGE INFERENCE ]</div>
+          <h1 className="font-display" style={{ fontSize: "clamp(3rem, 8vw, 6.4rem)", color: "var(--fg)" }}>
             I build AI<br />that <span style={{ color: "var(--accent)" }}>ships.</span>
           </h1>
-          <div className="mt-9 flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
-            <p className="max-w-md text-[15px] leading-relaxed" style={{ color: "var(--muted)" }}>
-              I&apos;m <span style={{ color: "var(--fg)" }}>{PROFILE.name}</span>. This page loads a real model into your
-              browser and answers from my résumé — <span style={{ color: "var(--fg)" }}>on your device</span>.
-            </p>
-            <div className="flex items-center gap-4">
-              <Magnetic><a href="#ask" data-hover className="btn-lime">ask the model ↓</a></Magnetic>
-              <Magnetic strength={0.25}><a href={`mailto:${PROFILE.email}`} data-hover className="btn-ghost">hire me</a></Magnetic>
-            </div>
+          <p className="mt-7 max-w-md text-[15px] leading-relaxed" style={{ color: "var(--muted)" }}>
+            <span style={{ color: "var(--fg)" }}>{PROFILE.name}</span> — AI engineer. This page loads a real model into
+            your browser and answers from my résumé, <span style={{ color: "var(--fg)" }}>on your device</span>.
+          </p>
+          <div className="mt-8 flex flex-wrap items-center gap-4">
+            <Magnetic><a href="#ask" data-hover className="btn-lime">ask the model ↓</a></Magnetic>
+            <Magnetic strength={0.25}><a href={`mailto:${PROFILE.email}`} data-hover className="btn-ghost">hire me</a></Magnetic>
           </div>
-          <div className="mt-10 font-mono text-[10.5px]" style={{ color: "var(--faint)" }}>press <span style={{ color: "var(--accent)" }}>⌘K</span> for commands · scroll to run inference</div>
+          {/* telemetry strip */}
+          <div className="mt-10 grid max-w-md grid-cols-3 gap-px overflow-hidden border" style={{ borderColor: "var(--line-2)", background: "var(--line-2)" }}>
+            {[["model", "MiniLM-L6"], ["inference", "100% local"], ["status", "online"]].map(([k, v]) => (
+              <div key={k} className="px-3 py-2.5" style={{ background: "var(--bg)" }}>
+                <div className="font-mono text-[9px] uppercase tracking-widest" style={{ color: "var(--faint)" }}>{k}</div>
+                <div className="mt-0.5 font-mono text-[12px]" style={{ color: "var(--accent-2)" }}>{v}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* right: the geometric core */}
+        <div className="lg:col-span-6">
+          <div className="relative mx-auto aspect-square w-full max-w-[460px]">
+            <WireframeCore className="absolute inset-0 h-full w-full" />
+            <Reticle />
+            <Corner pos="left-0 top-0">CORE.icosahedron</Corner>
+            <Corner pos="right-0 top-0">v:12 · e:30</Corner>
+            <Corner pos="left-0 bottom-0">proj: perspective</Corner>
+            <Corner pos="right-0 bottom-0"><Scramble text="rot: auto" start="mount" speed={2} /></Corner>
+          </div>
+        </div>
+      </div>
+
+      <div className="absolute bottom-6 left-0 right-0 px-6">
+        <div className="mx-auto flex items-center justify-between font-mono text-[10px]" style={{ maxWidth: "var(--maxw)", color: "var(--faint)" }}>
+          <span>press <span style={{ color: "var(--accent)" }}>⌘K</span> for commands</span>
+          <span>scroll to run inference ↓</span>
         </div>
       </div>
     </section>
