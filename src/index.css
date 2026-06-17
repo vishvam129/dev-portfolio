@@ -51,6 +51,28 @@
 
 @keyframes flicker { 0%,100%{opacity:1} 92%{opacity:1} 93%{opacity:0.7} 94%{opacity:1} }
 
+/* page-wide cursor spotlight glow */
+.spotlight-glow {
+  position: fixed; left: 0; top: 0; width: 520px; height: 520px; margin: -260px 0 0 -260px;
+  z-index: 1; pointer-events: none; border-radius: 999px; will-change: transform;
+  background: radial-gradient(circle, color-mix(in srgb, var(--accent) 13%, transparent), transparent 64%);
+  mix-blend-mode: screen;
+}
+/* card spotlight: radial highlight at --mx/--my */
+.spot { position: relative; }
+.spot::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity 0.3s;
+  background: radial-gradient(220px circle at var(--mx, 50%) var(--my, 50%), color-mix(in srgb, var(--accent) 16%, transparent), transparent 60%);
+  border-radius: inherit;
+}
+.spot:hover::before { opacity: 1; }
+/* 3d tilt */
+.tilt { transform-style: preserve-3d; transition: transform 0.2s ease-out; will-change: transform; }
+/* traveling packet on an svg path */
+.packet { animation: travel 2.2s linear infinite; }
+@keyframes travel { to { offset-distance: 100%; } }
+@keyframes dashflow { to { stroke-dashoffset: -1000; } }
+
 [data-variant="motion"] {
   --bg: #070709; --bg-2: #0b0c0f; --surface: #101216; --surface-2: #16191f;
   --line: #1d2026; --line-2: #2c3038;

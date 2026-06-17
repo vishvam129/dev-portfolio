@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { Assistant } from "@/components/ai/Assistant";
 import { VisionSandbox } from "@/components/ai/VisionSandbox";
+import { Pipeline } from "./Pipeline";
 import { Reveal } from "@/components/fx/Reveal";
 import { CountUp } from "@/components/fx/CountUp";
 import { Scramble } from "@/components/fx/Scramble";
 import { Magnetic } from "@/components/fx/Magnetic";
+import { spotMove } from "@/components/fx/Spotlight";
 import { PROJECTS, CAPABILITIES, PROFILE } from "@/data/content";
 
 function Head({ n, title, note }: { n: string; title: string; note?: string }) {
@@ -42,7 +44,7 @@ function Console() {
             {["Transformers.js", "ONNX / WASM", "384-dim", "0 servers"].map((c) => <span key={c} className="chip">{c}</span>)}
           </div>
         </Reveal>
-        <Reveal delay={0.1}><div className="crop"><Assistant /></div></Reveal>
+        <Reveal delay={0.1}><div className="crop spot" onMouseMove={spotMove}><Assistant /></div></Reveal>
       </div>
     </section>
   );
@@ -57,8 +59,8 @@ function Work() {
         {PROJECTS.map((p, i) => {
           const active = open === p.id;
           return (
-            <div key={p.id} data-hover onMouseEnter={() => setOpen(p.id)}
-              className="group cursor-pointer border-t transition-all" style={{ borderColor: "var(--line)" }}>
+            <div key={p.id} data-hover onMouseEnter={() => setOpen(p.id)} onMouseMove={spotMove}
+              className="spot group cursor-pointer border-t transition-all" style={{ borderColor: "var(--line)" }}>
               <div className="grid grid-cols-[auto_1fr_auto] items-center gap-5 py-6">
                 <span className="font-mono text-[12px]" style={{ color: active ? "var(--accent)" : "var(--faint)" }}>{String(i + 1).padStart(2, "0")}</span>
                 <h3 className="font-display transition-transform" style={{ fontSize: "clamp(1.7rem,3.4vw,2.6rem)", color: active ? "var(--fg)" : "var(--muted)", transform: active ? "translateX(8px)" : "none" }}>{p.name}</h3>
@@ -112,7 +114,7 @@ function Numbers() {
     <section className="wrap py-20">
       <div className="grid grid-cols-2 gap-px overflow-hidden rounded-[4px] border lg:grid-cols-4" style={{ borderColor: "var(--line-2)", background: "var(--line-2)" }}>
         {stats.map((s) => (
-          <div key={s.label} className="p-7" style={{ background: "var(--bg)" }}>
+          <div key={s.label} className="spot p-7" onMouseMove={spotMove} style={{ background: "var(--bg)" }}>
             <div className="font-display tnum" style={{ fontSize: "clamp(2.4rem,5vw,3.6rem)", color: "var(--accent)" }}>
               <CountUp to={s.to} suffix={s.suffix} />
             </div>
@@ -178,6 +180,7 @@ export function MotionSections() {
   return (
     <>
       <Console />
+      <Pipeline />
       <VisionSandbox />
       <Work />
       <Numbers />
