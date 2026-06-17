@@ -18,9 +18,9 @@
   /* defaults = motion */
   --bg: #070709; --bg-2: #0b0c0f; --surface: #101216; --surface-2: #16191f;
   --line: #1d2026; --line-2: #2c3038;
-  --fg: #f3f4ef; --muted: #888d98; --faint: #4a4f59;
+  --fg: #f3f4ef; --muted: #9aa0ad; --faint: #585d68;
   --accent: #ceff2e; --accent-press: #b9ec00; --accent-ink: #0a0b07;
-  --accent-2: #36e0ff;
+  --accent-2: #4ee6ff;
   --ok: #ceff2e; --warn: #ffcf5e; --err: #ff6a5a;
 }
 
@@ -76,9 +76,9 @@
 [data-variant="motion"] {
   --bg: #070709; --bg-2: #0b0c0f; --surface: #101216; --surface-2: #16191f;
   --line: #1d2026; --line-2: #2c3038;
-  --fg: #f3f4ef; --muted: #888d98; --faint: #4a4f59;
+  --fg: #f3f4ef; --muted: #9aa0ad; --faint: #585d68;
   --accent: #ceff2e; --accent-press: #b9ec00; --accent-ink: #0a0b07;
-  --accent-2: #36e0ff; /* secondary electric-cyan for data/telemetry */
+  --accent-2: #4ee6ff; /* secondary electric-cyan for data/telemetry */
   --f-display: "Bricolage Grotesque", sans-serif; --disp-weight: 800; --disp-track: -0.03em; --disp-lh: 0.9;
 }
 
@@ -142,9 +142,21 @@ body::after {
 .chip { display: inline-flex; align-items: center; gap: 0.4rem; font-family: var(--f-mono); font-size: 0.7rem; letter-spacing: 0.04em; border: 1px solid var(--line-2); color: var(--muted); padding: 0.2rem 0.55rem; border-radius: 999px; }
 
 .btn-lime { background: var(--accent); color: var(--accent-ink); font-family: var(--f-mono); font-size: 0.82rem; font-weight: 500; padding: 0.7rem 1.3rem; border-radius: 999px; display: inline-flex; align-items: center; gap: 0.5rem; transition: background 0.2s, transform 0.2s; }
-.btn-lime:hover { background: var(--accent-press); }
+.btn-lime:hover { background: var(--accent-press); transform: translateY(-1px); box-shadow: 0 8px 24px -10px var(--accent); }
 .btn-ghost { border: 1px solid var(--line-2); color: var(--fg); font-family: var(--f-mono); font-size: 0.82rem; padding: 0.7rem 1.3rem; border-radius: 999px; display: inline-flex; align-items: center; gap: 0.5rem; transition: border-color 0.2s, color 0.2s; }
-.btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+.btn-ghost:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-1px); }
+
+/* huge faint ghost numeral for section structure */
+.ghostnum {
+  font-family: var(--f-display); font-weight: 800; line-height: 1;
+  font-size: clamp(3rem, 7vw, 6rem); color: transparent;
+  -webkit-text-stroke: 1px var(--line-2); letter-spacing: -0.02em; user-select: none;
+}
+/* radial depth glow behind the core */
+.coreglow {
+  position: absolute; inset: 0; pointer-events: none; border-radius: 999px;
+  background: radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 60%);
+}
 
 .ulink { position: relative; display: inline-block; }
 .ulink::after { content: ""; position: absolute; left: 0; bottom: -2px; height: 1px; width: 100%; background: var(--accent); transform: scaleX(0); transform-origin: right; transition: transform 0.45s cubic-bezier(0.16,1,0.3,1); }

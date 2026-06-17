@@ -11,11 +11,17 @@ import { PROJECTS, CAPABILITIES, PROFILE } from "@/data/content";
 
 function Head({ n, title, note }: { n: string; title: string; note?: string }) {
   return (
-    <div className="mb-10">
+    <div className="mb-12">
       <div className="rule-faint" />
-      <div className="flex items-center justify-between pt-3">
-        <span className="glyph">{n} // {title.toUpperCase()}</span>
-        {note && <span className="kicker hidden sm:inline" style={{ color: "var(--faint)", fontSize: "0.58rem" }}>{note}</span>}
+      <div className="flex items-end justify-between gap-6 pt-4">
+        <div className="flex items-end gap-5">
+          <span className="ghostnum">{n}</span>
+          <div className="pb-1">
+            <span className="glyph block">// SECTION</span>
+            <h2 className="font-display mt-1" style={{ fontSize: "clamp(1.6rem,3vw,2.2rem)", color: "var(--fg)" }}>{title}</h2>
+          </div>
+        </div>
+        {note && <span className="kicker hidden pb-2 sm:inline" style={{ color: "var(--faint)", fontSize: "0.58rem" }}>{note}</span>}
       </div>
     </div>
   );

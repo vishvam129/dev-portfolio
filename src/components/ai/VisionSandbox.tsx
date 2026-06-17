@@ -51,9 +51,15 @@ export function VisionSandbox() {
     <section id="sandbox" className="wrap scroll-mt-24 py-24">
       <div className="mb-12">
         <div className="rule-faint" />
-        <div className="flex items-center justify-between pt-4">
-          <span className="glyph">02 — VISION SANDBOX</span>
-          <span className="kicker hidden sm:inline" style={{ color: "var(--faint)", fontSize: "0.6rem" }}>RMBG-1.4 · client-side · à la Vrixo</span>
+        <div className="flex items-end justify-between gap-6 pt-4">
+          <div className="flex items-end gap-5">
+            <span className="ghostnum">02</span>
+            <div className="pb-1">
+              <span className="glyph block">// SECTION</span>
+              <h2 className="font-display mt-1" style={{ fontSize: "clamp(1.6rem,3vw,2.2rem)", color: "var(--fg)" }}>Vision sandbox</h2>
+            </div>
+          </div>
+          <span className="kicker hidden pb-2 sm:inline" style={{ color: "var(--faint)", fontSize: "0.58rem" }}>RMBG-1.4 · client-side · à la Vrixo</span>
         </div>
       </div>
 

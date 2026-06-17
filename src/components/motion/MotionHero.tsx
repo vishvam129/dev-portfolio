@@ -42,6 +42,7 @@ export function MotionHero() {
         {/* right: the geometric core */}
         <div className="lg:col-span-6">
           <div className="relative mx-auto aspect-square w-full max-w-[460px]">
+            <div className="coreglow" aria-hidden />
             <WireframeCore className="absolute inset-0 h-full w-full" />
             <Reticle />
             <Corner pos="left-0 top-0">CORE.icosahedron</Corner>
