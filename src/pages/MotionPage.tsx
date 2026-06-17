@@ -4,7 +4,7 @@ import { MotionHero } from "@/components/motion/MotionHero";
 import { MotionSections } from "@/components/motion/MotionSections";
 import { ScrollProgress } from "@/components/fx/ScrollProgress";
 import { CommandPalette } from "@/components/fx/CommandPalette";
-import { VelocityText } from "@/components/fx/VelocityText";
+import { Marquee } from "@/components/motion/Marquee";
 import { PROFILE } from "@/data/content";
 
 function TopBar() {
@@ -34,7 +34,7 @@ export default function MotionPage() {
       <CommandPalette />
       <TopBar />
       <MotionHero />
-      <VelocityText text="PYTHON · FASTAPI · PYTORCH · NEXT.JS · KUBERNETES · TRANSFORMERS.JS" />
+      <Marquee items={["PYTHON", "FASTAPI", "PYTORCH", "NEXT.JS", "KUBERNETES", "TRANSFORMERS.JS", "POSTGRESQL", "REACT"]} />
       <MotionSections />
     </main>
   );
