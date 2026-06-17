@@ -2,8 +2,6 @@ import { useEffect } from "react";
 import { Boot } from "@/components/motion/Boot";
 import { MotionHero } from "@/components/motion/MotionHero";
 import { MotionSections } from "@/components/motion/MotionSections";
-import { Cursor } from "@/components/fx/Cursor";
-import { Spotlight } from "@/components/fx/Spotlight";
 import { ScrollProgress } from "@/components/fx/ScrollProgress";
 import { CommandPalette } from "@/components/fx/CommandPalette";
 import { VelocityText } from "@/components/fx/VelocityText";
@@ -32,10 +30,8 @@ export default function MotionPage() {
   return (
     <main data-variant="motion" className="min-h-screen pb-10" style={{ background: "var(--bg)" }}>
       <Boot />
-      <Spotlight />
       <ScrollProgress />
       <CommandPalette />
-      <Cursor />
       <TopBar />
       <MotionHero />
       <VelocityText text="PYTHON · FASTAPI · PYTORCH · NEXT.JS · KUBERNETES · TRANSFORMERS.JS" />
