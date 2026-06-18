@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useRag } from "@/lib/useRag";
+import { WireframeCore } from "@/components/motion/WireframeCore";
 import { SUGGESTED } from "@/data/knowledge";
 
 /** Reveals text word-by-word (the "generation" feel) once the full answer lands. */
@@ -43,7 +44,7 @@ export function Assistant() {
     <div className="overflow-hidden rounded-[3px] border" style={{ borderColor: "var(--line-2)", background: "var(--surface)", boxShadow: "0 24px 60px -40px color-mix(in srgb, var(--accent) 40%, transparent)" }}>
       {/* header */}
       <div className="flex items-center gap-3 border-b px-5 py-3.5" style={{ borderColor: "var(--line)", background: "var(--bg-2)" }}>
-        <span className="live-dot" style={{ background: ready ? "var(--ok)" : "var(--warn)" }} />
+        <span className="block h-9 w-9 shrink-0" title="live model core"><WireframeCore className="h-full w-full" /></span>
         <span className="font-mono text-[13px] font-semibold" style={{ color: "var(--fg)" }}>VISHVAM&#8209;1</span>
         <span className="kicker">on&#8209;device RAG</span>
         <span className="ml-auto font-mono text-[11px]" style={{ color: "var(--faint)" }}>

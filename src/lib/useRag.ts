@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { coreBus } from "@/lib/coreBus";
 
 export type RagStatus = "idle" | "loading" | "ready" | "error";
 export type Progress = { stage: string; detail: string; pct: number };
@@ -26,6 +27,7 @@ export function useRag() {
   const boot = useCallback(() => {
     if (workerRef.current) return;
     setStatus("loading");
+    coreBus.set("loading");
     const worker = new Worker(new URL("../workers/rag.worker.ts", import.meta.url), { type: "module" });
     workerRef.current = worker;
 
@@ -39,8 +41,10 @@ export function useRag() {
         setProgress({ stage: "ready", detail: "Inference engine ready", pct: 100 });
         setLog((l) => [...l.slice(-40), `Ready · ${m.docs} docs · ${m.dims}-dim embeddings`]);
         setStatus("ready");
+        coreBus.fire();
       } else if (m.type === "result") {
         setBusy(false);
+        coreBus.fire();
         setTurns((t) => {
           const next = [...t];
           // replace the trailing placeholder assistant turn
@@ -70,6 +74,7 @@ export function useRag() {
     const q = text.trim();
     if (!q || busy || status !== "ready" || !workerRef.current) return;
     setBusy(true);
+    coreBus.set("thinking");
     setTurns((t) => [...t, { role: "user", text: q }, { role: "assistant", text: "", streaming: true }]);
     workerRef.current.postMessage({ type: "query", text: q, id: ++_id });
   }, [busy, status]);
