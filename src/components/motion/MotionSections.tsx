@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Assistant } from "@/components/ai/Assistant";
+import { RetrievalMap } from "@/components/ai/RetrievalMap";
 import { VisionSandbox } from "@/components/ai/VisionSandbox";
 import { Pipeline } from "./Pipeline";
 import { Reveal } from "@/components/fx/Reveal";
@@ -49,6 +50,7 @@ function Console() {
           <div className="mt-6 flex flex-wrap gap-2">
             {["Transformers.js", "ONNX / WASM", "384-dim", "0 servers"].map((c) => <span key={c} className="chip">{c}</span>)}
           </div>
+          <div className="mt-7"><RetrievalMap /></div>
         </Reveal>
         <Reveal delay={0.1}><div className="crop spot" onMouseMove={spotMove}><Assistant /></div></Reveal>
       </div>

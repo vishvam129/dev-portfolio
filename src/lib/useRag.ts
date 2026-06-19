@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { coreBus } from "@/lib/coreBus";
+import { retrievalBus } from "@/lib/retrievalBus";
 
 export type RagStatus = "idle" | "loading" | "ready" | "error";
 export type Progress = { stage: string; detail: string; pct: number };
@@ -45,6 +46,7 @@ export function useRag() {
       } else if (m.type === "result") {
         setBusy(false);
         coreBus.fire();
+        retrievalBus.set(m.retrieval ?? []);
         setTurns((t) => {
           const next = [...t];
           // replace the trailing placeholder assistant turn
