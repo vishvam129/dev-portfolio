@@ -8,6 +8,7 @@ import MotionPage from "@/pages/MotionPage";
 const Chooser = lazy(() => import("@/pages/Chooser"));
 const VariantPage = lazy(() => import("@/pages/VariantPage"));
 const Placeholder = lazy(() => import("@/pages/Placeholder"));
+const BackendPage = lazy(() => import("@/pages/BackendPage"));
 
 function Fallback() {
   return (
@@ -22,7 +23,7 @@ const router = createBrowserRouter([
   { path: "/", element: <MotionPage /> },
   { path: "/all", element: lazyEl(<Chooser />) },
   { path: "/v/:variant", element: lazyEl(<VariantPage />) },
-  { path: "/backend", element: lazyEl(<Placeholder title="Backend — Production" />) },
+  { path: "/backend", element: lazyEl(<BackendPage />) },
   { path: "/full-stack", element: lazyEl(<Placeholder title="Full-Stack — The Studio" />) },
   { path: "*", element: <MotionPage /> },
 ]);
