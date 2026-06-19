@@ -3,12 +3,13 @@ import { Assistant } from "@/components/ai/Assistant";
 import { RetrievalMap } from "@/components/ai/RetrievalMap";
 import { VisionSandbox } from "@/components/ai/VisionSandbox";
 import { Pipeline } from "./Pipeline";
+import { StackPlayground } from "./StackPlayground";
 import { Reveal } from "@/components/fx/Reveal";
 import { CountUp } from "@/components/fx/CountUp";
 import { Scramble } from "@/components/fx/Scramble";
 import { Magnetic } from "@/components/fx/Magnetic";
 import { spotMove } from "@/components/fx/Spotlight";
-import { PROJECTS, CAPABILITIES, PROFILE } from "@/data/content";
+import { PROJECTS, PROFILE } from "@/data/content";
 
 function Head({ n, title, note }: { n: string; title: string; note?: string }) {
   return (
@@ -143,18 +144,8 @@ function Numbers() {
 function Stack() {
   return (
     <section id="stack" className="wrap scroll-mt-20 py-24">
-      <Head n="04" title="Stack" note="instruments in service" />
-      <div>
-        {CAPABILITIES.map((g) => (
-          <div key={g.label} className="grid gap-y-2 py-5 sm:grid-cols-[150px_1fr] sm:gap-x-8" style={{ borderTop: "1px solid var(--line)" }}>
-            <div className="kicker pt-1" style={{ color: "var(--accent)" }}>{g.label}</div>
-            <div className="flex flex-wrap gap-x-6 gap-y-2 font-mono text-[13.5px]" style={{ color: "var(--fg)" }}>
-              {g.items.map((s) => <span key={s} data-hover className="transition-colors hover:text-[color:var(--accent-2)]">{s}</span>)}
-            </div>
-          </div>
-        ))}
-        <div style={{ borderTop: "1px solid var(--line)" }} />
-      </div>
+      <Head n="04" title="Stack" note="grab & throw — it bounces" />
+      <StackPlayground />
     </section>
   );
 }

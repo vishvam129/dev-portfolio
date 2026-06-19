@@ -13,9 +13,9 @@ export function MotionHero() {
   return (
     <section className="relative flex min-h-[100svh] items-center overflow-hidden">
       {/* interactive field — swirl with the cursor, click to fire a shockwave */}
-      <FlowField className="absolute inset-0 h-full w-full opacity-70" />
-      <div className="pointer-events-none absolute inset-0 techgrid opacity-20" aria-hidden />
-      <div className="pointer-events-none absolute inset-0" style={{ background: "radial-gradient(140% 90% at 50% 50%, transparent 35%, var(--bg) 92%)" }} aria-hidden />
+      <FlowField className="absolute inset-0 h-full w-full opacity-90" />
+      <div className="pointer-events-none absolute inset-0 techgrid opacity-15" aria-hidden />
+      <div className="pointer-events-none absolute inset-0" style={{ background: "radial-gradient(150% 100% at 50% 45%, transparent 55%, var(--bg) 98%)" }} aria-hidden />
 
       <div className="relative z-10 grid w-full items-center gap-12 px-6 lg:grid-cols-12" style={{ maxWidth: "var(--maxw)", marginInline: "auto" }}>
         {/* left: statement */}
