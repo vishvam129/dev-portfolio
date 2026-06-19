@@ -2,26 +2,31 @@ import { useEffect, useRef } from "react";
 import { coreBus, type CoreState } from "@/lib/coreBus";
 
 /**
- * Rotating wireframe icosahedron — a clean, technical geometric "core".
- * Hand-rolled 3D → 2D projection on 2D canvas. Lime edges, cyan vertices,
- * gentle pointer parallax. The shape-driven centerpiece of the redesign.
+ * Faceted hexagonal step-cut crystal — translucent depth-sorted facets with
+ * glowing edges ("stained-glass" gem look). Hand-rolled 3D → 2D. Drag to orbit
+ * (inertia); reacts to the on-device model (warms while loading, fires on answer).
  */
-// Hexagonal crystal: outer hex bipyramid + apexes + an inner (rotated) hex core
-// with spokes. Reads unmistakably hexagonal while spinning in 3D.
-const OUTER = 0.84, APEX = 1.0, INNER = 0.42;
+
+// concentric hexagon rings (emerald/step cut): table → crown → girdle → pavilion → culet
+const RINGS = [
+  { y: 0.86, r: 0.40 },   // 0 table
+  { y: 0.55, r: 0.66 },   // 1 crown step
+  { y: 0.22, r: 0.88 },   // 2 girdle (widest)
+  { y: -0.34, r: 0.56 },  // 3 pavilion step
+];
 const VERTS: [number, number, number][] = [];
-const EDGES: [number, number][] = [];
-for (let i = 0; i < 6; i++) { const a = (i * Math.PI) / 3; VERTS.push([Math.cos(a) * OUTER, 0, Math.sin(a) * OUTER]); } // 0..5 outer hex
-VERTS.push([0, APEX, 0]);   // 6 top apex
-VERTS.push([0, -APEX, 0]);  // 7 bottom apex
-for (let i = 0; i < 6; i++) { const a = (i * Math.PI) / 3 + Math.PI / 6; VERTS.push([Math.cos(a) * INNER, 0, Math.sin(a) * INNER]); } // 8..13 inner hex
-for (let i = 0; i < 6; i++) {
-  EDGES.push([i, (i + 1) % 6]);            // outer hexagon
-  EDGES.push([i, 6]);                       // to top apex
-  EDGES.push([i, 7]);                       // to bottom apex
-  EDGES.push([8 + i, 8 + ((i + 1) % 6)]);  // inner hexagon
-  EDGES.push([8 + i, i]);                   // spoke inner → outer
+for (const { y, r } of RINGS) for (let i = 0; i < 6; i++) { const a = (i * Math.PI) / 3; VERTS.push([Math.cos(a) * r, y, Math.sin(a) * r]); }
+const CULET = VERTS.length;
+VERTS.push([0, -0.96, 0]);
+
+const FACES: number[][] = [];
+FACES.push([0, 1, 2, 3, 4, 5]);                 // table (top hexagon)
+for (let band = 0; band < 3; band++) {           // crown / girdle / pavilion bands
+  const a0 = band * 6, b0 = (band + 1) * 6;
+  for (let i = 0; i < 6; i++) { const j = (i + 1) % 6; FACES.push([a0 + i, a0 + j, b0 + j, b0 + i]); }
 }
+const P3 = 18;
+for (let i = 0; i < 6; i++) { const j = (i + 1) % 6; FACES.push([P3 + i, P3 + j, CULET]); } // pavilion → culet
 
 export function WireframeCore({ className, interactive = false }: { className?: string; interactive?: boolean }) {
   const ref = useRef<HTMLCanvasElement>(null);
@@ -31,14 +36,11 @@ export function WireframeCore({ className, interactive = false }: { className?: 
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const cs = getComputedStyle(canvas);
-    const lime = cs.getPropertyValue("--accent").trim() || "#ceff2e";
-    const cyan = cs.getPropertyValue("--accent-2").trim() || "#36e0ff";
 
     let w = 0, h = 0, R = 0;
     const dpr = Math.min(2, window.devicePixelRatio || 1);
-    const cur = { rx: -0.4, ry: 0 };   // current rotation
-    const vel = { rx: 0, ry: 0 };       // angular velocity (drag inertia)
+    const cur = { rx: -0.42, ry: 0 };
+    const vel = { rx: 0, ry: 0 };
     let dragging = false, lastX = 0, lastY = 0;
     if (interactive) { canvas.style.cursor = "grab"; canvas.style.touchAction = "none"; }
 
@@ -48,77 +50,72 @@ export function WireframeCore({ className, interactive = false }: { className?: 
       canvas!.width = w * dpr; canvas!.height = h * dpr;
       canvas!.style.width = w + "px"; canvas!.style.height = h + "px";
       ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
-      R = Math.min(w, h) * 0.34;
+      R = Math.min(w, h) * 0.36;
     }
-    // drag-orbit bound to the canvas with pointer capture (robust: move/up keep
-    // firing even when the pointer leaves the element)
-    function onDown(e: PointerEvent) {
-      dragging = true; lastX = e.clientX; lastY = e.clientY;
-      canvas!.style.cursor = "grabbing";
-      try { canvas!.setPointerCapture(e.pointerId); } catch { /* ignore */ }
-      e.preventDefault();
-    }
+    function onDown(e: PointerEvent) { dragging = true; lastX = e.clientX; lastY = e.clientY; canvas!.style.cursor = "grabbing"; try { canvas!.setPointerCapture(e.pointerId); } catch { /**/ } e.preventDefault(); }
     function onDrag(e: PointerEvent) {
       if (!dragging) return;
-      const dx = e.clientX - lastX, dy = e.clientY - lastY;
-      lastX = e.clientX; lastY = e.clientY;
-      cur.ry += dx * 0.016; cur.rx += -dy * 0.016;
-      vel.ry = dx * 0.016; vel.rx = -dy * 0.016;
+      const dx = e.clientX - lastX, dy = e.clientY - lastY; lastX = e.clientX; lastY = e.clientY;
+      cur.ry += dx * 0.016; cur.rx += -dy * 0.016; vel.ry = dx * 0.016; vel.rx = -dy * 0.016;
     }
-    function onUp(e: PointerEvent) {
-      if (!dragging) return;
-      dragging = false; canvas!.style.cursor = "grab";
-      try { canvas!.releasePointerCapture(e.pointerId); } catch { /* ignore */ }
-    }
+    function onUp(e: PointerEvent) { if (!dragging) return; dragging = false; canvas!.style.cursor = "grab"; try { canvas!.releasePointerCapture(e.pointerId); } catch { /**/ } }
 
-    // react to the live model state (see lib/coreBus)
     let coreState: CoreState = "loading";
     let flash = 0;
     const unsub = coreBus.subscribe((s) => { coreState = s; if (s === "fire") flash = 1; });
 
     let raf = 0, t = 0;
     function frame() {
-      // spin speed reflects what the model is doing
-      const spin = reduce ? 0 : coreState === "thinking" ? 0.02 : coreState === "loading" ? 0.009 : 0.0045;
-      t += spin;
+      const spin = reduce ? 0 : coreState === "thinking" ? 0.018 : coreState === "loading" ? 0.008 : 0.004;
+      t += spin || 0.004;
       flash *= 0.94;
-      const energy = (coreState === "thinking" ? 0.35 : coreState === "loading" ? 0.18 : 0) + flash * 0.6;
-      // gentle breathing pulse while loading/thinking
-      const pulse = coreState === "idle" ? 1 : 1 + Math.sin(t * (coreState === "thinking" ? 9 : 5)) * 0.04;
+      const energy = (coreState === "thinking" ? 0.3 : coreState === "loading" ? 0.16 : 0) + flash * 0.6;
+      const pulse = coreState === "idle" ? 1 : 1 + Math.sin(t * (coreState === "thinking" ? 9 : 5)) * 0.035;
 
       if (!dragging) {
-        // tumble on TWO axes so rotation is clearly visible (a hexagon spun on its
-        // own axis looks static due to 6-fold symmetry); plus drag inertia
         cur.ry += vel.ry + spin;
-        cur.rx += vel.rx + spin * 0.42;
+        cur.rx += vel.rx + spin * 0.4;
         vel.ry *= 0.95; vel.rx *= 0.95;
       }
       const cx = Math.cos(cur.rx), sx = Math.sin(cur.rx), cy = Math.cos(cur.ry), sy = Math.sin(cur.ry);
       const proj = VERTS.map(([x, y, z]) => {
-        let X = x * cy + z * sy, Z = -x * sy + z * cy, Y = y;
-        const Y2 = Y * cx - Z * sx, Z2 = Y * sx + Z * cx;
-        const persp = 2.6 / (2.6 - Z2);
-        return { x: w / 2 + X * R * persp * pulse, y: h / 2 + Y2 * R * persp * pulse, z: Z2, s: persp };
+        const X = x * cy + z * sy, Z = -x * sy + z * cy;
+        const Y2 = y * cx - Z * sx, Z2 = y * sx + Z * cx;
+        const persp = 2.7 / (2.7 - Z2);
+        return { x: w / 2 + X * R * persp * pulse, y: h / 2 + Y2 * R * persp * pulse, z: Z2 };
       });
+
+      // depth-sort facets back → front for translucent glass look
+      const order = FACES.map((f, i) => ({ i, z: f.reduce((s, vi) => s + proj[vi].z, 0) / f.length }))
+        .sort((a, b) => a.z - b.z);
+
       ctx!.clearRect(0, 0, w, h);
-      ctx!.shadowColor = "rgba(206,255,46,0.8)";
-      ctx!.shadowBlur = energy * 14;
-      for (const [a, b] of EDGES) {
-        const pa = proj[a], pb = proj[b];
-        const depth = (pa.z + pb.z) / 2;
-        const op = Math.min(1, 0.22 + (depth + 1) / 2 * 0.6 + energy);
-        ctx!.strokeStyle = `rgba(206,255,46,${op.toFixed(3)})`;
-        ctx!.lineWidth = 0.6 + (depth + 1) / 2 * 1.0 + flash * 1.2;
-        ctx!.beginPath(); ctx!.moveTo(pa.x, pa.y); ctx!.lineTo(pb.x, pb.y); ctx!.stroke();
+      ctx!.lineJoin = "round";
+      for (const { i, z } of order) {
+        const f = FACES[i];
+        const front = Math.max(0, Math.min(1, (z + 1) / 2)); // 0 (back) → 1 (front)
+        ctx!.beginPath();
+        f.forEach((vi, k) => { const p = proj[vi]; if (k === 0) ctx!.moveTo(p.x, p.y); else ctx!.lineTo(p.x, p.y); });
+        ctx!.closePath();
+        // translucent fill (brighter toward the front + when the model is active)
+        ctx!.fillStyle = `rgba(206,255,46,${(0.03 + front * 0.10 + energy * 0.12 + flash * 0.2).toFixed(3)})`;
+        ctx!.fill();
+        // glowing edges
+        ctx!.shadowColor = "rgba(206,255,46,0.7)";
+        ctx!.shadowBlur = (front * 4 + energy * 14);
+        ctx!.strokeStyle = `rgba(206,255,46,${(0.18 + front * 0.5 + energy * 0.4 + flash * 0.5).toFixed(3)})`;
+        ctx!.lineWidth = 0.6 + front * 0.8 + flash * 1.4;
+        ctx!.stroke();
+        ctx!.shadowBlur = 0;
       }
-      ctx!.shadowBlur = 0;
-      for (const p of proj) {
-        ctx!.fillStyle = p.z > 0 || flash > 0.2 ? cyan : "rgba(78,230,255,0.4)";
-        ctx!.beginPath(); ctx!.arc(p.x, p.y, 1.6 + p.s + flash * 2, 0, Math.PI * 2); ctx!.fill();
+      // cyan vertex sparks on the front
+      for (const p of proj) if (p.z > 0.25) {
+        ctx!.fillStyle = "rgba(78,230,255,0.9)";
+        ctx!.beginPath(); ctx!.arc(p.x, p.y, 1.3 + flash * 2, 0, Math.PI * 2); ctx!.fill();
       }
-      void lime;
-      raf = requestAnimationFrame(frame); // always loop so drags redraw
+      raf = requestAnimationFrame(frame);
     }
+
     resize();
     frame();
     window.addEventListener("resize", resize);

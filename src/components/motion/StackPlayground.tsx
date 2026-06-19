@@ -41,44 +41,48 @@ export function StackPlayground() {
       raf = requestAnimationFrame(loop);
     };
 
-    const down = (e: PointerEvent) => {
-      const idx = chips.current.findIndex((c) => c.el === e.target || c.el.contains(e.target as Node));
-      if (idx < 0) return;
-      drag = idx;
-      const r = wrap.getBoundingClientRect();
-      off.x = e.clientX - r.left - chips.current[idx].x;
-      off.y = e.clientY - r.top - chips.current[idx].y;
-      last.x = e.clientX; last.y = e.clientY; vel.x = 0; vel.y = 0;
-      chips.current[idx].el.style.zIndex = "20";
-      chips.current[idx].el.style.cursor = "grabbing";
-    };
-    const move = (e: PointerEvent) => {
-      if (drag < 0) return;
-      const r = wrap.getBoundingClientRect();
-      const c = chips.current[drag];
-      c.x = clamp(e.clientX - r.left - off.x, 0, W() - c.w);
-      c.y = clamp(e.clientY - r.top - off.y, 0, H() - c.h);
-      vel.x = e.clientX - last.x; vel.y = e.clientY - last.y;
-      last.x = e.clientX; last.y = e.clientY;
-    };
-    const up = () => {
-      if (drag < 0) return;
-      const c = chips.current[drag];
-      c.vx = clamp(vel.x * 0.9, -34, 34); c.vy = clamp(vel.y * 0.9, -34, 34);
-      c.el.style.zIndex = ""; c.el.style.cursor = "grab";
-      drag = -1;
-    };
+    // per-chip pointer capture — robust drag/throw that tracks off-element
+    const cleanups: Array<() => void> = [];
+    chips.current.forEach((c, idx) => {
+      const down = (e: PointerEvent) => {
+        drag = idx;
+        const r = wrap.getBoundingClientRect();
+        off.x = e.clientX - r.left - c.x; off.y = e.clientY - r.top - c.y;
+        last.x = e.clientX; last.y = e.clientY; vel.x = 0; vel.y = 0;
+        c.vx = 0; c.vy = 0;
+        c.el.style.zIndex = "20"; c.el.style.cursor = "grabbing";
+        try { c.el.setPointerCapture(e.pointerId); } catch { /**/ }
+        e.preventDefault();
+      };
+      const move = (e: PointerEvent) => {
+        if (drag !== idx) return;
+        const r = wrap.getBoundingClientRect();
+        c.x = clamp(e.clientX - r.left - off.x, 0, W() - c.w);
+        c.y = clamp(e.clientY - r.top - off.y, 0, H() - c.h);
+        vel.x = e.clientX - last.x; vel.y = e.clientY - last.y;
+        last.x = e.clientX; last.y = e.clientY;
+      };
+      const up = (e: PointerEvent) => {
+        if (drag !== idx) return;
+        drag = -1;
+        c.vx = clamp(vel.x * 0.9, -34, 34); c.vy = clamp(vel.y * 0.9, -34, 34);
+        c.el.style.zIndex = ""; c.el.style.cursor = "grab";
+        try { c.el.releasePointerCapture(e.pointerId); } catch { /**/ }
+      };
+      c.el.addEventListener("pointerdown", down);
+      c.el.addEventListener("pointermove", move);
+      c.el.addEventListener("pointerup", up);
+      c.el.addEventListener("pointercancel", up);
+      cleanups.push(() => {
+        c.el.removeEventListener("pointerdown", down);
+        c.el.removeEventListener("pointermove", move);
+        c.el.removeEventListener("pointerup", up);
+        c.el.removeEventListener("pointercancel", up);
+      });
+    });
 
-    wrap.addEventListener("pointerdown", down);
-    window.addEventListener("pointermove", move);
-    window.addEventListener("pointerup", up);
     loop();
-    return () => {
-      cancelAnimationFrame(raf);
-      wrap.removeEventListener("pointerdown", down);
-      window.removeEventListener("pointermove", move);
-      window.removeEventListener("pointerup", up);
-    };
+    return () => { cancelAnimationFrame(raf); cleanups.forEach((fn) => fn()); };
   }, [reduced]);
 
   if (reduced) {
