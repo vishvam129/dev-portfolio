@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Assistant } from "@/components/ai/Assistant";
 import { RetrievalMap } from "@/components/ai/RetrievalMap";
+import { Spectrometer } from "@/components/ai/Spectrometer";
 import { VisionSandbox } from "@/components/ai/VisionSandbox";
 import { Pipeline } from "./Pipeline";
 import { StackPlayground } from "./StackPlayground";
@@ -185,6 +186,7 @@ export function MotionSections() {
   return (
     <>
       <Console />
+      <Spectrometer />
       <Pipeline />
       <VisionSandbox />
       <Work />

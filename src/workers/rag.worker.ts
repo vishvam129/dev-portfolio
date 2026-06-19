@@ -126,11 +126,25 @@ async function query(text: string, id: number) {
   });
 }
 
+// lightweight per-keystroke scoring: embed query, cosine vs ALL docs, no answer
+async function score(text: string, id: number) {
+  if (!extractor || !kbVectors.length) return;
+  const t0 = performance.now();
+  const qv = await embed(text);
+  const scores = kbVectors.map((v, i) => ({
+    source: KB[i].source,
+    short: (KB[i].source.split("·").pop() ?? KB[i].source).trim(),
+    score: dot(qv, v),
+  }));
+  post({ type: "scores", id, scores, embed_ms: +(performance.now() - t0).toFixed(1) });
+}
+
 ctx.onmessage = async (e: MessageEvent) => {
   const msg = e.data;
   try {
     if (msg.type === "init") await init();
     else if (msg.type === "query") await query(msg.text, msg.id);
+    else if (msg.type === "score") await score(msg.text, msg.id);
   } catch (err) {
     post({ type: "error", message: err instanceof Error ? err.message : String(err) });
   }

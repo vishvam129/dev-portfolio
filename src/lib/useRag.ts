@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { coreBus } from "@/lib/coreBus";
 import { retrievalBus } from "@/lib/retrievalBus";
 import { statsBus } from "@/lib/statsBus";
+import { ragClient } from "@/lib/ragClient";
 
 export type RagStatus = "idle" | "loading" | "ready" | "error";
 export type Progress = { stage: string; detail: string; pct: number };
@@ -18,7 +19,7 @@ let _id = 0;
 
 /** Owns the RAG worker lifecycle, boot progress, and the chat transcript. */
 export function useRag() {
-  const workerRef = useRef<Worker | null>(null);
+  const unsubRef = useRef<(() => void) | null>(null);
   const [status, setStatus] = useState<RagStatus>("idle");
   const [progress, setProgress] = useState<Progress>({ stage: "boot", detail: "Cold start", pct: 0 });
   const [log, setLog] = useState<string[]>([]);
@@ -27,14 +28,11 @@ export function useRag() {
   const [busy, setBusy] = useState(false);
 
   const boot = useCallback(() => {
-    if (workerRef.current) return;
+    if (unsubRef.current) return;
     setStatus("loading");
     coreBus.set("loading");
-    const worker = new Worker(new URL("../workers/rag.worker.ts", import.meta.url), { type: "module" });
-    workerRef.current = worker;
 
-    worker.onmessage = (e: MessageEvent) => {
-      const m = e.data;
+    unsubRef.current = ragClient.on((m) => {
       if (m.type === "progress") {
         setProgress({ stage: m.stage, detail: m.detail, pct: m.pct });
         setLog((l) => [...l.slice(-40), m.detail]);
@@ -65,22 +63,22 @@ export function useRag() {
         setBusy(false);
         setLog((l) => [...l, `error: ${m.message}`]);
       }
-    };
-    worker.onerror = () => setStatus("error");
-    worker.postMessage({ type: "init" });
+    });
+    ragClient.start();
   }, []);
 
   useEffect(() => {
-    return () => { workerRef.current?.terminate(); workerRef.current = null; };
+    // unsubscribe on unmount; the shared worker stays alive for the page
+    return () => { unsubRef.current?.(); unsubRef.current = null; };
   }, []);
 
   const ask = useCallback((text: string) => {
     const q = text.trim();
-    if (!q || busy || status !== "ready" || !workerRef.current) return;
+    if (!q || busy || status !== "ready") return;
     setBusy(true);
     coreBus.set("thinking");
     setTurns((t) => [...t, { role: "user", text: q }, { role: "assistant", text: "", streaming: true }]);
-    workerRef.current.postMessage({ type: "query", text: q, id: ++_id });
+    ragClient.query(q, ++_id);
   }, [busy, status]);
 
   const markDone = useCallback((idx: number) => {
