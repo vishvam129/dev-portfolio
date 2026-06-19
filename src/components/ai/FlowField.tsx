@@ -54,7 +54,7 @@ export function FlowField({ className }: { className?: string }) {
       canvas!.style.width = w + "px"; canvas!.style.height = h + "px";
       ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx!.fillStyle = bg; ctx!.fillRect(0, 0, w, h);
-      const n = Math.min(2400, Math.floor((w * h) / 700));
+      const n = Math.min(1400, Math.floor((w * h) / 1100));
       parts = Array.from({ length: n }, () => { const p = { x: 0, y: 0, life: 0 }; reset(p); return p; });
     }
 

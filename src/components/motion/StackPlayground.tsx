@@ -12,7 +12,6 @@ export function StackPlayground() {
   const box = useRef<HTMLDivElement>(null);
   const chips = useRef<Chip[]>([]);
   const resetRef = useRef<() => void>(() => {});
-  const reduced = typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   useEffect(() => {
     const wrap = box.current!;
@@ -115,9 +114,9 @@ export function StackPlayground() {
     layout();
     const onResize = () => layout();
     window.addEventListener("resize", onResize);
-    if (!reduced) loop();
+    loop(); // always run so drags repaint (chips start at rest — no autonomous motion)
     return () => { cancelAnimationFrame(raf); window.removeEventListener("resize", onResize); cleanups.forEach((fn) => fn()); };
-  }, [reduced]);
+  }, []);
 
   return (
     <div ref={box} className="relative overflow-hidden rounded-[4px] border" style={{ height: 400, borderColor: "var(--line-2)", background: "var(--surface)", touchAction: "none" }}>

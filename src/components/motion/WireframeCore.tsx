@@ -100,13 +100,10 @@ export function WireframeCore({ className, interactive = false }: { className?: 
         // translucent fill (brighter toward the front + when the model is active)
         ctx!.fillStyle = `rgba(206,255,46,${(0.03 + front * 0.10 + energy * 0.12 + flash * 0.2).toFixed(3)})`;
         ctx!.fill();
-        // glowing edges
-        ctx!.shadowColor = "rgba(206,255,46,0.7)";
-        ctx!.shadowBlur = (front * 4 + energy * 14);
-        ctx!.strokeStyle = `rgba(206,255,46,${(0.18 + front * 0.5 + energy * 0.4 + flash * 0.5).toFixed(3)})`;
-        ctx!.lineWidth = 0.6 + front * 0.8 + flash * 1.4;
+        // crisp edges (no per-face canvas shadow — that was the stutter)
+        ctx!.strokeStyle = `rgba(206,255,46,${(0.2 + front * 0.55 + energy * 0.4 + flash * 0.5).toFixed(3)})`;
+        ctx!.lineWidth = 0.6 + front * 0.9 + flash * 1.4;
         ctx!.stroke();
-        ctx!.shadowBlur = 0;
       }
       // cyan vertex sparks on the front
       for (const p of proj) if (p.z > 0.25) {
