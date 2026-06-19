@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { PROFILE } from "@/data/content";
+import { getLenis } from "@/components/fx/SmoothScroll";
 
 type Cmd = { id: string; label: string; hint: string; run: () => void };
 
@@ -11,7 +12,14 @@ export function CommandPalette() {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const cmds = useMemo<Cmd[]>(() => {
-    const go = (id: string) => () => { setOpen(false); document.getElementById(id)?.scrollIntoView({ behavior: "smooth" }); };
+    const go = (id: string) => () => {
+      setOpen(false);
+      const t = document.getElementById(id);
+      if (!t) return;
+      const l = getLenis();
+      if (l) l.scrollTo(t, { offset: -80, duration: 1.1 });
+      else t.scrollIntoView({ behavior: "smooth" });
+    };
     return [
       { id: "ask", label: "Ask the model", hint: "§01", run: go("ask") },
       { id: "sandbox", label: "Vision sandbox", hint: "§02", run: go("sandbox") },

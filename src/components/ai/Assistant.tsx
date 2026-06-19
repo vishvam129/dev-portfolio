@@ -79,7 +79,7 @@ export function Assistant() {
             <div className="kicker mb-3" style={{ color: "var(--accent)" }}>
               cold-starting inference engine · running locally in your browser
             </div>
-            <div ref={logRef} className="flex-1 overflow-y-auto font-mono text-[11.5px] leading-relaxed" style={{ color: "var(--muted)" }}>
+            <div ref={logRef} data-lenis-prevent className="flex-1 overflow-y-auto font-mono text-[11.5px] leading-relaxed" style={{ color: "var(--muted)" }}>
               {log.map((l, i) => (
                 <div key={i}>
                   <span style={{ color: "var(--faint)" }}>{String(i).padStart(2, "0")} </span>
@@ -111,7 +111,7 @@ export function Assistant() {
         )}
 
         {ready && (
-          <div ref={scrollRef} className="h-full overflow-y-auto px-5 py-4">
+          <div ref={scrollRef} data-lenis-prevent className="h-full overflow-y-auto px-5 py-4">
             {turns.length === 0 && (
               <div className="flex h-full flex-col items-start justify-center gap-3">
                 <p className="font-mono text-[12.5px]" style={{ color: "var(--muted)" }}>

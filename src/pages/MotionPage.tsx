@@ -3,6 +3,7 @@ import { Boot } from "@/components/motion/Boot";
 import { MotionHero } from "@/components/motion/MotionHero";
 import { MotionSections } from "@/components/motion/MotionSections";
 import { ScrollProgress } from "@/components/fx/ScrollProgress";
+import { SmoothScroll } from "@/components/fx/SmoothScroll";
 import { CommandPalette } from "@/components/fx/CommandPalette";
 import { Marquee } from "@/components/motion/Marquee";
 import { PROFILE } from "@/data/content";
@@ -30,6 +31,7 @@ export default function MotionPage() {
   return (
     <main data-variant="motion" className="min-h-screen pb-10" style={{ background: "var(--bg)" }}>
       <Boot />
+      <SmoothScroll />
       <ScrollProgress />
       <CommandPalette />
       <TopBar />
