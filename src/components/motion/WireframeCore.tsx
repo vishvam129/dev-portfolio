@@ -63,8 +63,8 @@ export function WireframeCore({ className, interactive = false }: { className?: 
       if (!dragging) return;
       const dx = e.clientX - lastX, dy = e.clientY - lastY;
       lastX = e.clientX; lastY = e.clientY;
-      cur.ry += dx * 0.011; cur.rx += -dy * 0.011;
-      vel.ry = dx * 0.011; vel.rx = -dy * 0.011;
+      cur.ry += dx * 0.015; cur.rx += -dy * 0.015;
+      vel.ry = dx * 0.015; vel.rx = -dy * 0.015;
     }
     function onUp() { if (dragging) { dragging = false; canvas!.style.cursor = "grab"; } }
 
@@ -84,10 +84,11 @@ export function WireframeCore({ className, interactive = false }: { className?: 
       const pulse = coreState === "idle" ? 1 : 1 + Math.sin(t * (coreState === "thinking" ? 9 : 5)) * 0.04;
 
       if (!dragging) {
-        cur.ry += vel.ry + spin;   // drag inertia + base auto-spin
-        cur.rx += vel.rx;
-        vel.ry *= 0.94; vel.rx *= 0.94;
-        cur.rx += (-0.4 - cur.rx) * 0.012; // ease tilt back toward a nice resting angle
+        // tumble on TWO axes so rotation is clearly visible (a hexagon spun on its
+        // own axis looks static due to 6-fold symmetry); plus drag inertia
+        cur.ry += vel.ry + spin;
+        cur.rx += vel.rx + spin * 0.42;
+        vel.ry *= 0.95; vel.rx *= 0.95;
       }
       const cx = Math.cos(cur.rx), sx = Math.sin(cur.rx), cy = Math.cos(cur.ry), sy = Math.sin(cur.ry);
       const proj = VERTS.map(([x, y, z]) => {
