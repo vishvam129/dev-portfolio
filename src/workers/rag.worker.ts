@@ -85,16 +85,22 @@ function pickSentences(query: string, text: string, max = 2): string {
 
 async function query(text: string, id: number) {
   if (!extractor) return;
+  // real on-device timing
+  const t0 = performance.now();
   const qv = await embed(text);
+  const t1 = performance.now();
   const ranked = kbVectors
     .map((v, i) => ({ i, score: dot(qv, v) }))
     .sort((a, b) => b.score - a.score);
+  const t2 = performance.now();
+  const timing = { embed_ms: +(t1 - t0).toFixed(1), search_ms: +(t2 - t1).toFixed(2), docs: kbVectors.length };
 
   const top = ranked.slice(0, 3).filter((r) => r.score > 0.18);
   if (top.length === 0) {
     post({
       type: "result",
       id,
+      timing,
       answer: "I can only answer from Vishvam's résumé and projects, and I couldn't find anything relevant to that. Try asking about Vrixo, Near, LendLocal, RdFlex, his stack, or availability.",
       sources: [],
       retrieval: ranked.slice(0, 3).map((r) => ({ source: KB[r.i].source, score: +r.score.toFixed(3) })),
@@ -113,6 +119,7 @@ async function query(text: string, id: number) {
   post({
     type: "result",
     id,
+    timing,
     answer,
     sources: [...new Set(top.map((r) => KB[r.i].source))],
     retrieval: top.map((r) => ({ source: KB[r.i].source, score: +r.score.toFixed(3) })),

@@ -1,7 +1,27 @@
 import { useEffect, useRef, useState } from "react";
 import { useRag } from "@/lib/useRag";
 import { WireframeCore } from "@/components/motion/WireframeCore";
+import { statsBus } from "@/lib/statsBus";
 import { SUGGESTED } from "@/data/knowledge";
+
+/** Live, real on-device inference telemetry — appears once you've asked. */
+function Telemetry() {
+  const [s, setS] = useState(statsBus.get());
+  useEffect(() => statsBus.subscribe(setS), []);
+  if (!s.queries) return null;
+  const Stat = ({ k, v }: { k: string; v: string }) => (
+    <span>{k} <span style={{ color: "var(--accent-2)" }}>{v}</span></span>
+  );
+  return (
+    <div className="mb-3 flex flex-wrap items-center gap-x-4 gap-y-1 border-b pb-2.5 font-mono text-[10.5px]" style={{ color: "var(--faint)", borderColor: "var(--line)" }}>
+      <span style={{ color: "var(--accent)" }}>⚡ on-device</span>
+      <Stat k="embed" v={`${s.lastEmbed}ms`} />
+      <Stat k="search" v={`${s.lastSearch}ms`} />
+      <Stat k="avg" v={`${s.avgEmbed}ms`} />
+      <Stat k="q" v={`#${s.queries}`} />
+    </div>
+  );
+}
 
 /** Reveals text word-by-word (the "generation" feel) once the full answer lands. */
 function TypeOut({ text, onDone }: { text: string; onDone?: () => void }) {
@@ -131,8 +151,9 @@ export function Assistant() {
         )}
       </div>
 
-      {/* suggested + input */}
+      {/* telemetry + suggested + input */}
       <div className="border-t px-5 py-3" style={{ borderColor: "var(--line)" }}>
+        <Telemetry />
         {ready && turns.length === 0 && (
           <div className="mb-3 flex flex-wrap gap-1.5">
             {SUGGESTED.map((s) => (
