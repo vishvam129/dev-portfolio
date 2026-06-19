@@ -40,7 +40,7 @@ export function WireframeCore({ className, interactive = false }: { className?: 
     const cur = { rx: -0.4, ry: 0 };   // current rotation
     const vel = { rx: 0, ry: 0 };       // angular velocity (drag inertia)
     let dragging = false, lastX = 0, lastY = 0;
-    if (interactive) canvas.style.cursor = "grab";
+    if (interactive) { canvas.style.cursor = "grab"; canvas.style.touchAction = "none"; }
 
     function resize() {
       const p = canvas!.parentElement!;
@@ -50,23 +50,26 @@ export function WireframeCore({ className, interactive = false }: { className?: 
       ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
       R = Math.min(w, h) * 0.34;
     }
-    function inBounds(e: PointerEvent) {
-      const r = canvas!.getBoundingClientRect();
-      return e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom;
-    }
+    // drag-orbit bound to the canvas with pointer capture (robust: move/up keep
+    // firing even when the pointer leaves the element)
     function onDown(e: PointerEvent) {
-      if (!interactive || !inBounds(e)) return;
       dragging = true; lastX = e.clientX; lastY = e.clientY;
       canvas!.style.cursor = "grabbing";
+      try { canvas!.setPointerCapture(e.pointerId); } catch { /* ignore */ }
+      e.preventDefault();
     }
     function onDrag(e: PointerEvent) {
       if (!dragging) return;
       const dx = e.clientX - lastX, dy = e.clientY - lastY;
       lastX = e.clientX; lastY = e.clientY;
-      cur.ry += dx * 0.015; cur.rx += -dy * 0.015;
-      vel.ry = dx * 0.015; vel.rx = -dy * 0.015;
+      cur.ry += dx * 0.016; cur.rx += -dy * 0.016;
+      vel.ry = dx * 0.016; vel.rx = -dy * 0.016;
     }
-    function onUp() { if (dragging) { dragging = false; canvas!.style.cursor = "grab"; } }
+    function onUp(e: PointerEvent) {
+      if (!dragging) return;
+      dragging = false; canvas!.style.cursor = "grab";
+      try { canvas!.releasePointerCapture(e.pointerId); } catch { /* ignore */ }
+    }
 
     // react to the live model state (see lib/coreBus)
     let coreState: CoreState = "loading";
@@ -76,7 +79,7 @@ export function WireframeCore({ className, interactive = false }: { className?: 
     let raf = 0, t = 0;
     function frame() {
       // spin speed reflects what the model is doing
-      const spin = coreState === "thinking" ? 0.02 : coreState === "loading" ? 0.009 : 0.0045;
+      const spin = reduce ? 0 : coreState === "thinking" ? 0.02 : coreState === "loading" ? 0.009 : 0.0045;
       t += spin;
       flash *= 0.94;
       const energy = (coreState === "thinking" ? 0.35 : coreState === "loading" ? 0.18 : 0) + flash * 0.6;
@@ -114,22 +117,24 @@ export function WireframeCore({ className, interactive = false }: { className?: 
         ctx!.beginPath(); ctx!.arc(p.x, p.y, 1.6 + p.s + flash * 2, 0, Math.PI * 2); ctx!.fill();
       }
       void lime;
-      if (!reduce) raf = requestAnimationFrame(frame);
+      raf = requestAnimationFrame(frame); // always loop so drags redraw
     }
     resize();
     frame();
     window.addEventListener("resize", resize);
     if (interactive) {
-      window.addEventListener("pointerdown", onDown);
-      window.addEventListener("pointermove", onDrag);
-      window.addEventListener("pointerup", onUp);
+      canvas.addEventListener("pointerdown", onDown);
+      canvas.addEventListener("pointermove", onDrag);
+      canvas.addEventListener("pointerup", onUp);
+      canvas.addEventListener("pointercancel", onUp);
     }
     return () => {
       cancelAnimationFrame(raf); unsub();
       window.removeEventListener("resize", resize);
-      window.removeEventListener("pointerdown", onDown);
-      window.removeEventListener("pointermove", onDrag);
-      window.removeEventListener("pointerup", onUp);
+      canvas.removeEventListener("pointerdown", onDown);
+      canvas.removeEventListener("pointermove", onDrag);
+      canvas.removeEventListener("pointerup", onUp);
+      canvas.removeEventListener("pointercancel", onUp);
     };
   }, [interactive]);
   return <canvas ref={ref} className={className} aria-hidden />;
