@@ -58,11 +58,17 @@ export function FlowField({ className }: { className?: string }) {
       parts = Array.from({ length: n }, () => { const p = { x: 0, y: 0, life: 0 }; reset(p); return p; });
     }
 
+    // click shockwaves the user can fire into the field
+    const ripples: { x: number; y: number; age: number }[] = [];
+
     let raf = 0;
     let t = 0;
     const SCALE = 0.0016;
     function frame() {
       t += 0.0015;
+      // advance ripples (expanding rings); drop finished
+      for (const rp of ripples) rp.age += 0.018;
+      for (let k = ripples.length - 1; k >= 0; k--) if (ripples[k].age > 1) ripples.splice(k, 1);
       // fade previous frame toward bg (leaves glowing trails)
       ctx!.fillStyle = "rgba(7,7,9,0.04)";
       ctx!.fillRect(0, 0, w, h);
@@ -81,6 +87,16 @@ export function FlowField({ className }: { className?: string }) {
             vy += (dx / d) * f * 2.2;
           }
         }
+        // click shockwaves push particles out along an expanding ring
+        for (const rp of ripples) {
+          const dx = p.x - rp.x, dy = p.y - rp.y;
+          const d = Math.hypot(dx, dy) || 1;
+          const ring = rp.age * 520;
+          const band = Math.exp(-(((d - ring) / 46) ** 2));
+          const force = band * (1 - rp.age) * 7;
+          vx += (dx / d) * force;
+          vy += (dy / d) * force;
+        }
         const nx = p.x + vx * 1.25, ny = p.y + vy * 1.25;
         const speed = Math.min(1, Math.hypot(vx, vy) / 3);
         const alpha = 0.06 + speed * 0.36;
@@ -97,17 +113,26 @@ export function FlowField({ className }: { className?: string }) {
       pointer.x = e.clientX - r.left; pointer.y = e.clientY - r.top; pointer.active = true;
     };
     const leave = () => { pointer.active = false; };
+    const down = (e: PointerEvent) => {
+      const r = canvas!.getBoundingClientRect();
+      const x = e.clientX - r.left, y = e.clientY - r.top;
+      if (x < 0 || y < 0 || x > w || y > h) return; // only over the field
+      ripples.push({ x, y, age: 0 });
+      if (ripples.length > 6) ripples.shift();
+    };
 
     resize();
     if (reduce) { for (let i = 0; i < 220; i++) frame(); } else { raf = requestAnimationFrame(frame); }
     window.addEventListener("resize", resize);
     window.addEventListener("pointermove", move);
     window.addEventListener("pointerleave", leave);
+    window.addEventListener("pointerdown", down);
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", resize);
       window.removeEventListener("pointermove", move);
       window.removeEventListener("pointerleave", leave);
+      window.removeEventListener("pointerdown", down);
     };
   }, []);
 

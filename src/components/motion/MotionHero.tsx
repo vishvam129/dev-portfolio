@@ -1,5 +1,6 @@
 import { WireframeCore } from "./WireframeCore";
 import { Reticle } from "./Reticle";
+import { FlowField } from "@/components/ai/FlowField";
 import { Magnetic } from "@/components/fx/Magnetic";
 import { Scramble } from "@/components/fx/Scramble";
 import { PROFILE } from "@/data/content";
@@ -11,7 +12,10 @@ function Corner({ pos, children }: { pos: string; children: React.ReactNode }) {
 export function MotionHero() {
   return (
     <section className="relative flex min-h-[100svh] items-center overflow-hidden">
-      <div className="pointer-events-none absolute inset-0 techgrid opacity-40" aria-hidden />
+      {/* interactive field — swirl with the cursor, click to fire a shockwave */}
+      <FlowField className="absolute inset-0 h-full w-full opacity-70" />
+      <div className="pointer-events-none absolute inset-0 techgrid opacity-20" aria-hidden />
+      <div className="pointer-events-none absolute inset-0" style={{ background: "radial-gradient(140% 90% at 50% 50%, transparent 35%, var(--bg) 92%)" }} aria-hidden />
 
       <div className="relative z-10 grid w-full items-center gap-12 px-6 lg:grid-cols-12" style={{ maxWidth: "var(--maxw)", marginInline: "auto" }}>
         {/* left: statement */}
@@ -55,7 +59,7 @@ export function MotionHero() {
 
       <div className="absolute bottom-6 left-0 right-0 px-6">
         <div className="mx-auto flex items-center justify-between font-mono text-[10px]" style={{ maxWidth: "var(--maxw)", color: "var(--faint)" }}>
-          <span>press <span style={{ color: "var(--accent)" }}>⌘K</span> for commands</span>
+          <span><span style={{ color: "var(--accent)" }}>click anywhere</span> — fire a shockwave · drag to swirl the field</span>
           <span>scroll to run inference ↓</span>
         </div>
       </div>
