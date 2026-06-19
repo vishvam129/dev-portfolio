@@ -6,20 +6,22 @@ import { coreBus, type CoreState } from "@/lib/coreBus";
  * Hand-rolled 3D → 2D projection on 2D canvas. Lime edges, cyan vertices,
  * gentle pointer parallax. The shape-driven centerpiece of the redesign.
  */
-const PHI = (1 + Math.sqrt(5)) / 2;
-const RAW: [number, number, number][] = [
-  [0, 1, PHI], [0, -1, PHI], [0, 1, -PHI], [0, -1, -PHI],
-  [1, PHI, 0], [-1, PHI, 0], [1, -PHI, 0], [-1, -PHI, 0],
-  [PHI, 0, 1], [-PHI, 0, 1], [PHI, 0, -1], [-PHI, 0, -1],
-];
-// normalize to unit-ish + compute edges (adjacent verts ~2 apart)
-const VERTS = RAW.map(([x, y, z]) => { const l = Math.hypot(x, y, z); return [x / l, y / l, z / l] as [number, number, number]; });
+// Hexagonal crystal: outer hex bipyramid + apexes + an inner (rotated) hex core
+// with spokes. Reads unmistakably hexagonal while spinning in 3D.
+const OUTER = 0.84, APEX = 1.0, INNER = 0.42;
+const VERTS: [number, number, number][] = [];
 const EDGES: [number, number][] = [];
-for (let i = 0; i < RAW.length; i++)
-  for (let j = i + 1; j < RAW.length; j++) {
-    const d = Math.hypot(RAW[i][0] - RAW[j][0], RAW[i][1] - RAW[j][1], RAW[i][2] - RAW[j][2]);
-    if (d < 2.1) EDGES.push([i, j]);
-  }
+for (let i = 0; i < 6; i++) { const a = (i * Math.PI) / 3; VERTS.push([Math.cos(a) * OUTER, 0, Math.sin(a) * OUTER]); } // 0..5 outer hex
+VERTS.push([0, APEX, 0]);   // 6 top apex
+VERTS.push([0, -APEX, 0]);  // 7 bottom apex
+for (let i = 0; i < 6; i++) { const a = (i * Math.PI) / 3 + Math.PI / 6; VERTS.push([Math.cos(a) * INNER, 0, Math.sin(a) * INNER]); } // 8..13 inner hex
+for (let i = 0; i < 6; i++) {
+  EDGES.push([i, (i + 1) % 6]);            // outer hexagon
+  EDGES.push([i, 6]);                       // to top apex
+  EDGES.push([i, 7]);                       // to bottom apex
+  EDGES.push([8 + i, 8 + ((i + 1) % 6)]);  // inner hexagon
+  EDGES.push([8 + i, i]);                   // spoke inner → outer
+}
 
 export function WireframeCore({ className }: { className?: string }) {
   const ref = useRef<HTMLCanvasElement>(null);

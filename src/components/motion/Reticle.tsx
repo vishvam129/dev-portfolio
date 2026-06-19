@@ -1,6 +1,11 @@
-/** HUD reticle that frames the wireframe core: rings, crosshair, ticks. SVG. */
+/** HUD reticle that frames the hex core: rings, a hexagon, crosshair, ticks. */
 export function Reticle() {
   const ticks = Array.from({ length: 60 });
+  const hex = (r: number) =>
+    Array.from({ length: 6 }, (_, k) => {
+      const a = (k * Math.PI) / 3 - Math.PI / 2;
+      return `${(200 + Math.cos(a) * r).toFixed(1)},${(200 + Math.sin(a) * r).toFixed(1)}`;
+    }).join(" ");
   return (
     <svg viewBox="0 0 400 400" className="pointer-events-none absolute inset-0 h-full w-full" aria-hidden>
       <defs>
@@ -23,7 +28,11 @@ export function Reticle() {
 
       {/* concentric rings */}
       <circle cx="200" cy="200" r="150" fill="none" stroke="var(--line-2)" strokeWidth="0.75" />
-      <circle cx="200" cy="200" r="120" fill="none" stroke="var(--line)" strokeWidth="0.75" />
+      {/* rotating hexagon — reinforces the hex core */}
+      <polygon points={hex(126)} fill="none" stroke="var(--accent)" strokeWidth="0.75" opacity="0.4">
+        <animateTransform attributeName="transform" type="rotate" from="360 200 200" to="0 200 200" dur="26s" repeatCount="indefinite" />
+      </polygon>
+      <polygon points={hex(112)} fill="none" stroke="var(--line)" strokeWidth="0.75" opacity="0.7" />
       {/* rotating dashed ring */}
       <circle cx="200" cy="200" r="178" fill="none" stroke="var(--accent-2)" strokeWidth="0.75" strokeDasharray="2 10" opacity="0.55">
         <animateTransform attributeName="transform" type="rotate" from="0 200 200" to="360 200 200" dur="40s" repeatCount="indefinite" />
