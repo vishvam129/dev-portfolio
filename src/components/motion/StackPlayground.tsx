@@ -13,14 +13,14 @@ export function StackPlayground() {
   const reduced = typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   useEffect(() => {
-    if (reduced) return;
     const wrap = box.current!;
     const W = () => wrap.clientWidth, H = () => wrap.clientHeight;
     const w0 = W(), h0 = H();
     chips.current.forEach((c) => {
       c.w = c.el.offsetWidth; c.h = c.el.offsetHeight;
       c.x = Math.random() * (w0 - c.w); c.y = Math.random() * (h0 - c.h);
-      c.vx = (Math.random() - 0.5) * 2.4; c.vy = (Math.random() - 0.5) * 2.4;
+      // no autonomous drift under reduced-motion; grab/throw still works
+      c.vx = reduced ? 0 : (Math.random() - 0.5) * 2.4; c.vy = reduced ? 0 : (Math.random() - 0.5) * 2.4;
     });
     const place = (c: Chip) => { c.el.style.transform = `translate(${c.x}px, ${c.y}px)`; };
 
@@ -85,14 +85,6 @@ export function StackPlayground() {
     return () => { cancelAnimationFrame(raf); cleanups.forEach((fn) => fn()); };
   }, [reduced]);
 
-  if (reduced) {
-    return (
-      <div className="flex flex-wrap gap-2">
-        {ITEMS.map((it) => <span key={it} className="chip">{it}</span>)}
-      </div>
-    );
-  }
-
   return (
     <div ref={box} className="relative overflow-hidden rounded-[4px] border" style={{ height: 400, borderColor: "var(--line-2)", background: "var(--surface)", touchAction: "none" }}>
       <span className="pointer-events-none absolute left-4 top-3 kicker" style={{ color: "var(--faint)", fontSize: "0.58rem" }}>grab &amp; throw — they bounce</span>
@@ -100,8 +92,8 @@ export function StackPlayground() {
         <span
           key={it}
           ref={(el) => { if (el) chips.current[i] = { el, x: 0, y: 0, vx: 0, vy: 0, w: 0, h: 0 }; }}
-          className="absolute select-none rounded-full border px-3 py-1.5 font-mono text-[13px]"
-          style={{ left: 0, top: 0, cursor: "grab", borderColor: "var(--line-2)", background: "var(--bg-2)", color: "var(--fg)", touchAction: "none", willChange: "transform" }}
+          className="absolute rounded-full border px-3 py-1.5 font-mono text-[13px]"
+          style={{ left: 0, top: 0, cursor: "grab", userSelect: "none", WebkitUserSelect: "none", borderColor: "var(--line-2)", background: "var(--bg-2)", color: "var(--fg)", touchAction: "none", willChange: "transform" }}
         >
           {it}
         </span>
