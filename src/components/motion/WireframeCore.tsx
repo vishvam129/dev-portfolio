@@ -23,7 +23,7 @@ for (let i = 0; i < 6; i++) {
   EDGES.push([8 + i, i]);                   // spoke inner → outer
 }
 
-export function WireframeCore({ className }: { className?: string }) {
+export function WireframeCore({ className, interactive = false }: { className?: string; interactive?: boolean }) {
   const ref = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
     const canvas = ref.current;
@@ -37,8 +37,10 @@ export function WireframeCore({ className }: { className?: string }) {
 
     let w = 0, h = 0, R = 0;
     const dpr = Math.min(2, window.devicePixelRatio || 1);
-    const target = { rx: -0.4, ry: 0 };
-    const cur = { rx: -0.4, ry: 0 };
+    const cur = { rx: -0.4, ry: 0 };   // current rotation
+    const vel = { rx: 0, ry: 0 };       // angular velocity (drag inertia)
+    let dragging = false, lastX = 0, lastY = 0;
+    if (interactive) canvas.style.cursor = "grab";
 
     function resize() {
       const p = canvas!.parentElement!;
@@ -48,11 +50,23 @@ export function WireframeCore({ className }: { className?: string }) {
       ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
       R = Math.min(w, h) * 0.34;
     }
-    function onMove(e: PointerEvent) {
+    function inBounds(e: PointerEvent) {
       const r = canvas!.getBoundingClientRect();
-      target.ry = ((e.clientX - r.left) / r.width - 0.5) * 1.1;
-      target.rx = -0.4 + ((e.clientY - r.top) / r.height - 0.5) * 0.8;
+      return e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom;
     }
+    function onDown(e: PointerEvent) {
+      if (!interactive || !inBounds(e)) return;
+      dragging = true; lastX = e.clientX; lastY = e.clientY;
+      canvas!.style.cursor = "grabbing";
+    }
+    function onDrag(e: PointerEvent) {
+      if (!dragging) return;
+      const dx = e.clientX - lastX, dy = e.clientY - lastY;
+      lastX = e.clientX; lastY = e.clientY;
+      cur.ry += dx * 0.011; cur.rx += -dy * 0.011;
+      vel.ry = dx * 0.011; vel.rx = -dy * 0.011;
+    }
+    function onUp() { if (dragging) { dragging = false; canvas!.style.cursor = "grab"; } }
 
     // react to the live model state (see lib/coreBus)
     let coreState: CoreState = "loading";
@@ -69,8 +83,12 @@ export function WireframeCore({ className }: { className?: string }) {
       // gentle breathing pulse while loading/thinking
       const pulse = coreState === "idle" ? 1 : 1 + Math.sin(t * (coreState === "thinking" ? 9 : 5)) * 0.04;
 
-      cur.ry += (target.ry + t - cur.ry) * 0.06;
-      cur.rx += (target.rx - cur.rx) * 0.06;
+      if (!dragging) {
+        cur.ry += vel.ry + spin;   // drag inertia + base auto-spin
+        cur.rx += vel.rx;
+        vel.ry *= 0.94; vel.rx *= 0.94;
+        cur.rx += (-0.4 - cur.rx) * 0.012; // ease tilt back toward a nice resting angle
+      }
       const cx = Math.cos(cur.rx), sx = Math.sin(cur.rx), cy = Math.cos(cur.ry), sy = Math.sin(cur.ry);
       const proj = VERTS.map(([x, y, z]) => {
         let X = x * cy + z * sy, Z = -x * sy + z * cy, Y = y;
@@ -100,8 +118,18 @@ export function WireframeCore({ className }: { className?: string }) {
     resize();
     frame();
     window.addEventListener("resize", resize);
-    window.addEventListener("pointermove", onMove);
-    return () => { cancelAnimationFrame(raf); unsub(); window.removeEventListener("resize", resize); window.removeEventListener("pointermove", onMove); };
-  }, []);
+    if (interactive) {
+      window.addEventListener("pointerdown", onDown);
+      window.addEventListener("pointermove", onDrag);
+      window.addEventListener("pointerup", onUp);
+    }
+    return () => {
+      cancelAnimationFrame(raf); unsub();
+      window.removeEventListener("resize", resize);
+      window.removeEventListener("pointerdown", onDown);
+      window.removeEventListener("pointermove", onDrag);
+      window.removeEventListener("pointerup", onUp);
+    };
+  }, [interactive]);
   return <canvas ref={ref} className={className} aria-hidden />;
 }

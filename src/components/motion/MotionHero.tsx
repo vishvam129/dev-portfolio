@@ -47,7 +47,8 @@ export function MotionHero() {
         <div className="lg:col-span-6">
           <div className="relative mx-auto aspect-square w-full max-w-[460px]">
             <div className="coreglow" aria-hidden />
-            <WireframeCore className="absolute inset-0 h-full w-full" />
+            <WireframeCore className="absolute inset-0 h-full w-full" interactive />
+            <span className="pointer-events-none absolute bottom-1 left-1/2 -translate-x-1/2 kicker" style={{ color: "var(--accent)", fontSize: "0.55rem" }}>drag to spin ↻</span>
             <Reticle />
             <Corner pos="left-0 top-0">CORE.icosahedron</Corner>
             <Corner pos="right-0 top-0">v:12 · e:30</Corner>
