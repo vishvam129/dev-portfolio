@@ -1,30 +1,22 @@
 import { useState } from "react";
 import { TRACE, TRACE_TOTAL } from "@/data/backend";
+import { Panel } from "./Panel";
 
 const SVC_COLOR: Record<string, string> = {
   fastapi: "var(--accent)", auth: "var(--info)", pydantic: "var(--accent-2)",
   celery: "var(--warn)", redis: "var(--err)", worker: "var(--accent)", postgres: "var(--accent-2)",
 };
 
-export function Trace() {
+export function TraceView() {
   const [hover, setHover] = useState<number>(5); // the fat GPU span by default
   const s = TRACE[hover];
   return (
-    <section id="trace" className="mx-auto max-w-[1180px] scroll-mt-20 px-6 py-20">
-      <div className="mb-8 flex items-end justify-between border-b pb-3" style={{ borderColor: "var(--line)" }}>
-        <div>
-          <div className="font-mono text-[11px] uppercase tracking-[0.22em]" style={{ color: "var(--accent)" }}>// distributed trace</div>
-          <h2 className="mt-1.5 font-display text-2xl font-semibold sm:text-3xl" style={{ color: "var(--fg)" }}>Vrixo — one photo job</h2>
-        </div>
-        <span className="hidden font-mono text-[12px] sm:flex sm:items-center sm:gap-2">
-          <span style={{ color: "var(--ok)" }}>202 Accepted</span><span className="tnum" style={{ color: "var(--muted)" }}>· {TRACE_TOTAL}ms · 8 spans</span>
-        </span>
-      </div>
-
-      <div className="ticks rounded-[4px] border p-5" style={{ borderColor: "var(--line-2)", background: "var(--surface)" }}>
+    <div className="flex h-full flex-col gap-3 overflow-y-auto p-4">
+      <Panel title="distributed trace · vrixo — one photo job" dot="var(--warn)"
+        meta={<><span style={{ color: "var(--ok)" }}>202</span> · {TRACE_TOTAL}ms · 8 spans</>} className="flex-1">
         <div className="space-y-1.5">
           {TRACE.map((sp, i) => (
-            <div key={i} onMouseEnter={() => setHover(i)} className="grid cursor-default grid-cols-[180px_1fr] items-center gap-3 rounded px-1 py-1 transition-colors"
+            <div key={i} onMouseEnter={() => setHover(i)} className="grid cursor-default grid-cols-[170px_1fr] items-center gap-3 rounded px-1 py-1 transition-colors"
               style={{ background: hover === i ? "color-mix(in srgb, var(--accent) 8%, transparent)" : "transparent" }}>
               <span className="truncate font-mono text-[11px]" style={{ color: hover === i ? "var(--fg)" : "var(--muted)", paddingLeft: sp.depth * 12 }}>{sp.name}</span>
               <div className="relative h-4">
@@ -38,15 +30,16 @@ export function Trace() {
             </div>
           ))}
         </div>
-        {/* span inspector */}
-        <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 border-t pt-3 font-mono text-[11px]" style={{ borderColor: "var(--line)" }}>
+      </Panel>
+
+      <Panel title="span" dot={SVC_COLOR[s.svc] ?? "var(--accent)"} meta={`${s.dur}ms`}>
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-[12px]">
           <span style={{ color: SVC_COLOR[s.svc] ?? "var(--accent)" }}>{s.svc}</span>
           <span style={{ color: "var(--fg)" }}>{s.name}</span>
-          <span className="tnum" style={{ color: "var(--muted)" }}>{s.dur}ms</span>
           <span style={{ color: "var(--faint)" }}>{s.attrs}</span>
         </div>
-      </div>
-      <p className="mt-3 font-mono text-[11px]" style={{ color: "var(--faint)" }}>↑ hover a span — the GPU inference is the fat bar; everything else is &lt; 20ms.</p>
-    </section>
+        <p className="mt-2 font-mono text-[11px]" style={{ color: "var(--faint)" }}>hover a span — GPU inference is the fat bar; everything else is &lt; 20ms.</p>
+      </Panel>
+    </div>
   );
 }
