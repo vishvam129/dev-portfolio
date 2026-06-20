@@ -32,10 +32,10 @@ function Floor() {
 }
 
 export function Scene({
-  selected, hovered, onHover, onSelect,
+  selected, hovered, onHover, onSelect, paused = false,
 }: {
   selected: string | null; hovered: string | null;
-  onHover: (id: string | null) => void; onSelect: (id: string) => void;
+  onHover: (id: string | null) => void; onSelect: (id: string) => void; paused?: boolean;
 }) {
   const N = SERVICES.length;
   const idle = !hovered && !selected;
@@ -43,6 +43,7 @@ export function Scene({
     <Canvas
       shadows
       dpr={[1, 1.8]}
+      frameloop={paused ? "never" : "always"}
       camera={{ position: [7.5, 3.6, 8.5], fov: 42 }}
       gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping }}
       onPointerMissed={() => onSelect("")}
@@ -86,8 +87,8 @@ export function Scene({
       </Suspense>
 
       <OrbitControls
-        target={[0, 1.0, 0]} enablePan={false} enableDamping dampingFactor={0.08}
-        minDistance={5.5} maxDistance={17} minPolarAngle={0.25} maxPolarAngle={Math.PI / 2 - 0.04}
+        target={[0, 1.0, 0]} enablePan={false} enableZoom={false} enableDamping dampingFactor={0.08}
+        minPolarAngle={0.25} maxPolarAngle={Math.PI / 2 - 0.04}
         autoRotate={idle} autoRotateSpeed={0.45} />
 
       <EffectComposer>
