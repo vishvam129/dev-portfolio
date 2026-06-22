@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { C, F } from "./theme";
 
 const SECTIONS = [
-  { href: "#work", label: "work" },
+  { href: "#projects", label: "work" },
   { href: "#operator", label: "about" },
   { href: "#stack", label: "stack" },
   { href: "#contact", label: "contact" },

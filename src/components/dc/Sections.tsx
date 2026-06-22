@@ -34,6 +34,53 @@ function Section({ id, eyebrow, children }: { id: string; eyebrow: string; child
 
 const H2: React.CSSProperties = { fontFamily: F.disp, fontWeight: 600, fontSize: "clamp(1.9rem,4.2vw,3.1rem)", lineHeight: 1.05, letterSpacing: "-0.02em", color: C.fg, margin: 0 };
 
+function ProjectCard({ s }: { s: (typeof SERVICES)[number] }) {
+  const col = s.status === "ok" ? C.green : C.amber;
+  return (
+    <article style={{ display: "flex", flexDirection: "column", gap: 13, border: `1px solid ${C.line}`, borderRadius: 9, background: C.surface, padding: "22px 22px 20px" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+        <span style={{ width: 9, height: 9, borderRadius: 9, background: col, boxShadow: `0 0 9px ${col}` }} />
+        <span style={{ fontFamily: F.disp, fontWeight: 600, fontSize: 21, letterSpacing: "-0.01em", color: C.fg }}>{s.project}</span>
+        <span style={{ marginLeft: "auto", fontFamily: F.mono, fontSize: 12, color: col, fontVariantNumeric: "tabular-nums" }}>{s.uptime}%</span>
+      </div>
+      <div style={{ display: "flex", gap: 14, fontFamily: F.mono, fontSize: 11.5, color: C.faint, marginTop: -6 }}>
+        <span style={{ color: C.cyan }}>{s.name}</span>
+        <span>p50 {s.p50}ms</span><span>p99 {s.p99}ms</span>
+      </div>
+      <p style={{ fontFamily: F.body, fontSize: 13.5, lineHeight: 1.6, color: C.muted, margin: 0 }}>{s.blurb}</p>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 7 }}>
+        {s.stack.map((t) => <span key={t} style={{ fontFamily: F.mono, fontSize: 10.5, color: C.fg, border: `1px solid ${C.line}`, borderRadius: 4, padding: "2px 7px" }}>{t}</span>)}
+      </div>
+      <div style={{ fontFamily: F.mono, fontSize: 11.5, color: C.muted, marginTop: 2 }}>
+        <span style={{ color: C.green }}>✓ recovered</span> · {s.incidents[0].title}
+      </div>
+      <div style={{ display: "flex", gap: 18, marginTop: 4, fontFamily: F.mono, fontSize: 12 }}>
+        <button onClick={() => { window.dispatchEvent(new CustomEvent("dc:rack", { detail: s.id })); window.scrollTo({ top: 0, behavior: "smooth" }); }}
+          style={{ background: "transparent", border: "none", padding: 0, cursor: "pointer", color: C.cyan, fontFamily: F.mono, fontSize: 12 }}>inspect rack ↑</button>
+        {s.url && <a href={s.url} target="_blank" rel="noopener noreferrer" style={{ color: C.muted, textDecoration: "none" }}>live ↗</a>}
+      </div>
+    </article>
+  );
+}
+
+function Projects() {
+  return (
+    <Section id="projects" eyebrow="// selected work">
+      <Reveal><h2 style={H2}>Four systems in production.</h2></Reveal>
+      <Reveal delay={0.06}>
+        <p style={{ fontFamily: F.body, fontSize: "clamp(14px,1.5vw,16px)", lineHeight: 1.6, color: C.muted, maxWidth: 560, margin: "16px 0 0" }}>
+          The same racks you can walk above — here as the record. Real uptime, real latency, and the incidents I&apos;ve recovered from.
+        </p>
+      </Reveal>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(320px,1fr))", gap: 16, marginTop: 40 }}>
+        {SERVICES.map((s, i) => (
+          <Reveal key={s.id} delay={i * 0.06}><ProjectCard s={s} /></Reveal>
+        ))}
+      </div>
+    </Section>
+  );
+}
+
 function About() {
   const langs = B_STACK[0].items.length;
   const avg = (SERVICES.reduce((a, s) => a + s.uptime, 0) / SERVICES.length).toFixed(2);
@@ -164,6 +211,7 @@ function Footer() {
 export function Sections() {
   return (
     <div style={{ position: "relative", background: C.bg, zIndex: 2 }}>
+      <Projects />
       <About />
       <Principles />
       <Stack />

@@ -28,7 +28,10 @@ export default function BackendPage() {
       io = new IntersectionObserver(([e]) => setPaused(!e.isIntersecting), { threshold: 0.04 });
       io.observe(el);
     }
-    return () => { clearTimeout(t); clearTimeout(t2); cancelAnimationFrame(r); io?.disconnect(); };
+    // bridge: "inspect rack" buttons in the Projects section open that rack
+    const onRack = (e: Event) => onSelect((e as CustomEvent<string>).detail);
+    window.addEventListener("dc:rack", onRack);
+    return () => { clearTimeout(t); clearTimeout(t2); cancelAnimationFrame(r); io?.disconnect(); window.removeEventListener("dc:rack", onRack); };
   }, []);
 
   const onSelect = (id: string) => {
