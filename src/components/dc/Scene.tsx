@@ -86,7 +86,6 @@ export function Scene({
       frameloop={paused ? "never" : "always"}
       camera={{ position: [7.5, 3.6, 8.5], fov: 42 }}
       gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping }}
-      onPointerMissed={() => onSelect("")}
       style={{ position: "absolute", inset: 0 }}
     >
       <color attach="background" args={["#05080c"]} />

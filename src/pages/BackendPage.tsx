@@ -8,7 +8,7 @@ import { C, F } from "@/components/dc/theme";
 const rackParam = () => new URLSearchParams(window.location.search).get("rack");
 
 export default function BackendPage() {
-  const [selected, setSelected] = useState<string | null>(rackParam);
+  const [selected, setSelected] = useState<string | null>(rackParam); // drives the rack glow ring only
   const [hovered, setHovered] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
   const [paused, setPaused] = useState(false);
@@ -17,28 +17,26 @@ export default function BackendPage() {
   useEffect(() => {
     document.title = "Vishvam Patel — Backend Engineer · datacenter";
     const t = setTimeout(() => setReady(true), 900);
-    // honor a deep-link hash once content has rendered + after boot settles
     const scrollToHash = () => { if (window.location.hash) document.querySelector(window.location.hash)?.scrollIntoView(); };
     const r = requestAnimationFrame(scrollToHash);
     const t2 = setTimeout(scrollToHash, 980);
-    // pause the WebGL frameloop once the hero scrolls off-screen
+
     const el = heroRef.current;
     let io: IntersectionObserver | undefined;
     if (el) {
       io = new IntersectionObserver(([e]) => setPaused(!e.isIntersecting), { threshold: 0.04 });
       io.observe(el);
     }
-    // bridge: "inspect rack" buttons in the Projects section open that rack
-    const onRack = (e: Event) => onSelect((e as CustomEvent<string>).detail);
+    // "inspect rack ↑" in a project card → highlight that rack in the scene
+    const onRack = (e: Event) => setSelected((e as CustomEvent<string>).detail);
     window.addEventListener("dc:rack", onRack);
     return () => { clearTimeout(t); clearTimeout(t2); cancelAnimationFrame(r); io?.disconnect(); window.removeEventListener("dc:rack", onRack); };
   }, []);
 
-  const onSelect = (id: string) => {
-    setSelected(id || null);
-    const url = new URL(window.location.href);
-    if (id) url.searchParams.set("rack", id); else url.searchParams.delete("rack");
-    window.history.replaceState(null, "", url);
+  // clicking a rack scrolls down to its project card (the info now lives below)
+  const openCard = (id: string) => {
+    if (!id) return;
+    document.getElementById(`card-${id}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
   };
 
   return (
@@ -46,8 +44,8 @@ export default function BackendPage() {
       <TopNav />
 
       <section ref={heroRef} id="work" style={{ position: "relative", height: "100svh", overflow: "hidden" }}>
-        <Scene selected={selected} hovered={hovered} onHover={setHovered} onSelect={onSelect} paused={paused} />
-        <Hud selected={selected} onSelect={onSelect} hovered={hovered} />
+        <Scene selected={selected} hovered={hovered} onHover={setHovered} onSelect={openCard} paused={paused} />
+        <Hud />
 
         {/* boot overlay */}
         <div style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center", background: C.bg, transition: "opacity 0.7s ease", pointerEvents: ready ? "none" : "auto", opacity: ready ? 0 : 1, zIndex: 30 }}>

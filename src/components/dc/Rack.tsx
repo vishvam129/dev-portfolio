@@ -146,9 +146,8 @@ export function Rack({
 
         {/* floating label */}
         {detailed && service && (
-          <Html position={[0, BODY_TOP + 0.28, 0]} center distanceFactor={9} zIndexRange={[10, 0]} style={{ pointerEvents: "none", userSelect: "none", whiteSpace: "nowrap", textAlign: "center", transition: "transform 0.2s", transform: `scale(${hovered || selected ? 1.08 : 1})` }}>
-            <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, fontSize: 17, letterSpacing: "-0.01em", color: hovered || selected ? accent : "#dcebf4", textShadow: "0 2px 12px rgba(0,0,0,0.9)" }}>{service.project}</div>
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10.5, color: "#7d8c99", marginTop: 2 }}>{service.name} · {service.uptime}%</div>
+          <Html position={[0, BODY_TOP + 0.26, 0]} center distanceFactor={9} zIndexRange={[10, 0]} style={{ pointerEvents: "none", userSelect: "none", whiteSpace: "nowrap", textAlign: "center", transition: "transform 0.2s", transform: `scale(${hovered || selected ? 1.08 : 1})` }}>
+            <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, fontSize: 16, letterSpacing: "-0.01em", color: hovered || selected ? accent : "#cfdbe4", textShadow: "0 2px 12px rgba(0,0,0,0.9)" }}>{service.project}</div>
           </Html>
         )}
       </group>

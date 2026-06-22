@@ -37,7 +37,7 @@ const H2: React.CSSProperties = { fontFamily: F.disp, fontWeight: 600, fontSize:
 function ProjectCard({ s }: { s: (typeof SERVICES)[number] }) {
   const col = s.status === "ok" ? C.green : C.amber;
   return (
-    <article style={{ display: "flex", flexDirection: "column", gap: 13, border: `1px solid ${C.line}`, borderRadius: 9, background: C.surface, padding: "22px 22px 20px" }}>
+    <article id={`card-${s.id}`} style={{ scrollMarginTop: 80, display: "flex", flexDirection: "column", gap: 13, border: `1px solid ${C.line}`, borderRadius: 9, background: C.surface, padding: "22px 22px 20px" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
         <span style={{ width: 9, height: 9, borderRadius: 9, background: col, boxShadow: `0 0 9px ${col}` }} />
         <span style={{ fontFamily: F.disp, fontWeight: 600, fontSize: 21, letterSpacing: "-0.01em", color: C.fg }}>{s.project}</span>
