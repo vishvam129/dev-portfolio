@@ -1,10 +1,49 @@
-import { Suspense } from "react";
+import { Suspense, useMemo } from "react";
 import { Canvas } from "@react-three/fiber";
-import { OrbitControls, MeshReflectorMaterial, ContactShadows } from "@react-three/drei";
+import { OrbitControls, MeshReflectorMaterial, ContactShadows, Environment, Lightformer } from "@react-three/drei";
 import { EffectComposer, Bloom, Vignette } from "@react-three/postprocessing";
 import * as THREE from "three";
 import { SERVICES } from "@/data/backend";
 import { Rack } from "./Rack";
+
+function Cable({ from, to, color }: { from: [number, number, number]; to: [number, number, number]; color: string }) {
+  const geo = useMemo(() => {
+    const mid: [number, number, number] = [(from[0] + to[0]) / 2, Math.min(from[1], to[1]) - 0.35, (from[2] + to[2]) / 2 + 0.18];
+    const curve = new THREE.CatmullRomCurve3([new THREE.Vector3(...from), new THREE.Vector3(...mid), new THREE.Vector3(...to)]);
+    return new THREE.TubeGeometry(curve, 24, 0.018, 8, false);
+  }, [from, to]);
+  return <mesh geometry={geo}><meshStandardMaterial color={color} metalness={0.2} roughness={0.7} /></mesh>;
+}
+
+function CableTray({ xs }: { xs: number[] }) {
+  const y = 3.5, z = 0.15;
+  const colors = ["#16202a", "#1f3a44", "#2a2f1a", "#16202a"];
+  return (
+    <group>
+      {/* tray side rails */}
+      {[-0.45, 0.45].map((dz) => (
+        <mesh key={dz} position={[0, y, z + dz]}>
+          <boxGeometry args={[xs.length * 2 + 2.4, 0.05, 0.06]} />
+          <meshStandardMaterial color="#10161c" metalness={0.7} roughness={0.4} />
+        </mesh>
+      ))}
+      {/* rungs */}
+      {Array.from({ length: 13 }).map((_, i) => (
+        <mesh key={i} position={[-(xs.length * 2 + 1.2) / 2 + i * ((xs.length * 2 + 1.2) / 12), y, z]}>
+          <boxGeometry args={[0.04, 0.04, 0.9]} />
+          <meshStandardMaterial color="#0c1116" metalness={0.6} roughness={0.5} />
+        </mesh>
+      ))}
+      {/* cable drops into each rack */}
+      {xs.map((x, i) => (
+        <group key={x}>
+          <Cable from={[x - 0.12, y, z]} to={[x - 0.12, 2.04, 0.3]} color={colors[i % colors.length]} />
+          <Cable from={[x + 0.12, y, z]} to={[x + 0.12, 2.04, 0.3]} color={i % 2 ? "#2a6f6a" : "#244"} />
+        </group>
+      ))}
+    </group>
+  );
+}
 
 function CeilingStrip({ x, z }: { x: number; z: number }) {
   return (
@@ -39,6 +78,7 @@ export function Scene({
 }) {
   const N = SERVICES.length;
   const idle = !hovered && !selected;
+  const xs = SERVICES.map((_, i) => (i - (N - 1) / 2) * 2.0);
   return (
     <Canvas
       shadows
@@ -67,6 +107,16 @@ export function Scene({
 
       <Floor />
       <ContactShadows position={[0, 0.02, 0]} opacity={0.55} scale={26} blur={2.4} far={6} resolution={1024} color="#000000" />
+
+      {/* image-based lighting so the metal reads as real hardware */}
+      <Environment resolution={256} frames={1}>
+        <Lightformer intensity={2.2} color="#bfe6ff" position={[0, 6, -5]} scale={[12, 5, 1]} />
+        <Lightformer intensity={1.4} color="#39d0d8" position={[-7, 2.5, 3]} scale={[2.5, 7, 1]} />
+        <Lightformer intensity={1.1} color="#ffb454" position={[7, 2.5, 4]} scale={[2.5, 6, 1]} />
+        <Lightformer intensity={0.8} color="#ffffff" position={[0, 3, 9]} scale={[8, 3, 1]} />
+      </Environment>
+
+      <CableTray xs={xs} />
 
       <Suspense fallback={null}>
       {/* interactive racks — front aisle */}
