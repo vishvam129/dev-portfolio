@@ -4,6 +4,7 @@ import { Hud } from "@/components/dc/Hud";
 import { TopNav } from "@/components/dc/TopNav";
 import { Sections } from "@/components/dc/Sections";
 import { CommandPalette } from "@/components/dc/CommandPalette";
+import { Terminal } from "@/components/dc/Terminal";
 import { C, F } from "@/components/dc/theme";
 
 const rackParam = () => new URLSearchParams(window.location.search).get("rack");
@@ -70,6 +71,7 @@ export default function BackendPage() {
 
       <Sections />
       <CommandPalette />
+      <Terminal />
     </main>
   );
 }

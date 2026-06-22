@@ -30,6 +30,7 @@ export function CommandPalette() {
     { group: "Links", label: "LinkedIn", hint: "in/vishvam129", run: () => ext(B_PROFILE.linkedin) },
     { group: "Links", label: "Copy email", hint: B_PROFILE.email, run: () => copy(B_PROFILE.email) },
     { group: "Links", label: "Download résumé", hint: "PDF", run: () => ext(B_PROFILE.resume) },
+    { group: "Actions", label: "Open terminal", hint: "⌘J", run: () => { setOpen(false); window.dispatchEvent(new CustomEvent("dc:terminal")); } },
     { group: "Portfolio", label: "AI portfolio", hint: "/", run: () => { window.location.href = "/"; } },
     { group: "Portfolio", label: "Full-stack portfolio", hint: "/full-stack", run: () => { window.location.href = "/full-stack"; } },
   ], []);
