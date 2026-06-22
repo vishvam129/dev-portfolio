@@ -13,6 +13,7 @@ export default function BackendPage() {
   const [ready, setReady] = useState(false);
   const [paused, setPaused] = useState(false);
   const heroRef = useRef<HTMLElement>(null);
+  const railRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     document.title = "Vishvam Patel — Backend Engineer · datacenter";
@@ -30,7 +31,14 @@ export default function BackendPage() {
     // "inspect rack ↑" in a project card → highlight that rack in the scene
     const onRack = (e: Event) => setSelected((e as CustomEvent<string>).detail);
     window.addEventListener("dc:rack", onRack);
-    return () => { clearTimeout(t); clearTimeout(t2); cancelAnimationFrame(r); io?.disconnect(); window.removeEventListener("dc:rack", onRack); };
+    // backplane scroll-progress rail
+    const onScroll = () => {
+      const h = document.documentElement;
+      const p = h.scrollTop / Math.max(1, h.scrollHeight - h.clientHeight);
+      if (railRef.current) railRef.current.style.transform = `scaleY(${Math.min(1, p)})`;
+    };
+    window.addEventListener("scroll", onScroll, { passive: true }); onScroll();
+    return () => { clearTimeout(t); clearTimeout(t2); cancelAnimationFrame(r); io?.disconnect(); window.removeEventListener("dc:rack", onRack); window.removeEventListener("scroll", onScroll); };
   }, []);
 
   // clicking a rack scrolls down to its project card (the info now lives below)
@@ -41,6 +49,10 @@ export default function BackendPage() {
 
   return (
     <main style={{ background: C.bg, color: C.fg, minHeight: "100svh" }}>
+      {/* backplane scroll-progress rail */}
+      <div style={{ position: "fixed", left: 0, top: 0, bottom: 0, width: 2, background: "rgba(120,160,180,0.10)", zIndex: 45, pointerEvents: "none" }}>
+        <div ref={railRef} style={{ width: "100%", height: "100%", transformOrigin: "top", transform: "scaleY(0)", background: `linear-gradient(${C.cyan}, ${C.green})`, boxShadow: `0 0 8px ${C.cyan}` }} />
+      </div>
       <TopNav />
 
       <section ref={heroRef} id="work" style={{ position: "relative", height: "100svh", overflow: "hidden" }}>

@@ -1,18 +1,35 @@
-import { Suspense, useMemo } from "react";
-import { Canvas } from "@react-three/fiber";
-import { OrbitControls, MeshReflectorMaterial, ContactShadows, Environment, Lightformer } from "@react-three/drei";
+import { Suspense, useMemo, useRef } from "react";
+import { Canvas, useFrame } from "@react-three/fiber";
+import { OrbitControls, MeshReflectorMaterial, ContactShadows, Environment, Lightformer, Sparkles } from "@react-three/drei";
 import { EffectComposer, Bloom, Vignette } from "@react-three/postprocessing";
 import * as THREE from "three";
 import { SERVICES } from "@/data/backend";
 import { Rack } from "./Rack";
 
-function Cable({ from, to, color }: { from: [number, number, number]; to: [number, number, number]; color: string }) {
-  const geo = useMemo(() => {
+function Cable({ from, to, color, speed = 0.4, phase = 0 }: { from: [number, number, number]; to: [number, number, number]; color: string; speed?: number; phase?: number }) {
+  const dot = useRef<THREE.Mesh>(null);
+  const { geo, curve } = useMemo(() => {
     const mid: [number, number, number] = [(from[0] + to[0]) / 2, Math.min(from[1], to[1]) - 0.35, (from[2] + to[2]) / 2 + 0.18];
     const curve = new THREE.CatmullRomCurve3([new THREE.Vector3(...from), new THREE.Vector3(...mid), new THREE.Vector3(...to)]);
-    return new THREE.TubeGeometry(curve, 24, 0.018, 8, false);
+    return { geo: new THREE.TubeGeometry(curve, 24, 0.018, 8, false), curve };
   }, [from, to]);
-  return <mesh geometry={geo}><meshStandardMaterial color={color} metalness={0.2} roughness={0.7} /></mesh>;
+  // a packet of light flows down the cable into the rack
+  useFrame((s) => {
+    if (!dot.current) return;
+    const t = (s.clock.elapsedTime * speed + phase) % 1;
+    const p = curve.getPointAt(t);
+    dot.current.position.set(p.x, p.y, p.z);
+    (dot.current.material as THREE.MeshStandardMaterial).opacity = Math.sin(t * Math.PI);
+  });
+  return (
+    <group>
+      <mesh geometry={geo}><meshStandardMaterial color={color} metalness={0.2} roughness={0.7} /></mesh>
+      <mesh ref={dot}>
+        <sphereGeometry args={[0.028, 8, 8]} />
+        <meshStandardMaterial color="#9fe9ff" emissive="#9fe9ff" emissiveIntensity={4} transparent toneMapped={false} />
+      </mesh>
+    </group>
+  );
 }
 
 function CableTray({ xs }: { xs: number[] }) {
@@ -37,8 +54,8 @@ function CableTray({ xs }: { xs: number[] }) {
       {/* cable drops into each rack */}
       {xs.map((x, i) => (
         <group key={x}>
-          <Cable from={[x - 0.12, y, z]} to={[x - 0.12, 2.04, 0.3]} color={colors[i % colors.length]} />
-          <Cable from={[x + 0.12, y, z]} to={[x + 0.12, 2.04, 0.3]} color={i % 2 ? "#2a6f6a" : "#244"} />
+          <Cable from={[x - 0.12, y, z]} to={[x - 0.12, 2.04, 0.3]} color={colors[i % colors.length]} speed={0.32 + i * 0.05} phase={i * 0.27} />
+          <Cable from={[x + 0.12, y, z]} to={[x + 0.12, 2.04, 0.3]} color={i % 2 ? "#2a6f6a" : "#244"} speed={0.38 + i * 0.04} phase={0.5 + i * 0.2} />
         </group>
       ))}
     </group>
@@ -116,6 +133,9 @@ export function Scene({
       </Environment>
 
       <CableTray xs={xs} />
+
+      {/* atmospheric dust motes drifting in the aisle */}
+      <Sparkles count={55} scale={[16, 6, 9]} position={[0, 3, -1]} size={2} speed={0.22} color="#8fe0ff" opacity={0.5} />
 
       <Suspense fallback={null}>
       {/* interactive racks — front aisle */}
