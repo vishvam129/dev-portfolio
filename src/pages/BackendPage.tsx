@@ -3,6 +3,7 @@ import { Scene } from "@/components/dc/Scene";
 import { Hud } from "@/components/dc/Hud";
 import { TopNav } from "@/components/dc/TopNav";
 import { Sections } from "@/components/dc/Sections";
+import { CommandPalette } from "@/components/dc/CommandPalette";
 import { C, F } from "@/components/dc/theme";
 
 const rackParam = () => new URLSearchParams(window.location.search).get("rack");
@@ -68,6 +69,7 @@ export default function BackendPage() {
       </section>
 
       <Sections />
+      <CommandPalette />
     </main>
   );
 }

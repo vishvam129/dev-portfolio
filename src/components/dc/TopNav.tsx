@@ -49,7 +49,14 @@ export function TopNav() {
         ))}
       </nav>
 
-      <nav style={{ marginLeft: "auto", display: "flex", gap: 2, border: `1px solid ${C.line}`, borderRadius: 6, padding: 2 }}>
+      <button onClick={() => window.dispatchEvent(new CustomEvent("dc:cmdk"))}
+        title="Command palette"
+        style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 7, background: "transparent", border: `1px solid ${C.line}`, borderRadius: 6, padding: "5px 9px", cursor: "pointer", color: C.muted, fontFamily: F.mono, fontSize: 11.5 }}>
+        <span>search</span>
+        <kbd style={{ fontFamily: F.mono, fontSize: 10.5, color: C.faint, border: `1px solid ${C.line}`, borderRadius: 4, padding: "1px 5px" }}>⌘K</kbd>
+      </button>
+
+      <nav style={{ display: "flex", gap: 2, border: `1px solid ${C.line}`, borderRadius: 6, padding: 2 }}>
         {PORTFOLIOS.map((p) => (
           <a key={p.href} href={p.href} style={{ padding: "4px 10px", borderRadius: 4, textDecoration: "none", fontFamily: F.mono, fontSize: 12, background: p.on ? C.cyan : "transparent", color: p.on ? "#04181a" : C.muted }}>{p.label}</a>
         ))}
