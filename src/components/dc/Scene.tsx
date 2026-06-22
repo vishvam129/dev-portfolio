@@ -1,10 +1,19 @@
 import { Suspense, useMemo, useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, MeshReflectorMaterial, ContactShadows, Environment, Lightformer, Sparkles } from "@react-three/drei";
-import { EffectComposer, Bloom, Vignette } from "@react-three/postprocessing";
+import { EffectComposer, Bloom, Vignette, DepthOfField } from "@react-three/postprocessing";
 import * as THREE from "three";
 import { SERVICES } from "@/data/backend";
 import { Rack } from "./Rack";
+
+// camera gently eases its focus toward the rack you hover (subtle, professional)
+function Rig({ focusX }: { focusX: number }) {
+  useFrame((s) => {
+    const c = s.controls as unknown as { target?: THREE.Vector3 } | null;
+    if (c?.target) c.target.x += (focusX - c.target.x) * 0.045;
+  });
+  return null;
+}
 
 function Cable({ from, to, color, speed = 0.4, phase = 0 }: { from: [number, number, number]; to: [number, number, number]; color: string; speed?: number; phase?: number }) {
   const dot = useRef<THREE.Mesh>(null);
@@ -96,6 +105,7 @@ export function Scene({
   const N = SERVICES.length;
   const idle = !hovered && !selected;
   const xs = SERVICES.map((_, i) => (i - (N - 1) / 2) * 2.0);
+  const focusX = hovered ? (xs[SERVICES.findIndex((s) => s.id === hovered)] ?? 0) * 0.55 : 0;
   return (
     <Canvas
       shadows
@@ -134,8 +144,10 @@ export function Scene({
 
       <CableTray xs={xs} />
 
-      {/* atmospheric dust motes drifting in the aisle */}
-      <Sparkles count={55} scale={[16, 6, 9]} position={[0, 3, -1]} size={2} speed={0.22} color="#8fe0ff" opacity={0.5} />
+      {/* faint dust haze drifting in the aisle */}
+      <Sparkles count={38} scale={[16, 6, 9]} position={[0, 3, -1]} size={1.3} speed={0.13} color="#8fe0ff" opacity={0.28} />
+
+      <Rig focusX={focusX} />
 
       <Suspense fallback={null}>
       {/* interactive racks — front aisle */}
@@ -156,12 +168,14 @@ export function Scene({
       </Suspense>
 
       <OrbitControls
+        makeDefault
         target={[0, 1.0, 0]} enablePan={false} enableZoom={false} enableDamping dampingFactor={0.08}
         minPolarAngle={0.25} maxPolarAngle={Math.PI / 2 - 0.04}
         autoRotate={idle} autoRotateSpeed={0.45} />
 
       <EffectComposer>
         <Bloom intensity={0.9} luminanceThreshold={0.25} luminanceSmoothing={0.9} mipmapBlur radius={0.7} />
+        <DepthOfField target={[0, 1, 0.4]} focalLength={0.02} bokehScale={2.4} height={480} />
         <Vignette eskil={false} offset={0.25} darkness={0.85} />
       </EffectComposer>
     </Canvas>
