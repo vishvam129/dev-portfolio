@@ -5,7 +5,8 @@ import { TopNav } from "@/components/dc/TopNav";
 import { Sections } from "@/components/dc/Sections";
 import { CommandPalette } from "@/components/dc/CommandPalette";
 import { Terminal } from "@/components/dc/Terminal";
-import { C, F } from "@/components/dc/theme";
+import { BootSequence } from "@/components/dc/BootSequence";
+import { C } from "@/components/dc/theme";
 
 const rackParam = () => new URLSearchParams(window.location.search).get("rack");
 
@@ -19,7 +20,7 @@ export default function BackendPage() {
 
   useEffect(() => {
     document.title = "Vishvam Patel — Backend Engineer · datacenter";
-    const t = setTimeout(() => setReady(true), 900);
+    const t = setTimeout(() => setReady(true), 4000); // fallback; BootSequence drives it
     const scrollToHash = () => { if (window.location.hash) document.querySelector(window.location.hash)?.scrollIntoView(); };
     const r = requestAnimationFrame(scrollToHash);
     const t2 = setTimeout(scrollToHash, 980);
@@ -61,11 +62,9 @@ export default function BackendPage() {
         <Scene selected={selected} hovered={hovered} onHover={setHovered} onSelect={openCard} paused={paused} />
         <Hud />
 
-        {/* boot overlay */}
-        <div style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center", background: C.bg, transition: "opacity 0.7s ease", pointerEvents: ready ? "none" : "auto", opacity: ready ? 0 : 1, zIndex: 30 }}>
-          <div style={{ fontFamily: F.mono, fontSize: 12, color: C.cyan, letterSpacing: "0.1em" }}>
-            spinning up racks<span className="caret" />
-          </div>
+        {/* boot / POST sequence */}
+        <div onMouseDown={() => setReady(true)} style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center", background: C.bg, transition: "opacity 0.7s ease", pointerEvents: ready ? "none" : "auto", opacity: ready ? 0 : 1, zIndex: 30 }}>
+          <BootSequence onDone={() => setReady(true)} />
         </div>
       </section>
 
