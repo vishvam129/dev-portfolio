@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { motion } from "framer-motion";
-import { B_PROFILE, B_STACK, SERVICES } from "@/data/backend";
+import { B_PROFILE, B_STACK, SERVICES, EXPERIENCE, EDUCATION } from "@/data/backend";
 import { C, F } from "./theme";
 
 function Reveal({ children, delay = 0 }: { children: ReactNode; delay?: number }) {
@@ -66,10 +66,10 @@ function ProjectCard({ s }: { s: (typeof SERVICES)[number] }) {
 function Projects() {
   return (
     <Section id="projects" eyebrow="// selected work">
-      <Reveal><h2 style={H2}>Four systems in production.</h2></Reveal>
+      <Reveal><h2 style={H2}>Three systems I&apos;ve built.</h2></Reveal>
       <Reveal delay={0.06}>
         <p style={{ fontFamily: F.body, fontSize: "clamp(14px,1.5vw,16px)", lineHeight: 1.6, color: C.muted, maxWidth: 560, margin: "16px 0 0" }}>
-          The same racks you can walk above — here as the record. Real uptime, real latency, and the incidents I&apos;ve recovered from.
+          The same racks you can walk above — here as the record. The architecture, the stack, and the engineering call behind each.
         </p>
       </Reveal>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(320px,1fr))", gap: 16, marginTop: 40 }}>
@@ -83,11 +83,10 @@ function Projects() {
 
 function About() {
   const langs = B_STACK[0].items.length;
-  const avg = (SERVICES.reduce((a, s) => a + s.uptime, 0) / SERVICES.length).toFixed(2);
   const stats = [
-    { v: String(SERVICES.length), k: "systems shipped" },
-    { v: avg + "%", k: "avg uptime" },
-    { v: langs + "+", k: "languages" },
+    { v: String(SERVICES.length), k: "projects shipped" },
+    { v: "1.5+", k: "yrs @ RdFlex" },
+    { v: langs + "", k: "languages" },
     { v: "1100+", k: "lines of tests" },
   ];
   return (
@@ -98,11 +97,32 @@ function About() {
       <Reveal delay={0.08}>
         <p style={{ fontFamily: F.body, fontSize: "clamp(15px,1.6vw,17.5px)", lineHeight: 1.7, color: C.muted, maxWidth: 620, margin: "26px 0 0" }}>
           I&apos;m {B_PROFILE.name}, a backend engineer. APIs, data models, auth, async pipelines, and the
-          infrastructure underneath them. I care about the boring parts that decide whether a product is
-          trustworthy — idempotency, observability, and what happens when something fails at the worst
-          possible time. The racks above are real systems I&apos;ve shipped; this is the operator behind them.
+          infrastructure underneath them. I care about the parts that decide whether a product is trustworthy —
+          idempotency, observability, and what happens when something fails at 3am. By day I build backend at
+          RdFlex; the racks above are projects I&apos;ve shipped on my own.
         </p>
       </Reveal>
+
+      {/* experience */}
+      <Reveal delay={0.12}>
+        <div style={{ marginTop: 48 }}>
+          <div style={{ fontFamily: F.mono, fontSize: 11, textTransform: "uppercase", letterSpacing: "0.18em", color: C.faint, marginBottom: 6 }}>experience</div>
+          {EXPERIENCE.map((e) => (
+            <div key={e.role} style={{ display: "grid", gridTemplateColumns: "minmax(120px,150px) 1fr", columnGap: "clamp(16px,3vw,40px)", padding: "20px 0", borderTop: `1px solid ${C.line}` }}>
+              <div style={{ fontFamily: F.mono, fontSize: 12, color: C.cyan, paddingTop: 3 }}>{e.period}</div>
+              <div>
+                <div style={{ fontFamily: F.disp, fontWeight: 600, fontSize: "clamp(1.1rem,2vw,1.4rem)", color: C.fg }}>{e.role} <span style={{ color: C.muted, fontWeight: 400 }}>· {e.org}</span></div>
+                <p style={{ fontFamily: F.body, fontSize: "clamp(13.5px,1.4vw,15px)", lineHeight: 1.6, color: C.muted, margin: "8px 0 0", maxWidth: 600 }}>{e.desc}</p>
+              </div>
+            </div>
+          ))}
+          <div style={{ display: "grid", gridTemplateColumns: "minmax(120px,150px) 1fr", columnGap: "clamp(16px,3vw,40px)", padding: "20px 0", borderTop: `1px solid ${C.line}` }}>
+            <div style={{ fontFamily: F.mono, fontSize: 12, color: C.cyan, paddingTop: 3 }}>{EDUCATION.period}</div>
+            <div style={{ fontFamily: F.disp, fontWeight: 600, fontSize: "clamp(1.1rem,2vw,1.4rem)", color: C.fg }}>{EDUCATION.degree} <span style={{ color: C.muted, fontWeight: 400 }}>· {EDUCATION.org}</span></div>
+          </div>
+        </div>
+      </Reveal>
+
       <Reveal delay={0.15}>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(130px,1fr))", gap: 1, marginTop: 42, border: `1px solid ${C.line}`, background: C.line }}>
           {stats.map((s) => (
