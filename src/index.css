@@ -217,6 +217,14 @@ body::after {
 .os-dock-btn { transition: transform 0.16s ease; transform-origin: bottom center; }
 .os-dock-btn:hover { transform: scale(1.2) translateY(-5px); }
 
+/* split-stack console: 2 columns + seam on desktop, stacked on mobile */
+.sp-split { grid-template-columns: 1fr; }
+.sp-seam { display: none; }
+@media (min-width: 820px) {
+  .sp-split { grid-template-columns: 1fr 1fr; }
+  .sp-seam { display: block; }
+}
+
 /* -------------------------------- keyframes ------------------------------ */
 @keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
 .caret::after { content: "▋"; margin-left: 1px; color: var(--accent); animation: blink 1.05s steps(1) infinite; }
