@@ -74,7 +74,7 @@ function PhotoMock({ accent }: { accent: string }) {
   );
 }
 
-function Mock({ preview, accent }: { preview: Preview; accent: string }) {
+export function Mock({ preview, accent }: { preview: Preview; accent: string }) {
   if (preview === "map") return <MapMock accent={accent} />;
   if (preview === "chat") return <ChatMock accent={accent} />;
   return <PhotoMock accent={accent} />;
