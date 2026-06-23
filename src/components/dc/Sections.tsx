@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { motion } from "framer-motion";
 import { B_PROFILE, B_STACK, SERVICES, EXPERIENCE, EDUCATION } from "@/data/backend";
+import { useGitHub, langColor, ago } from "./useGitHub";
 import { C, F } from "./theme";
 
 function Reveal({ children, delay = 0 }: { children: ReactNode; delay?: number }) {
@@ -186,6 +187,48 @@ function Stack() {
   );
 }
 
+function LiveActivity() {
+  const repos = useGitHub(B_PROFILE.githubHandle, 5);
+  return (
+    <Section id="live" eyebrow="// live signal">
+      <Reveal><h2 style={H2}>Currently shipping.</h2></Reveal>
+      <Reveal delay={0.06}>
+        <div style={{ display: "flex", alignItems: "center", gap: 9, marginTop: 16, fontFamily: F.mono, fontSize: 12.5, color: C.muted }}>
+          <motion.span animate={{ opacity: [1, 0.35, 1] }} transition={{ duration: 1.8, repeat: Infinity }} style={{ width: 8, height: 8, borderRadius: 9, background: C.green, boxShadow: `0 0 8px ${C.green}` }} />
+          synced live from <a href={B_PROFILE.github} target="_blank" rel="noopener noreferrer" style={{ color: C.cyan, textDecoration: "none" }}>github.com/{B_PROFILE.githubHandle}</a>
+        </div>
+      </Reveal>
+
+      <div style={{ marginTop: 34 }}>
+        {repos === null && (
+          <div style={{ fontFamily: F.mono, fontSize: 13, color: C.faint, padding: "16px 0", borderTop: `1px solid ${C.line}` }}>fetching recent pushes<span className="caret" /></div>
+        )}
+        {repos && repos.length === 0 && (
+          <a href={B_PROFILE.github} target="_blank" rel="noopener noreferrer" style={{ display: "block", fontFamily: F.mono, fontSize: 13, color: C.cyan, padding: "16px 0", borderTop: `1px solid ${C.line}`, textDecoration: "none" }}>view repositories on GitHub ↗</a>
+        )}
+        {repos && repos.map((r, i) => (
+          <Reveal key={r.name} delay={i * 0.05}>
+            <a href={r.html_url} target="_blank" rel="noopener noreferrer"
+              style={{ display: "flex", alignItems: "center", gap: 13, padding: "15px 0", borderTop: `1px solid ${C.line}`, textDecoration: "none" }}
+              onMouseEnter={(e) => { const a = e.currentTarget.querySelector("[data-n]") as HTMLElement; if (a) a.style.color = C.cyan; }}
+              onMouseLeave={(e) => { const a = e.currentTarget.querySelector("[data-n]") as HTMLElement; if (a) a.style.color = C.fg; }}>
+              <span style={{ width: 9, height: 9, borderRadius: 9, background: langColor(r.language), flexShrink: 0 }} />
+              <span data-n style={{ fontFamily: F.disp, fontWeight: 600, fontSize: "clamp(15px,1.8vw,18px)", color: C.fg, transition: "color 0.2s", flexShrink: 0 }}>{r.name}</span>
+              <span className="dc-hide-sm" style={{ fontFamily: F.body, fontSize: 13.5, color: C.faint, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.description ?? ""}</span>
+              <span style={{ marginLeft: "auto", display: "flex", gap: 14, alignItems: "center", fontFamily: F.mono, fontSize: 11.5, color: C.faint, flexShrink: 0 }}>
+                {r.language && <span style={{ color: C.muted }}>{r.language}</span>}
+                {r.stargazers_count > 0 && <span>★ {r.stargazers_count}</span>}
+                <span style={{ color: C.muted }}>pushed {ago(r.pushed_at)}</span>
+                <span style={{ color: C.cyan }}>↗</span>
+              </span>
+            </a>
+          </Reveal>
+        ))}
+      </div>
+    </Section>
+  );
+}
+
 function Contact() {
   const links = [
     { k: "email", v: B_PROFILE.email, href: `mailto:${B_PROFILE.email}` },
@@ -235,6 +278,7 @@ export function Sections() {
       <About />
       <Principles />
       <Stack />
+      <LiveActivity />
       <Contact />
       <Footer />
     </div>

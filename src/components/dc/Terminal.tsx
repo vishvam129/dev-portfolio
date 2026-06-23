@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { SERVICES, B_PROFILE, B_STACK, EXPERIENCE } from "@/data/backend";
+import { ago } from "./useGitHub";
 import { C, F } from "./theme";
 
 type Line = { kind: "cmd" | "out" | "err" | "accent"; text: string };
@@ -47,7 +48,7 @@ export function Terminal() {
       case "help":
         push("available commands:", "accent");
         ["whoami        who I am", "ls            list projects", "cat <project> project detail (vrixo · lendlocal · near)",
-         "stack         tech stack", "experience    roles @ RdFlex", "contact       how to reach me", "resume        open résumé (pdf)",
+         "stack         tech stack", "experience    roles @ RdFlex", "repos         recent github pushes (live)", "contact       how to reach me", "resume        open résumé (pdf)",
          "open <proj>   open a live deployment", "goto <section> work·about·stack·contact", "clear         clear screen", "exit          close console"].forEach((l) => push("  " + l));
         break;
       case "whoami":
@@ -94,6 +95,15 @@ export function Terminal() {
       }
       case "clear": setLines([]); setInput(""); return;
       case "exit": case "quit": setOpen(false); setInput(""); return;
+      case "repos": case "git": {
+        push(`fetching github.com/${B_PROFILE.githubHandle} …`);
+        fetch(`https://api.github.com/users/${B_PROFILE.githubHandle}/repos?sort=pushed&per_page=5`)
+          .then((r) => (r.ok ? r.json() : Promise.reject(new Error())))
+          .then((d: { name: string; language: string | null; pushed_at: string }[]) =>
+            setLines((l) => [...l, ...d.slice(0, 5).map((rp) => ({ kind: "out" as const, text: `  ${rp.name.padEnd(22)}${(rp.language ?? "—").padEnd(13)}pushed ${ago(rp.pushed_at)}` }))]))
+          .catch(() => setLines((l) => [...l, { kind: "err", text: "github: unreachable" }]));
+        break;
+      }
       case "date": push(new Date().toString()); break;
       case "uptime": push("99.9% — the racks speak for themselves."); break;
       case "sudo": push("nice try. 🙂", "err"); break;
