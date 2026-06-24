@@ -7,6 +7,7 @@ import { C, F } from "@/components/fstack/theme";
 
 export default function FullStackPage() {
   const [project, setProject] = useState<string | null>(null);
+  const [layer, setLayer] = useState<string | null>(null);
   const [tracing, setTracing] = useState(false);
   const [ready, setReady] = useState(false);
   const [paused, setPaused] = useState(false);
@@ -39,8 +40,8 @@ export default function FullStackPage() {
     <main style={{ background: C.bg, color: C.fg, fontFamily: F.body, minHeight: "100svh", overflowX: "hidden" }}>
       <TopNav />
       <section ref={heroRef} id="top" style={{ position: "relative", height: "100svh", overflow: "hidden" }}>
-        <StackScene project={project} runRef={runRef} hoverRef={hoverRef} onHover={(id) => (hoverRef.current = id)} paused={paused} />
-        <Hud project={project} tracing={tracing} onPick={onPick} />
+        <StackScene project={project} selected={layer} runRef={runRef} hoverRef={hoverRef} onHover={(id) => (hoverRef.current = id)} onSelect={setLayer} paused={paused} />
+        <Hud project={project} tracing={tracing} onPick={onPick} layer={layer} onCloseLayer={() => setLayer(null)} />
         <div style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center", background: C.bg, transition: "opacity .7s ease", pointerEvents: ready ? "none" : "auto", opacity: ready ? 0 : 1, zIndex: 30 }}>
           <div style={{ fontFamily: F.mono, fontSize: 12, color: C.accent, letterSpacing: "0.1em" }}>assembling the stack<span className="caret" /></div>
         </div>

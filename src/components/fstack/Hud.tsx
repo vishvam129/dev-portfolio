@@ -1,8 +1,9 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { C, F } from "./theme";
+import { C, F, LAYERS, PROJECT_LAYERS } from "./theme";
 import { FS_PROJECTS } from "@/data/fullstack";
 
-export function Hud({ project, tracing, onPick }: { project: string | null; tracing: boolean; onPick: (id: string) => void }) {
+export function Hud({ project, tracing, onPick, layer, onCloseLayer }: { project: string | null; tracing: boolean; onPick: (id: string) => void; layer: string | null; onCloseLayer: () => void }) {
+  const ld = LAYERS.find((l) => l.id === layer) || null;
   return (
     <div style={{ position: "absolute", inset: 0, pointerEvents: "none", fontFamily: F.body, color: C.fg }}>
       {/* intro + trace controls */}
@@ -42,6 +43,28 @@ export function Hud({ project, tracing, onPick }: { project: string | null; trac
         the work
         <motion.div animate={{ y: [0, 5, 0] }} transition={{ duration: 1.6, repeat: Infinity }} style={{ color: C.accent, fontSize: 14, marginTop: 2 }}>↓</motion.div>
       </a>
+
+      {/* layer inspector */}
+      <AnimatePresence>
+        {ld && (
+          <motion.aside key={ld.id} initial={{ x: 360, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: 360, opacity: 0 }} transition={{ type: "spring", stiffness: 320, damping: 34 }}
+            style={{ pointerEvents: "auto", position: "absolute", top: 76, right: "clamp(16px,4vw,40px)", width: "min(340px, 86vw)", background: "rgba(10,10,20,0.82)", backdropFilter: "blur(16px)", border: `1px solid ${ld.color}55`, borderRadius: 14, padding: "18px 20px 20px", boxShadow: `0 24px 60px -20px #000` }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
+              <span style={{ width: 9, height: 9, borderRadius: 99, background: ld.color, boxShadow: `0 0 10px ${ld.color}` }} />
+              <span style={{ fontFamily: F.display, fontWeight: 600, fontSize: 20, color: C.fg }}>{ld.label}</span>
+              <button onClick={onCloseLayer} style={{ marginLeft: "auto", background: "transparent", border: `1px solid ${C.line2}`, color: C.sub, borderRadius: 6, padding: "2px 8px", fontFamily: F.mono, fontSize: 11, cursor: "pointer" }}>esc ✕</button>
+            </div>
+            <p style={{ fontFamily: F.body, fontSize: 13.5, lineHeight: 1.6, color: C.sub, margin: "12px 0 0" }}>{ld.desc}</p>
+            <div style={{ fontFamily: F.mono, fontSize: 10, textTransform: "uppercase", letterSpacing: "0.16em", color: C.faint, margin: "18px 0 8px" }}>this layer, per project</div>
+            {FS_PROJECTS.map((p) => (
+              <div key={p.id} style={{ display: "flex", gap: 10, padding: "7px 0", borderTop: `1px solid ${C.line}`, fontFamily: F.mono, fontSize: 12 }}>
+                <span style={{ color: C.fg, width: 78, flexShrink: 0 }}>{p.name}</span>
+                <span style={{ color: ld.color }}>{PROJECT_LAYERS[p.id]?.[ld.id] ?? "—"}</span>
+              </div>
+            ))}
+          </motion.aside>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

@@ -8,12 +8,13 @@ import { C, F, LAYERS, PROJECT_LAYERS } from "./theme";
 const TOP = LAYERS[0].y, BOT = LAYERS[LAYERS.length - 1].y;
 const LAT = [0, 6, 14, 24, 38, 9]; // per-layer latency (ms), cosmetic
 
-function LayerMesh({ i, def, tech, lat, side, showLat, registerMat, registerGroup, onHover }:
-  { i: number; def: (typeof LAYERS)[number]; tech: string; lat: number; side: number; showLat: boolean;
-    registerMat: (i: number, m: THREE.MeshStandardMaterial) => void; registerGroup: (i: number, g: THREE.Group) => void; onHover: (id: string | null) => void }) {
+function LayerMesh({ i, def, tech, lat, side, showLat, selected, registerMat, registerGroup, onHover, onSelect }:
+  { i: number; def: (typeof LAYERS)[number]; tech: string; lat: number; side: number; showLat: boolean; selected: boolean;
+    registerMat: (i: number, m: THREE.MeshStandardMaterial) => void; registerGroup: (i: number, g: THREE.Group) => void; onHover: (id: string | null) => void; onSelect: (id: string | null) => void }) {
   return (
     <group ref={(g) => g && registerGroup(i, g)} position={[0, def.y, 0]}>
       <RoundedBox args={[4.3, 0.18, 2.7]} radius={0.08} smoothness={3}
+        onClick={(e) => { e.stopPropagation(); onSelect(selected ? null : def.id); }}
         onPointerOver={(e) => { e.stopPropagation(); onHover(def.id); document.body.style.cursor = "pointer"; }}
         onPointerOut={(e) => { e.stopPropagation(); onHover(null); document.body.style.cursor = "auto"; }}>
         <meshStandardMaterial ref={(m) => m && registerMat(i, m as THREE.MeshStandardMaterial)} color={def.color} emissive={def.color} emissiveIntensity={1.2} transparent opacity={0.5} metalness={0.15} roughness={0.22} toneMapped={false} />
@@ -32,8 +33,8 @@ function LayerMesh({ i, def, tech, lat, side, showLat, registerMat, registerGrou
   );
 }
 
-function Flow({ mats, groups, packet, runRef, project, hoverRef }:
-  { mats: React.MutableRefObject<THREE.MeshStandardMaterial[]>; groups: React.MutableRefObject<THREE.Group[]>; packet: React.RefObject<THREE.Mesh | null>; runRef: React.MutableRefObject<number>; project: string | null; hoverRef: React.MutableRefObject<string | null> }) {
+function Flow({ mats, groups, packet, runRef, project, hoverRef, selected }:
+  { mats: React.MutableRefObject<THREE.MeshStandardMaterial[]>; groups: React.MutableRefObject<THREE.Group[]>; packet: React.RefObject<THREE.Mesh | null>; runRef: React.MutableRefObject<number>; project: string | null; hoverRef: React.MutableRefObject<string | null>; selected: string | null }) {
   const last = useRef(0); const start = useRef(-99);
   useFrame((s) => {
     const t = s.clock.elapsedTime;
@@ -61,10 +62,20 @@ function Flow({ mats, groups, packet, runRef, project, hoverRef }:
       if (!m) continue;
       const ly = LAYERS[i].y;
       const wave = (running ? 2.8 : 0.9) * Math.exp(-(((ly - py) / 0.85) ** 2));
+      const isSel = selected === LAYERS[i].id;
       const hov = hoverRef.current === LAYERS[i].id ? 1.3 : 0;
-      m.emissiveIntensity = (1.25 + wave + hov + (project ? 0.25 : 0)) * (0.15 + 0.85 * reveal);
-      m.opacity = (0.52 + Math.min(0.4, wave * 0.16) + (hoverRef.current === LAYERS[i].id ? 0.2 : 0)) * reveal;
+      const sel = isSel ? 1.6 : selected ? -0.55 : 0;   // focus the selected layer, dim the rest
+      m.emissiveIntensity = Math.max(0.05, (1.25 + wave + hov + sel + (project ? 0.25 : 0)) * (0.15 + 0.85 * reveal));
+      m.opacity = Math.max(0.06, (0.52 + Math.min(0.4, wave * 0.16) + (hoverRef.current === LAYERS[i].id ? 0.2 : 0) + (isSel ? 0.25 : selected ? -0.2 : 0)) * reveal);
     }
+  });
+  return null;
+}
+
+function Rig({ targetY }: { targetY: number }) {
+  useFrame((s) => {
+    const c = s.controls as unknown as { target?: THREE.Vector3 } | null;
+    if (c?.target) c.target.y += (targetY - c.target.y) * 0.05;
   });
   return null;
 }
@@ -78,16 +89,17 @@ function Floor() {
   );
 }
 
-export function StackScene({ project, runRef, hoverRef, onHover, paused = false }:
-  { project: string | null; runRef: React.MutableRefObject<number>; hoverRef: React.MutableRefObject<string | null>; onHover: (id: string | null) => void; paused?: boolean }) {
+export function StackScene({ project, selected, runRef, hoverRef, onHover, onSelect, paused = false }:
+  { project: string | null; selected: string | null; runRef: React.MutableRefObject<number>; hoverRef: React.MutableRefObject<string | null>; onHover: (id: string | null) => void; onSelect: (id: string | null) => void; paused?: boolean }) {
   const mats = useRef<THREE.MeshStandardMaterial[]>([]);
   const groups = useRef<THREE.Group[]>([]);
   const packet = useRef<THREE.Mesh>(null);
   const tech = (id: string) => (project && PROJECT_LAYERS[project]?.[id]) || LAYERS.find((l) => l.id === id)!.sub;
+  const selY = selected ? (LAYERS.find((l) => l.id === selected)!.y) * 0.62 : 0;
 
   return (
     <Canvas shadows={false} dpr={[1, 1.8]} frameloop={paused ? "never" : "always"} camera={{ position: [8.5, 2.6, 10.5], fov: 38 }}
-      gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping }} style={{ position: "absolute", inset: 0 }}>
+      gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping }} onPointerMissed={() => onSelect(null)} style={{ position: "absolute", inset: 0 }}>
       <color attach="background" args={[C.bg]} />
       <fog attach="fog" args={[C.bg, 16, 38]} />
       <ambientLight intensity={0.4} />
@@ -103,16 +115,17 @@ export function StackScene({ project, runRef, hoverRef, onHover, paused = false 
         <mesh ref={packet}><sphereGeometry args={[0.13, 16, 16]} /><meshStandardMaterial color="#fff" emissive="#fff" emissiveIntensity={4} toneMapped={false} /></mesh>
 
         {LAYERS.map((def, i) => (
-          <LayerMesh key={def.id} i={i} def={def} tech={tech(def.id)} lat={LAT[i]} side={i % 2 === 0 ? 1 : -1} showLat={!!project}
-            registerMat={(idx, m) => (mats.current[idx] = m)} registerGroup={(idx, g) => (groups.current[idx] = g)} onHover={onHover} />
+          <LayerMesh key={def.id} i={i} def={def} tech={tech(def.id)} lat={LAT[i]} side={i % 2 === 0 ? 1 : -1} showLat={!!project} selected={selected === def.id}
+            registerMat={(idx, m) => (mats.current[idx] = m)} registerGroup={(idx, g) => (groups.current[idx] = g)} onHover={onHover} onSelect={onSelect} />
         ))}
 
         <Sparkles count={60} scale={[14, 13, 12]} size={1.6} speed={0.2} color="#9fb4ff" opacity={0.5} />
-        <Flow mats={mats} groups={groups} packet={packet} runRef={runRef} project={project} hoverRef={hoverRef} />
+        <Flow mats={mats} groups={groups} packet={packet} runRef={runRef} project={project} hoverRef={hoverRef} selected={selected} />
+        <Rig targetY={selY} />
       </Suspense>
 
       <OrbitControls makeDefault target={[0, 0, 0]} enablePan={false} enableZoom={false} enableDamping dampingFactor={0.08}
-        minPolarAngle={0.5} maxPolarAngle={2.0} autoRotate={!project} autoRotateSpeed={0.5} />
+        minPolarAngle={0.5} maxPolarAngle={2.0} autoRotate={!project && !selected} autoRotateSpeed={0.5} />
 
       <EffectComposer>
         <Bloom intensity={1.35} luminanceThreshold={0.14} luminanceSmoothing={0.9} mipmapBlur radius={0.78} />

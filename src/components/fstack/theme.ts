@@ -20,14 +20,14 @@ export const F = {
 };
 
 // the layers of the stack, top (client) → bottom (infra); warm → cool
-export type LayerDef = { id: string; label: string; sub: string; color: string; y: number };
+export type LayerDef = { id: string; label: string; sub: string; color: string; y: number; desc: string };
 export const LAYERS: LayerDef[] = [
-  { id: "client", label: "Client", sub: "React · Next.js · PWA", color: "#ff5c8a", y: 4.2 },
-  { id: "edge", label: "Edge / CDN", sub: "Vercel · routing", color: "#ff894d", y: 2.5 },
-  { id: "api", label: "API", sub: "FastAPI · route handlers", color: "#ffce3d", y: 0.8 },
-  { id: "services", label: "Services", sub: "auth · payments · queue", color: "#5cff9e", y: -0.9 },
-  { id: "data", label: "Database", sub: "Postgres · Firestore", color: "#4db5ff", y: -2.6 },
-  { id: "infra", label: "Infra", sub: "Docker · Kubernetes", color: "#9a6bff", y: -4.3 },
+  { id: "client", label: "Client", sub: "React · Next.js · PWA", color: "#ff5c8a", y: 4.2, desc: "The interface users touch — React 19 / Next.js 14, responsive, installable as a PWA and shipped native to Android via Capacitor." },
+  { id: "edge", label: "Edge / CDN", sub: "Vercel · routing", color: "#ff894d", y: 2.5, desc: "Assets and routing at the edge — Vercel / Firebase Hosting serve the app worldwide and route each request to the right handler." },
+  { id: "api", label: "API", sub: "FastAPI · route handlers", color: "#ffce3d", y: 0.8, desc: "The contract — FastAPI and Next.js route handlers that own request validation, response shape, and status codes." },
+  { id: "services", label: "Services", sub: "auth · payments · queue", color: "#5cff9e", y: -0.9, desc: "The work behind the request — JWT/OAuth auth, Stripe payments, WebRTC realtime, and Celery/Redis async queues." },
+  { id: "data", label: "Database", sub: "Postgres · Firestore", color: "#4db5ff", y: -2.6, desc: "Where state lives — PostgreSQL via Prisma/SQLAlchemy, Firestore for realtime, plus object storage (R2 / Cloudinary)." },
+  { id: "infra", label: "Infra", sub: "Docker · Kubernetes", color: "#9a6bff", y: -4.3, desc: "Shipping it — Docker images, Kubernetes (Kind locally, DOKS in prod), and automated deploys with Gateway API routing." },
 ];
 
 // per-project tech shown on each layer when traced
