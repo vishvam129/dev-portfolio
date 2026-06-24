@@ -89,6 +89,34 @@ function Rig({ targetY }: { targetY: number }) {
   return null;
 }
 
+function glowTexture() {
+  const s = 128, c = document.createElement("canvas"); c.width = c.height = s;
+  const ctx = c.getContext("2d")!;
+  const g = ctx.createRadialGradient(s / 2, s / 2, 0, s / 2, s / 2, s / 2);
+  g.addColorStop(0, "rgba(255,255,255,1)"); g.addColorStop(0.4, "rgba(255,255,255,0.45)"); g.addColorStop(1, "rgba(255,255,255,0)");
+  ctx.fillStyle = g; ctx.fillRect(0, 0, s, s);
+  return new THREE.CanvasTexture(c);
+}
+
+function Nebula() {
+  const tex = useRef(glowTexture()).current;
+  const orbs: [number, number, number, number, string, number][] = [
+    [5, 5.5, -9, 15, C.accent, 0.26],
+    [-5, -5, -10, 17, C.accent2, 0.22],
+    [3, -1, -11, 20, "#5f8cf2", 0.16],
+  ];
+  return (
+    <group>
+      {orbs.map(([x, y, z, sc, col, op], i) => (
+        <mesh key={i} position={[x, y, z]} scale={[sc, sc, 1]}>
+          <planeGeometry args={[1, 1]} />
+          <meshBasicMaterial map={tex} color={col} transparent opacity={op} depthWrite={false} blending={THREE.AdditiveBlending} toneMapped={false} />
+        </mesh>
+      ))}
+    </group>
+  );
+}
+
 function Floor() {
   return (
     <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, BOT - 1.7, 0]}>
@@ -116,6 +144,7 @@ export function StackScene({ project, selected, runRef, hoverRef, onHover, onSel
       <pointLight position={[-6, -8, 4]} intensity={90} decay={2} color="#4db5ff" />
 
       <Suspense fallback={null}>
+        <Nebula />
         <Floor />
         <mesh position={[0, (TOP + BOT) / 2, 0]}>
           <cylinderGeometry args={[0.05, 0.05, TOP - BOT + 0.6, 12]} />
