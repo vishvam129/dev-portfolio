@@ -43,7 +43,7 @@ function Work() {
             <article style={{ background: C.panel, border: `1px solid ${C.line2}`, borderRadius: 12, padding: "22px 22px 24px", height: "100%" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                 <span style={{ fontFamily: F.display, fontWeight: 600, fontSize: 21, color: C.fg }}>{p.name}</span>
-                <span style={{ marginLeft: "auto", fontFamily: F.mono, fontSize: 11, color: p.status === "live" ? C.ok : p.status === "building" ? "#ffce3d" : C.sub }}>{p.status}</span>
+                <span style={{ marginLeft: "auto", fontFamily: F.mono, fontSize: 11, color: p.status === "live" ? C.ok : p.status === "building" ? C.accent : C.sub }}>{p.status}</span>
                 {p.liveUrl && <a href={p.liveUrl} target="_blank" rel="noopener noreferrer" style={{ fontFamily: F.mono, fontSize: 11, color: C.accent2, textDecoration: "none" }}>↗</a>}
               </div>
               <div style={{ fontFamily: F.body, fontSize: 14, color: C.accent, fontWeight: 600, marginTop: 3 }}>{p.tag}</div>
@@ -95,7 +95,7 @@ function Stack() {
     <SectionShell id="stack" n="03" eyebrow="toolkit" title="The whole stack." intro="What I reach for across the front, the back, and everything wiring them together.">
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(230px,1fr))", gap: 16, marginTop: 44 }}>
         {FS_STACK.map((g, i) => {
-          const col = g.label === "Frontend" ? C.accent : g.label === "Infra" ? "#9a6bff" : C.accent2;
+          const col = g.label === "Frontend" ? C.accent : g.label === "Infra" ? "#9ec4ff" : C.accent2;
           return (
             <Reveal key={g.label} delay={i * 0.05}>
               <div style={{ background: C.panel, border: `1px solid ${C.line2}`, borderRadius: 12, padding: "20px 20px 22px", height: "100%" }}>
