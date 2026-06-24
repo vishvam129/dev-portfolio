@@ -37,7 +37,7 @@ function SectionShell({ id, n, eyebrow, title, intro, children }: { id: string; 
 function Work() {
   return (
     <SectionShell id="work" n="01" eyebrow="selected work" title={<>Three products,<br />every layer mine.</>} intro="The same apps you traced above — each built across the whole stack and shipped.">
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(330px,1fr))", gap: 16, marginTop: 42 }}>
+      <div className="fs-work-grid" style={{ marginTop: 42 }}>
         {FS_PROJECTS.map((p, i) => (
           <Reveal key={p.id} delay={i * 0.06}>
             <article style={{ background: C.panel, border: `1px solid ${C.line2}`, borderRadius: 12, padding: "22px 22px 24px", height: "100%" }}>

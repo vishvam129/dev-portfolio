@@ -14,7 +14,7 @@ function LayerMesh({ i, def, tech, lat, side, showLat, selected, circuit, regist
   return (
     <group ref={(g) => g && registerGroup(i, g)} position={[0, def.y, 0]}>
       {/* glassy board */}
-      <RoundedBox args={[3.95, 0.12, 2.45]} radius={0.05} smoothness={4}
+      <RoundedBox args={[4.05, 0.13, 2.55]} radius={0.05} smoothness={4}
         onClick={(e) => { e.stopPropagation(); onSelect(selected ? null : def.id); }}
         onPointerOver={(e) => { e.stopPropagation(); onHover(def.id); document.body.style.cursor = "pointer"; }}
         onPointerOut={(e) => { e.stopPropagation(); onHover(null); document.body.style.cursor = "auto"; }}>
@@ -22,10 +22,13 @@ function LayerMesh({ i, def, tech, lat, side, showLat, selected, circuit, regist
         <Edges threshold={15} color={def.color} />
       </RoundedBox>
       {/* faint circuit-grid on the board surface */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.064, 0]}>
-        <planeGeometry args={[3.78, 2.32]} />
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.07, 0]}>
+        <planeGeometry args={[3.88, 2.42]} />
         <meshBasicMaterial map={circuit} color={def.color} transparent opacity={0.32} depthWrite={false} blending={THREE.AdditiveBlending} toneMapped={false} />
       </mesh>
+      {/* connector to the label */}
+      <mesh position={[-2.32, 0, 0]}><boxGeometry args={[0.52, 0.014, 0.014]} /><meshStandardMaterial color={def.color} emissive={def.color} emissiveIntensity={2.2} toneMapped={false} /></mesh>
+      <mesh position={[-2.62, 0, 0]}><sphereGeometry args={[0.055, 12, 12]} /><meshStandardMaterial color="#fff" emissive={def.color} emissiveIntensity={2.6} toneMapped={false} /></mesh>
       {/* component modules sitting on the board */}
       {([[-1.45, 0.5, 0.55, 0.5], [-0.5, -0.5, 0.85, 0.55], [0.6, 0.45, 0.55, 0.75], [1.45, -0.35, 0.45, 0.5]] as const).map(([x, z, w, d], k) => (
         <mesh key={k} position={[x, 0.1, z]}>
@@ -37,7 +40,7 @@ function LayerMesh({ i, def, tech, lat, side, showLat, selected, circuit, regist
       {[-1.2, -0.4, 0.4, 1.2].map((x) => (
         <mesh key={x} position={[x, 0.06, 1.18]}><boxGeometry args={[0.09, 0.07, 0.05]} /><meshStandardMaterial color="#fff" emissive="#fff" emissiveIntensity={2} toneMapped={false} /></mesh>
       ))}
-      <Html position={[side * 2.55, 0, 0]} center distanceFactor={11} zIndexRange={[8, 0]} style={{ pointerEvents: "none", userSelect: "none", textAlign: side > 0 ? "left" : "right", width: 220, transform: `translateX(${side > 0 ? "0" : "-100%"})` }}>
+      <Html position={[side * 2.72, 0, 0]} center distanceFactor={11} zIndexRange={[8, 0]} style={{ pointerEvents: "none", userSelect: "none", textAlign: side > 0 ? "left" : "right", width: 220, transform: `translateX(${side > 0 ? "0" : "-100%"})` }}>
         <div style={{ fontFamily: F.display, fontWeight: 600, fontSize: 17, color: "#fff", textShadow: `0 2px 14px ${def.color}, 0 1px 4px #000` }}>{def.label}</div>
         <div style={{ fontFamily: F.mono, fontSize: 10.5, color: def.color, marginTop: 2, textShadow: "0 1px 4px #000" }}>
           {tech}{showLat && lat > 0 ? <span style={{ color: C.sub }}> · {lat}ms</span> : null}
@@ -158,7 +161,7 @@ export function StackScene({ project, selected, runRef, hoverRef, onHover, onSel
   const selY = selected ? (LAYERS.find((l) => l.id === selected)!.y) * 0.62 : 0;
 
   return (
-    <Canvas shadows={false} dpr={[1, 1.8]} frameloop={paused ? "never" : "always"} camera={{ position: [8.5, 2.6, 10.5], fov: 38 }}
+    <Canvas shadows={false} dpr={[1, 1.8]} frameloop={paused ? "never" : "always"} camera={{ position: [7.6, 2.3, 9.6], fov: 38 }}
       gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping }} onPointerMissed={() => onSelect(null)} style={{ position: "absolute", inset: 0 }}>
       <color attach="background" args={[C.bg]} />
       <fog attach="fog" args={[C.bg, 16, 38]} />
@@ -189,7 +192,7 @@ export function StackScene({ project, selected, runRef, hoverRef, onHover, onSel
         minPolarAngle={0.5} maxPolarAngle={2.0} autoRotate={!project && !selected} autoRotateSpeed={0.5} />
 
       <EffectComposer>
-        <Bloom intensity={1.35} luminanceThreshold={0.14} luminanceSmoothing={0.9} mipmapBlur radius={0.78} />
+        <Bloom intensity={1.5} luminanceThreshold={0.12} luminanceSmoothing={0.9} mipmapBlur radius={0.8} />
         <DepthOfField target={[0, 0, 0]} focalLength={0.018} bokehScale={2.6} height={480} />
         <Vignette eskil={false} offset={0.2} darkness={0.92} />
       </EffectComposer>
