@@ -8,8 +8,8 @@ import { C, F, LAYERS, PROJECT_LAYERS } from "./theme";
 const TOP = LAYERS[0].y, BOT = LAYERS[LAYERS.length - 1].y;
 const LAT = [0, 6, 14, 24, 38, 9]; // per-layer latency (ms), cosmetic
 
-function LayerMesh({ i, def, tech, lat, side, showLat, selected, registerMat, registerGroup, onHover, onSelect }:
-  { i: number; def: (typeof LAYERS)[number]; tech: string; lat: number; side: number; showLat: boolean; selected: boolean;
+function LayerMesh({ i, def, tech, lat, side, showLat, selected, circuit, registerMat, registerGroup, onHover, onSelect }:
+  { i: number; def: (typeof LAYERS)[number]; tech: string; lat: number; side: number; showLat: boolean; selected: boolean; circuit: THREE.Texture;
     registerMat: (i: number, m: THREE.MeshStandardMaterial) => void; registerGroup: (i: number, g: THREE.Group) => void; onHover: (id: string | null) => void; onSelect: (id: string | null) => void }) {
   return (
     <group ref={(g) => g && registerGroup(i, g)} position={[0, def.y, 0]}>
@@ -21,6 +21,11 @@ function LayerMesh({ i, def, tech, lat, side, showLat, selected, registerMat, re
         <meshStandardMaterial ref={(m) => m && registerMat(i, m as THREE.MeshStandardMaterial)} color="#0a0b16" emissive={def.color} emissiveIntensity={0.6} transparent opacity={0.34} metalness={0.5} roughness={0.12} toneMapped={false} />
         <Edges threshold={15} color={def.color} />
       </RoundedBox>
+      {/* faint circuit-grid on the board surface */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.064, 0]}>
+        <planeGeometry args={[3.78, 2.32]} />
+        <meshBasicMaterial map={circuit} color={def.color} transparent opacity={0.32} depthWrite={false} blending={THREE.AdditiveBlending} toneMapped={false} />
+      </mesh>
       {/* component modules sitting on the board */}
       {([[-1.45, 0.5, 0.55, 0.5], [-0.5, -0.5, 0.85, 0.55], [0.6, 0.45, 0.55, 0.75], [1.45, -0.35, 0.45, 0.5]] as const).map(([x, z, w, d], k) => (
         <mesh key={k} position={[x, 0.1, z]}>
@@ -98,6 +103,22 @@ function glowTexture() {
   return new THREE.CanvasTexture(c);
 }
 
+function circuitTexture() {
+  const s = 256, c = document.createElement("canvas"); c.width = c.height = s;
+  const ctx = c.getContext("2d")!;
+  // faint grid
+  ctx.strokeStyle = "rgba(255,255,255,0.14)"; ctx.lineWidth = 1;
+  for (let i = 32; i < s; i += 32) { ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, s); ctx.stroke(); ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(s, i); ctx.stroke(); }
+  // circuit traces
+  ctx.strokeStyle = "rgba(255,255,255,0.5)"; ctx.lineWidth = 2; ctx.lineJoin = "round";
+  const traces = [[[20, 48], [128, 48], [128, 140]], [[208, 24], [208, 96], [150, 96]], [[40, 210], [40, 150], [116, 150]], [[236, 168], [168, 168], [168, 236]], [[96, 96], [60, 96], [60, 40]]];
+  traces.forEach((p) => { ctx.beginPath(); ctx.moveTo(p[0][0], p[0][1]); for (let k = 1; k < p.length; k++) ctx.lineTo(p[k][0], p[k][1]); ctx.stroke(); });
+  // pads
+  ctx.fillStyle = "rgba(255,255,255,0.75)";
+  [[128, 140], [150, 96], [116, 150], [168, 168], [20, 48], [208, 24], [60, 40]].forEach(([x, y]) => ctx.fillRect(x - 3, y - 3, 6, 6));
+  return new THREE.CanvasTexture(c);
+}
+
 function Nebula() {
   const tex = useRef(glowTexture()).current;
   const orbs: [number, number, number, number, string, number][] = [
@@ -131,6 +152,8 @@ export function StackScene({ project, selected, runRef, hoverRef, onHover, onSel
   const mats = useRef<THREE.MeshStandardMaterial[]>([]);
   const groups = useRef<THREE.Group[]>([]);
   const packet = useRef<THREE.Mesh>(null);
+  const circuit = useRef<THREE.Texture>(undefined);
+  if (!circuit.current) circuit.current = circuitTexture();
   const tech = (id: string) => (project && PROJECT_LAYERS[project]?.[id]) || LAYERS.find((l) => l.id === id)!.sub;
   const selY = selected ? (LAYERS.find((l) => l.id === selected)!.y) * 0.62 : 0;
 
@@ -153,7 +176,7 @@ export function StackScene({ project, selected, runRef, hoverRef, onHover, onSel
         <mesh ref={packet}><sphereGeometry args={[0.13, 16, 16]} /><meshStandardMaterial color="#fff" emissive="#fff" emissiveIntensity={4} toneMapped={false} /></mesh>
 
         {LAYERS.map((def, i) => (
-          <LayerMesh key={def.id} i={i} def={def} tech={tech(def.id)} lat={LAT[i]} side={-1} showLat={!!project} selected={selected === def.id}
+          <LayerMesh key={def.id} i={i} def={def} tech={tech(def.id)} lat={LAT[i]} side={-1} showLat={!!project} selected={selected === def.id} circuit={circuit.current!}
             registerMat={(idx, m) => (mats.current[idx] = m)} registerGroup={(idx, g) => (groups.current[idx] = g)} onHover={onHover} onSelect={onSelect} />
         ))}
 
