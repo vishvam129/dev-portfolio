@@ -217,6 +217,10 @@ body::after {
 .os-dock-btn { transition: transform 0.16s ease; transform-origin: bottom center; }
 .os-dock-btn:hover { transform: scale(1.2) translateY(-5px); }
 
+/* full-stack: 3D tower sits on the right on desktop, full-bleed on mobile */
+.fs-canvas-wrap { position: absolute; inset: 0; }
+@media (min-width: 900px) { .fs-canvas-wrap { left: 34%; } }
+
 /* split-stack console: 2 columns + seam on desktop, stacked on mobile */
 .sp-split { grid-template-columns: 1fr; }
 .sp-seam { display: none; }

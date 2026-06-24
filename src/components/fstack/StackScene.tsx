@@ -13,15 +13,24 @@ function LayerMesh({ i, def, tech, lat, side, showLat, selected, registerMat, re
     registerMat: (i: number, m: THREE.MeshStandardMaterial) => void; registerGroup: (i: number, g: THREE.Group) => void; onHover: (id: string | null) => void; onSelect: (id: string | null) => void }) {
   return (
     <group ref={(g) => g && registerGroup(i, g)} position={[0, def.y, 0]}>
-      <RoundedBox args={[4.3, 0.18, 2.7]} radius={0.08} smoothness={3}
+      {/* glassy board */}
+      <RoundedBox args={[3.95, 0.12, 2.45]} radius={0.05} smoothness={4}
         onClick={(e) => { e.stopPropagation(); onSelect(selected ? null : def.id); }}
         onPointerOver={(e) => { e.stopPropagation(); onHover(def.id); document.body.style.cursor = "pointer"; }}
         onPointerOut={(e) => { e.stopPropagation(); onHover(null); document.body.style.cursor = "auto"; }}>
-        <meshStandardMaterial ref={(m) => m && registerMat(i, m as THREE.MeshStandardMaterial)} color={def.color} emissive={def.color} emissiveIntensity={1.2} transparent opacity={0.5} metalness={0.15} roughness={0.22} toneMapped={false} />
+        <meshStandardMaterial ref={(m) => m && registerMat(i, m as THREE.MeshStandardMaterial)} color="#0a0b16" emissive={def.color} emissiveIntensity={0.6} transparent opacity={0.34} metalness={0.5} roughness={0.12} toneMapped={false} />
         <Edges threshold={15} color={def.color} />
       </RoundedBox>
-      {[-1.4, 0, 1.4].map((x) => (
-        <mesh key={x} position={[x, 0.12, 0.7]}><sphereGeometry args={[0.05, 10, 10]} /><meshStandardMaterial color="#fff" emissive={def.color} emissiveIntensity={2.4} toneMapped={false} /></mesh>
+      {/* component modules sitting on the board */}
+      {([[-1.45, 0.5, 0.55, 0.5], [-0.5, -0.5, 0.85, 0.55], [0.6, 0.45, 0.55, 0.75], [1.45, -0.35, 0.45, 0.5]] as const).map(([x, z, w, d], k) => (
+        <mesh key={k} position={[x, 0.1, z]}>
+          <boxGeometry args={[w, 0.12, d]} />
+          <meshStandardMaterial color={def.color} emissive={def.color} emissiveIntensity={k % 2 ? 2.6 : 1.7} metalness={0.3} roughness={0.35} toneMapped={false} />
+        </mesh>
+      ))}
+      {/* edge ports */}
+      {[-1.2, -0.4, 0.4, 1.2].map((x) => (
+        <mesh key={x} position={[x, 0.06, 1.18]}><boxGeometry args={[0.09, 0.07, 0.05]} /><meshStandardMaterial color="#fff" emissive="#fff" emissiveIntensity={2} toneMapped={false} /></mesh>
       ))}
       <Html position={[side * 2.55, 0, 0]} center distanceFactor={11} zIndexRange={[8, 0]} style={{ pointerEvents: "none", userSelect: "none", textAlign: side > 0 ? "left" : "right", width: 220, transform: `translateX(${side > 0 ? "0" : "-100%"})` }}>
         <div style={{ fontFamily: F.display, fontWeight: 600, fontSize: 17, color: "#fff", textShadow: `0 2px 14px ${def.color}, 0 1px 4px #000` }}>{def.label}</div>
@@ -65,8 +74,8 @@ function Flow({ mats, groups, packet, runRef, project, hoverRef, selected }:
       const isSel = selected === LAYERS[i].id;
       const hov = hoverRef.current === LAYERS[i].id ? 1.3 : 0;
       const sel = isSel ? 1.6 : selected ? -0.55 : 0;   // focus the selected layer, dim the rest
-      m.emissiveIntensity = Math.max(0.05, (1.25 + wave + hov + sel + (project ? 0.25 : 0)) * (0.15 + 0.85 * reveal));
-      m.opacity = Math.max(0.06, (0.52 + Math.min(0.4, wave * 0.16) + (hoverRef.current === LAYERS[i].id ? 0.2 : 0) + (isSel ? 0.25 : selected ? -0.2 : 0)) * reveal);
+      m.emissiveIntensity = Math.max(0.05, (1.15 + wave + hov + sel + (project ? 0.2 : 0)) * (0.15 + 0.85 * reveal));
+      m.opacity = Math.max(0.05, (0.46 + Math.min(0.35, wave * 0.14) + (hoverRef.current === LAYERS[i].id ? 0.18 : 0) + (isSel ? 0.22 : selected ? -0.16 : 0)) * reveal);
     }
   });
   return null;
@@ -115,7 +124,7 @@ export function StackScene({ project, selected, runRef, hoverRef, onHover, onSel
         <mesh ref={packet}><sphereGeometry args={[0.13, 16, 16]} /><meshStandardMaterial color="#fff" emissive="#fff" emissiveIntensity={4} toneMapped={false} /></mesh>
 
         {LAYERS.map((def, i) => (
-          <LayerMesh key={def.id} i={i} def={def} tech={tech(def.id)} lat={LAT[i]} side={i % 2 === 0 ? 1 : -1} showLat={!!project} selected={selected === def.id}
+          <LayerMesh key={def.id} i={i} def={def} tech={tech(def.id)} lat={LAT[i]} side={-1} showLat={!!project} selected={selected === def.id}
             registerMat={(idx, m) => (mats.current[idx] = m)} registerGroup={(idx, g) => (groups.current[idx] = g)} onHover={onHover} onSelect={onSelect} />
         ))}
 

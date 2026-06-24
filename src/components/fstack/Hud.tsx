@@ -7,7 +7,7 @@ export function Hud({ project, tracing, onPick, layer, onCloseLayer }: { project
   return (
     <div style={{ position: "absolute", inset: 0, pointerEvents: "none", fontFamily: F.body, color: C.fg }}>
       {/* intro + trace controls */}
-      <div style={{ position: "absolute", left: "clamp(20px,5vw,48px)", bottom: "clamp(64px,12vh,108px)", maxWidth: 480, pointerEvents: "none" }}>
+      <div style={{ position: "absolute", left: "clamp(20px,5vw,52px)", top: "50%", transform: "translateY(-48%)", maxWidth: 440, pointerEvents: "none" }}>
         <div style={{ fontFamily: F.mono, fontSize: 12, letterSpacing: "0.18em", textTransform: "uppercase", color: C.accent, display: "flex", alignItems: "center", gap: 9 }}>
           <span style={{ width: 22, height: 1, background: `linear-gradient(90deg,${C.accent},${C.accent2})` }} /> Full-stack engineer
         </div>
