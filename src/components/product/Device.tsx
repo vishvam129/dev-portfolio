@@ -1,83 +1,114 @@
 import type { CSSProperties, ReactNode } from "react";
 import { C, F } from "./theme";
-import type { Preview } from "@/data/fullstack";
 
 const fill: CSSProperties = { position: "absolute", inset: 0, display: "flex", flexDirection: "column", overflow: "hidden" };
+const bricolage = "'Bricolage Grotesque', system-ui, sans-serif";
+const fraunces = "'Fraunces', Georgia, serif";
 
-/* ---- dark, premium in-app mocks ---- */
-function MapMock({ accent }: { accent: string }) {
-  const pins = [[24, 36], [56, 28], [42, 56], [70, 62], [33, 70]];
+/* ---- LendLocal: light teal/amber marketplace (Next.js + Tailwind) ---- */
+function LendLocalMock() {
+  const teal = "#0d9488", stone = "#fafaf9", ink = "#1c1917", mute = "#78716c", line = "#e7e5e4";
+  const items = [
+    { t: "Cordless drill", who: "Riya · Satellite", price: "$9/day", free: false, g: "linear-gradient(135deg,#5eead4,#0d9488)" },
+    { t: "Camping tent", who: "Arjun · Bodakdev", price: "Free", free: true, g: "linear-gradient(135deg,#fde68a,#f59e0b)" },
+  ];
   return (
-    <div style={{ ...fill, background: "#0e0f14", fontFamily: F.body }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "5% 6% 4%" }}>
-        <div style={{ flex: 1, height: "9%", minHeight: 16, background: "#191b22", borderRadius: 99, display: "flex", alignItems: "center", padding: "0 12px", fontSize: 9, color: C.faint }}>Find near you</div>
-        <div style={{ width: 16, height: 16, borderRadius: 99, background: accent }} />
+    <div style={{ ...fill, background: stone, fontFamily: "'Hanken Grotesk',sans-serif", color: ink }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "3.5% 5%", background: "#fff", borderBottom: `1px solid ${line}` }}>
+        <div style={{ width: 22, height: 22, borderRadius: 6, background: teal, color: "#fff", display: "grid", placeItems: "center", fontFamily: bricolage, fontWeight: 800, fontSize: 10 }}>LL</div>
+        <div style={{ fontFamily: bricolage, fontWeight: 700, fontSize: 13 }}>LendLocal</div>
+        <div style={{ marginLeft: "auto", fontSize: 9, fontWeight: 700, color: "#fff", background: teal, borderRadius: 8, padding: "5px 10px" }}>List item</div>
       </div>
-      <div style={{ flex: 1, position: "relative", margin: "0 6%", borderRadius: 10, background: "#14161d", backgroundImage: "linear-gradient(rgba(255,255,255,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.04) 1px,transparent 1px)", backgroundSize: "12% 12%" }}>
-        {pins.map(([x, y], i) => (
-          <div key={i} style={{ position: "absolute", left: `${x}%`, top: `${y}%`, width: 12, height: 12, borderRadius: "50% 50% 50% 0", transform: "rotate(-45deg)", background: i === 1 ? accent : "#1c1f28", border: `2px solid ${i === 1 ? accent : "#2c3040"}`, boxShadow: i === 1 ? `0 0 12px ${accent}` : "none" }} />
-        ))}
-      </div>
-      <div style={{ margin: "5% 6% 6%", background: "#181a22", border: `1px solid ${C.line}`, borderRadius: 11, padding: "9px 11px", display: "flex", alignItems: "center", gap: 10 }}>
-        <div style={{ width: 30, height: 30, borderRadius: 8, background: `linear-gradient(135deg, ${accent}, ${accent}66)` }} />
-        <div style={{ flex: 1 }}>
-          <div style={{ fontSize: 10.5, fontWeight: 700, color: C.fg }}>Cordless drill</div>
-          <div style={{ fontSize: 8.5, color: C.faint }}>0.4 mi · ★ 4.9</div>
+      <div style={{ padding: "4% 5% 0" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 6, background: "#fff", border: `1px solid ${line}`, borderRadius: 9, padding: "7px 10px", fontSize: 9.5, color: mute }}><span>🔍</span>Search tools, skills…</div>
+        <div style={{ display: "flex", gap: 6, marginTop: 9 }}>
+          {[["🔨 Tools", true], ["⛺ Outdoor", false], ["🎸 Skills", false]].map(([t, on], i) => (
+            <div key={i} style={{ fontSize: 8.5, fontWeight: 600, borderRadius: 8, padding: "4px 9px", color: on ? "#fff" : mute, background: on ? teal : "transparent", border: `1px solid ${on ? teal : line}` }}>{t as string}</div>
+          ))}
         </div>
-        <div style={{ fontSize: 9, fontWeight: 700, color: "#0a0a0f", background: accent, borderRadius: 99, padding: "6px 11px" }}>$9/day</div>
       </div>
-    </div>
-  );
-}
-
-function ChatMock({ accent }: { accent: string }) {
-  const bubbles: [boolean, string][] = [[false, "miss you 🌙"], [true, "2 days left ♥"], [false, "watch-party tonight?"], [true, "yes! 9pm"]];
-  return (
-    <div style={{ ...fill, background: "#0e0f14", fontFamily: F.body }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 9, padding: "6% 6% 5%", borderBottom: `1px solid ${C.line}` }}>
-        <div style={{ width: 26, height: 26, borderRadius: 99, background: `linear-gradient(135deg, ${accent}, ${accent}55)` }} />
-        <div style={{ flex: 1, fontSize: 11, fontWeight: 700, color: C.fg }}>Aanya <span style={{ color: accent }}>♥</span></div>
-        <div style={{ display: "flex", gap: 9, color: accent, fontSize: 12 }}><span>📞</span><span>📹</span></div>
-      </div>
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 8, padding: "6%", justifyContent: "flex-end" }}>
-        {bubbles.map(([me, t], i) => (
-          <div key={i} style={{ alignSelf: me ? "flex-end" : "flex-start", maxWidth: "78%", fontSize: 9.5, padding: "7px 11px", borderRadius: 13, color: me ? "#0a0a0f" : C.fg, background: me ? accent : "#1a1c24", borderBottomRightRadius: me ? 3 : 13, borderBottomLeftRadius: me ? 13 : 3 }}>{t}</div>
-        ))}
-      </div>
-      <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "4% 6% 6%" }}>
-        <div style={{ flex: 1, height: 26, borderRadius: 99, background: "#191b22", display: "flex", alignItems: "center", padding: "0 12px", fontSize: 9, color: C.faint }}>Message…</div>
-        <div style={{ width: 26, height: 26, borderRadius: 99, background: accent }} />
-      </div>
-    </div>
-  );
-}
-
-function PhotoMock({ accent }: { accent: string }) {
-  return (
-    <div style={{ ...fill, background: "#0c0c12", fontFamily: F.body }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 9, padding: "5% 6% 4%" }}>
-        <div style={{ flex: 1, fontSize: 12, fontWeight: 800, color: C.fg, fontFamily: F.display }}>Vrixo</div>
-        <div style={{ fontSize: 9, fontWeight: 700, color: "#0a0a0f", background: accent, borderRadius: 99, padding: "6px 12px" }}>Enhance</div>
-      </div>
-      <div style={{ flex: 1, display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 6, padding: "0 6%" }}>
-        {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} style={{ borderRadius: 7, background: `linear-gradient(${135 + i * 30}deg, ${accent}${i % 2 ? "aa" : "55"}, #16131f)`, position: "relative" }}>
-            {i === 0 && <div style={{ position: "absolute", inset: 0, border: `2px solid ${accent}`, borderRadius: 7 }} />}
+      <div style={{ flex: 1, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 9, padding: "4% 5% 5%" }}>
+        {items.map((it) => (
+          <div key={it.t} style={{ background: "#fff", border: `1px solid ${line}`, borderRadius: 11, overflow: "hidden", boxShadow: "0 4px 12px rgba(28,25,23,0.05)" }}>
+            <div style={{ position: "relative", aspectRatio: "4/3", background: it.g }}>
+              <div style={{ position: "absolute", top: 5, left: 5, fontSize: 7.5, fontWeight: 600, background: "rgba(255,255,255,0.85)", borderRadius: 99, padding: "2px 6px" }}>🔨 Tools</div>
+              <div style={{ position: "absolute", bottom: 5, right: 5, fontSize: 8, fontWeight: 700, color: it.free ? "#fff" : ink, background: it.free ? "#10b981" : "rgba(255,255,255,0.92)", borderRadius: 99, padding: "3px 8px" }}>{it.price}</div>
+            </div>
+            <div style={{ padding: "7px 8px 9px" }}>
+              <div style={{ fontSize: 10.5, fontWeight: 700 }}>{it.t}</div>
+              <div style={{ fontSize: 8, color: mute, marginTop: 2 }}>📍 {it.who}</div>
+            </div>
           </div>
         ))}
       </div>
-      <div style={{ margin: "5% 6% 6%" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 8.5, color: C.sub, marginBottom: 5 }}><span>processing · GPU</span><span>2 / 3</span></div>
-        <div style={{ height: 4, borderRadius: 99, background: "#1c1c28", overflow: "hidden" }}><div style={{ width: "66%", height: "100%", background: accent }} /></div>
+    </div>
+  );
+}
+
+/* ---- Near: dark "dusk" chat, rose→peach gradient (React PWA) ---- */
+function NearMock() {
+  const bg = "#16121d", panel = "#221b2c", text = "#f6ece8", mute = "#b3a6b3", grad = "linear-gradient(120deg,#ff7da6,#ffb27a)", line = "rgba(255,232,224,0.1)";
+  const bubbles: [boolean, string][] = [[false, "miss you 🌙"], [true, "2 days left ♥"], [false, "watch-party tonight?"], [true, "yes! 9pm"]];
+  return (
+    <div style={{ ...fill, background: bg, fontFamily: "'Hanken Grotesk',sans-serif", color: text }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "6% 6% 5%", borderBottom: `1px solid ${line}` }}>
+        <div style={{ width: 26, height: 26, borderRadius: 99, background: grad }} />
+        <div>
+          <div style={{ fontFamily: fraunces, fontWeight: 600, fontSize: 13, lineHeight: 1 }}>Aanya</div>
+          <div style={{ fontSize: 8.5, color: "#9be8b0" }}>● online</div>
+        </div>
+        <div style={{ marginLeft: "auto", display: "flex", gap: 8, fontSize: 13, color: "#ff7da6" }}><span>📞</span><span>📹</span></div>
+      </div>
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 7, padding: "6%", justifyContent: "flex-end" }}>
+        {bubbles.map(([me, t], i) => (
+          <div key={i} style={{ alignSelf: me ? "flex-end" : "flex-start", maxWidth: "78%", fontSize: 10, padding: "8px 11px", color: me ? "#3a1020" : text, background: me ? grad : panel, border: me ? "none" : `1px solid ${line}`, borderRadius: 14, borderBottomRightRadius: me ? 5 : 14, borderBottomLeftRadius: me ? 14 : 5, fontWeight: me ? 600 : 400 }}>{t}</div>
+        ))}
+      </div>
+      <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "4% 6% 3%" }}>
+        <div style={{ flex: 1, height: 28, borderRadius: 99, background: panel, border: `1px solid ${line}`, display: "flex", alignItems: "center", padding: "0 12px", fontSize: 10, color: mute }}>Message…</div>
+        <div style={{ width: 28, height: 28, borderRadius: 99, background: grad, display: "grid", placeItems: "center", fontSize: 11 }}>✉️</div>
+      </div>
+      <div style={{ display: "flex", justifyContent: "space-around", padding: "8px 0 11px", borderTop: `1px solid ${line}`, fontSize: 14 }}>
+        {["🏠", "💬", "🍿", "🎮", "✨"].map((e, i) => <span key={i} style={{ opacity: i === 1 ? 1 : 0.45, filter: i === 1 ? `drop-shadow(0 0 6px #ff7da6)` : "none" }}>{e}</span>)}
       </div>
     </div>
   );
 }
 
-export function Mock({ preview, accent }: { preview: Preview; accent: string }) {
-  if (preview === "map") return <MapMock accent={accent} />;
-  if (preview === "chat") return <ChatMock accent={accent} />;
-  return <PhotoMock accent={accent} />;
+/* ---- Vrixo: dark AI photo enhance, before/after (blue accent) ---- */
+function VrixoMock() {
+  const bg = "#0e1016", text = "#eef1f6", mute = "#8b93a5", blue = "#3b8cff", line = "rgba(255,255,255,0.08)";
+  return (
+    <div style={{ ...fill, background: bg, fontFamily: "'Hanken Grotesk',sans-serif", color: text }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "4% 5%", borderBottom: `1px solid ${line}` }}>
+        <div style={{ fontFamily: bricolage, fontWeight: 800, fontSize: 13 }}>✨ Vrixo</div>
+        <div style={{ fontSize: 9, color: mute }}>AI photo magic</div>
+        <div style={{ marginLeft: "auto", display: "flex", gap: 5 }}>
+          {[["Upscale", true], ["Remove bg", false], ["Restore", false]].map(([t, on], i) => (
+            <span key={i} style={{ fontSize: 8, fontWeight: 600, borderRadius: 99, padding: "4px 9px", color: on ? "#04101f" : mute, background: on ? blue : "transparent", border: `1px solid ${on ? blue : line}` }}>{t as string}</span>
+          ))}
+        </div>
+      </div>
+      <div style={{ flex: 1, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, padding: "4% 5%" }}>
+        {[["Before", "linear-gradient(135deg,#3a3f4d,#23262e)", false], ["After", "linear-gradient(135deg,#7db4ff,#2b3a55)", true]].map(([label, g, on], i) => (
+          <div key={i} style={{ position: "relative", borderRadius: 9, background: g as string, border: on ? `1.5px solid ${blue}` : `1px solid ${line}`, overflow: "hidden" }}>
+            <div style={{ position: "absolute", top: 6, left: 6, fontSize: 8, fontWeight: 700, color: "#fff", background: "rgba(0,0,0,0.4)", borderRadius: 6, padding: "2px 7px" }}>{label}</div>
+            {on && <div style={{ position: "absolute", bottom: 6, right: 6, width: 16, height: 16, borderRadius: 99, background: blue, color: "#04101f", display: "grid", placeItems: "center", fontSize: 9, fontWeight: 800 }}>✓</div>}
+          </div>
+        ))}
+      </div>
+      <div style={{ display: "flex", alignItems: "center", gap: 9, padding: "3% 5% 5%" }}>
+        <div style={{ fontSize: 9, fontWeight: 700, color: "#04101f", background: blue, borderRadius: 8, padding: "7px 13px" }}>✨ Enhance</div>
+        <div style={{ fontSize: 8.5, color: mute }}><span style={{ color: "#4ee0a0" }}>✓ done</span> · 3/5 today</div>
+      </div>
+    </div>
+  );
+}
+
+export function Mock({ id }: { id: string }) {
+  if (id === "lendlocal") return <LendLocalMock />;
+  if (id === "near") return <NearMock />;
+  return <VrixoMock />;
 }
 
 /* ---- frames ---- */
@@ -87,7 +118,7 @@ export function Browser({ url, children }: { url: string; children: ReactNode })
       <div style={{ display: "flex", alignItems: "center", gap: 8, height: 40, padding: "0 14px", background: "#15151e", borderBottom: `1px solid ${C.line}` }}>
         <span style={{ display: "flex", gap: 7 }}>{["#ff5f57", "#febc2e", "#28c840"].map((c) => <i key={c} style={{ width: 11, height: 11, borderRadius: 99, background: c, opacity: 0.9 }} />)}</span>
         <div style={{ flex: 1, maxWidth: 320, margin: "0 auto", height: 22, borderRadius: 99, background: "#0d0d14", border: `1px solid ${C.line}`, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, fontFamily: F.mono, fontSize: 11, color: C.sub }}>
-          <span style={{ color: C.faint }}>↪</span>{url}
+          <span style={{ color: C.faint }}>🔒</span>{url}
         </div>
         <span style={{ width: 44 }} />
       </div>

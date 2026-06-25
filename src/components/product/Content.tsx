@@ -13,7 +13,7 @@ function Reveal({ children, delay = 0, y = 26 }: { children: ReactNode; delay?: 
 
 function Frame({ p }: { p: Project }) {
   const phone = p.devices[0] === "mobile";
-  const inner = <Mock preview={p.preview} accent={p.accent} />;
+  const inner = <Mock id={p.id} />;
   return phone ? <Phone>{inner}</Phone> : <Browser url={p.liveUrl ? p.liveUrl.replace("https://", "") : `${p.id}.app`}>{inner}</Browser>;
 }
 
@@ -43,15 +43,15 @@ function Hero() {
     <section id="top" style={{ position: "relative", padding: "clamp(120px,16vh,180px) clamp(20px,5vw,48px) clamp(60px,9vh,110px)", overflow: "hidden" }}>
       <div style={{ position: "absolute", top: "-10%", left: "50%", transform: "translateX(-50%)", width: "80%", height: "60%", background: `radial-gradient(closest-side, ${flagship.accent}1f, transparent)`, pointerEvents: "none" }} />
       <div style={{ position: "relative", maxWidth: 1080, margin: "0 auto", textAlign: "center" }}>
-        <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease }}
+        <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease }}
           style={{ display: "inline-flex", alignItems: "center", gap: 8, fontFamily: F.mono, fontSize: 12, letterSpacing: "0.14em", textTransform: "uppercase", color: C.sub, border: `1px solid ${C.line}`, borderRadius: 99, padding: "6px 14px" }}>
           <span style={{ width: 6, height: 6, borderRadius: 99, background: C.ok, boxShadow: `0 0 8px ${C.ok}` }} /> Full-stack engineer · 3 products live
         </motion.div>
-        <motion.h1 initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease, delay: 0.06 }}
+        <motion.h1 initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease, delay: 0.06 }}
           style={{ fontFamily: F.display, fontWeight: 700, fontSize: "clamp(2.7rem,8vw,6rem)", lineHeight: 0.96, letterSpacing: "-0.04em", color: C.fg, margin: "26px 0 0" }}>
           I build &amp; ship<br />the <span style={{ fontStyle: "italic", fontWeight: 600, color: flagship.accent }}>whole</span> product.
         </motion.h1>
-        <motion.p initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease, delay: 0.12 }}
+        <motion.p initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease, delay: 0.12 }}
           style={{ fontFamily: F.body, fontSize: "clamp(15px,1.8vw,19px)", lineHeight: 1.55, color: C.sub, maxWidth: 520, margin: "22px auto 0" }}>
           Frontend, backend, mobile — designed, built, and deployed end to end, by one engineer.
         </motion.p>
