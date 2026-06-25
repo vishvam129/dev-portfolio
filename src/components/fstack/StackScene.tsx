@@ -33,7 +33,7 @@ function LayerMesh({ i, def, tech, lat, side, showLat, selected, circuit, regist
       {([[-1.45, 0.5, 0.55, 0.5], [-0.5, -0.5, 0.85, 0.55], [0.6, 0.45, 0.55, 0.75], [1.45, -0.35, 0.45, 0.5]] as const).map(([x, z, w, d], k) => (
         <mesh key={k} position={[x, 0.1, z]}>
           <boxGeometry args={[w, 0.12, d]} />
-          <meshStandardMaterial color={def.color} emissive={def.color} emissiveIntensity={k % 2 ? 2.6 : 1.7} metalness={0.3} roughness={0.35} toneMapped={false} />
+          <meshStandardMaterial color={def.color} emissive={def.color} emissiveIntensity={k % 2 ? 3.2 : 2.3} metalness={0.3} roughness={0.35} toneMapped={false} />
         </mesh>
       ))}
       {/* edge ports */}
@@ -82,8 +82,8 @@ function Flow({ mats, groups, packet, runRef, project, hoverRef, selected }:
       const isSel = selected === LAYERS[i].id;
       const hov = hoverRef.current === LAYERS[i].id ? 1.3 : 0;
       const sel = isSel ? 1.6 : selected ? -0.55 : 0;   // focus the selected layer, dim the rest
-      m.emissiveIntensity = Math.max(0.05, (1.15 + wave + hov + sel + (project ? 0.2 : 0)) * (0.15 + 0.85 * reveal));
-      m.opacity = Math.max(0.05, (0.46 + Math.min(0.35, wave * 0.14) + (hoverRef.current === LAYERS[i].id ? 0.18 : 0) + (isSel ? 0.22 : selected ? -0.16 : 0)) * reveal);
+      m.emissiveIntensity = Math.max(0.05, (1.7 + wave + hov + sel + (project ? 0.25 : 0)) * (0.15 + 0.85 * reveal));
+      m.opacity = Math.max(0.05, (0.54 + Math.min(0.38, wave * 0.14) + (hoverRef.current === LAYERS[i].id ? 0.18 : 0) + (isSel ? 0.24 : selected ? -0.16 : 0)) * reveal);
     }
   });
   return null;
@@ -192,7 +192,7 @@ export function StackScene({ project, selected, runRef, hoverRef, onHover, onSel
         minPolarAngle={0.5} maxPolarAngle={2.0} autoRotate={!project && !selected} autoRotateSpeed={0.5} />
 
       <EffectComposer>
-        <Bloom intensity={1.5} luminanceThreshold={0.12} luminanceSmoothing={0.9} mipmapBlur radius={0.8} />
+        <Bloom intensity={1.75} luminanceThreshold={0.1} luminanceSmoothing={0.9} mipmapBlur radius={0.82} />
         <DepthOfField target={[0, 0, 0]} focalLength={0.018} bokehScale={2.6} height={480} />
         <Vignette eskil={false} offset={0.2} darkness={0.92} />
       </EffectComposer>

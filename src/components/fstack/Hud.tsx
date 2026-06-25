@@ -11,8 +11,8 @@ export function Hud({ project, tracing, onPick, layer, onCloseLayer }: { project
         <div style={{ fontFamily: F.mono, fontSize: 12, letterSpacing: "0.18em", textTransform: "uppercase", color: C.accent, display: "flex", alignItems: "center", gap: 9 }}>
           <span style={{ width: 22, height: 1, background: `linear-gradient(90deg,${C.accent},${C.accent2})` }} /> Full-stack engineer
         </div>
-        <h1 style={{ fontFamily: F.display, fontWeight: 600, fontSize: "clamp(2.2rem,5.4vw,3.9rem)", lineHeight: 1.0, letterSpacing: "-0.025em", margin: "14px 0 0" }}>
-          Every layer.<br /><span style={{ background: `linear-gradient(90deg,${C.accent},${C.accent2})`, WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" }}>One engineer.</span>
+        <h1 style={{ fontFamily: F.display, fontWeight: 700, fontSize: "clamp(2.6rem,6.2vw,4.7rem)", lineHeight: 0.98, letterSpacing: "-0.035em", margin: "16px 0 0", color: C.fg }}>
+          Every layer.<br /><span style={{ background: `linear-gradient(95deg,${C.accent},${C.accent2})`, WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" }}>One engineer.</span>
         </h1>
         <p style={{ fontFamily: F.body, fontSize: "clamp(14px,1.5vw,16px)", lineHeight: 1.55, color: C.sub, margin: "14px 0 0", maxWidth: 380 }}>
           The whole stack — client to infra. Pick a project to trace a request down through every layer and back.

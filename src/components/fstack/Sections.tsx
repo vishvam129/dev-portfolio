@@ -10,7 +10,7 @@ function Reveal({ children, delay = 0 }: { children: ReactNode; delay?: number }
   return <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-70px" }} transition={{ duration: 0.65, delay, ease }}>{children}</motion.div>;
 }
 
-function SectionShell({ id, n, eyebrow, title, intro, children }: { id: string; n: string; eyebrow: string; title: ReactNode; intro?: ReactNode; children: ReactNode }) {
+function SectionShell({ id, eyebrow, title, intro, children }: { id: string; eyebrow: string; title: ReactNode; intro?: ReactNode; children: ReactNode }) {
   return (
     <section id={id} style={{ scrollMarginTop: 72 }}>
       <div style={{ maxWidth: 1140, margin: "0 auto", padding: "clamp(76px,12vh,150px) clamp(20px,5vw,44px)", display: "grid", gridTemplateColumns: "26px 1fr", columnGap: "clamp(14px,3vw,40px)" }}>
@@ -20,9 +20,9 @@ function SectionShell({ id, n, eyebrow, title, intro, children }: { id: string; 
         </div>
         <div>
           <Reveal>
-            <div style={{ display: "flex", alignItems: "baseline", gap: 14, marginBottom: 14 }}>
-              <span style={{ fontFamily: F.mono, fontSize: 12, color: C.faint }}>{n}</span>
-              <span style={{ fontFamily: F.mono, fontSize: 12, letterSpacing: "0.18em", textTransform: "uppercase", color: C.accent }}>{eyebrow}</span>
+            <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
+              <span style={{ width: 26, height: 2, borderRadius: 2, background: `linear-gradient(90deg,${C.accent},${C.accent2})` }} />
+              <span style={{ fontFamily: F.mono, fontSize: 12, letterSpacing: "0.2em", textTransform: "uppercase", color: C.accent }}>{eyebrow}</span>
             </div>
             <h2 style={{ fontFamily: F.display, fontWeight: 600, fontSize: "clamp(2rem,4.4vw,3.2rem)", lineHeight: 1.04, letterSpacing: "-0.02em", color: C.fg, margin: 0, maxWidth: 760 }}>{title}</h2>
             {intro && <p style={{ fontFamily: F.body, fontSize: "clamp(15px,1.6vw,17px)", lineHeight: 1.6, color: C.sub, maxWidth: 560, margin: "16px 0 0" }}>{intro}</p>}
@@ -36,7 +36,7 @@ function SectionShell({ id, n, eyebrow, title, intro, children }: { id: string; 
 
 function Work() {
   return (
-    <SectionShell id="work" n="01" eyebrow="selected work" title={<>Three products,<br />every layer mine.</>} intro="The same apps you traced above — each built across the whole stack and shipped.">
+    <SectionShell id="work" eyebrow="selected work" title={<>Three products,<br />every layer mine.</>} intro="The same apps you traced above — each built across the whole stack and shipped.">
       <div className="fs-work-grid" style={{ marginTop: 42 }}>
         {FS_PROJECTS.map((p, i) => (
           <Reveal key={p.id} delay={i * 0.06}>
@@ -66,7 +66,7 @@ function Work() {
 
 function About() {
   return (
-    <SectionShell id="about" n="02" eyebrow="operator" title={<>Both ends, <span style={{ color: C.accent }}>genuinely</span>.</>}
+    <SectionShell id="about" eyebrow="operator" title={<>Both ends, <span style={{ color: C.accent }}>genuinely</span>.</>}
       intro="Most “full-stack” means a little of each. I own the product end to end — schema, API, auth, the interface, and the deploy — and I sweat the seams between them.">
       <Reveal delay={0.1}>
         <div style={{ marginTop: 46 }}>
@@ -92,10 +92,10 @@ function About() {
 
 function Stack() {
   return (
-    <SectionShell id="stack" n="03" eyebrow="toolkit" title="The whole stack." intro="What I reach for across the front, the back, and everything wiring them together.">
+    <SectionShell id="stack" eyebrow="toolkit" title="The whole stack." intro="What I reach for across the front, the back, and everything wiring them together.">
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(230px,1fr))", gap: 16, marginTop: 44 }}>
         {FS_STACK.map((g, i) => {
-          const col = g.label === "Frontend" ? C.accent : g.label === "Infra" ? "#9ec4ff" : C.accent2;
+          const col = g.label === "Frontend" ? C.accent : g.label === "Infra" ? "#9aa6ff" : C.accent2;
           return (
             <Reveal key={g.label} delay={i * 0.05}>
               <div style={{ background: C.panel, border: `1px solid ${C.line2}`, borderRadius: 12, padding: "20px 20px 22px", height: "100%" }}>
@@ -118,7 +118,7 @@ function Contact() {
     { k: "résumé", v: "FullStack_Developer.pdf", href: FS_PROFILE.resume },
   ];
   return (
-    <SectionShell id="contact" n="04" eyebrow="say hi" title={<>Let&apos;s ship<br />something <span style={{ background: grad, WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" }}>good</span>.</>}>
+    <SectionShell id="contact" eyebrow="say hi" title={<>Let&apos;s ship<br />something <span style={{ background: grad, WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" }}>good</span>.</>}>
       <Reveal delay={0.08}>
         <a href={`mailto:${FS_PROFILE.email}`} style={{ display: "inline-flex", alignItems: "center", gap: 12, marginTop: 32, fontFamily: F.display, fontWeight: 600, fontSize: "clamp(1.4rem,3vw,2.2rem)", color: C.fg, textDecoration: "none", borderBottom: `2px solid ${C.accent}`, paddingBottom: 4 }}>
           {FS_PROFILE.email} <span style={{ color: C.accent }}>↗</span>
