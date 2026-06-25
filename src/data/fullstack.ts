@@ -35,11 +35,11 @@ export const FS_PROJECTS: Project[] = [
   {
     id: "lendlocal", name: "LendLocal", tag: "Hyperlocal sharing marketplace", year: "2025",
     status: "live", devices: ["desktop", "mobile"], preview: "map", accent: "#2dd4bf",
-    liveUrl: "https://lendlocal-eight.vercel.app",
-    blurb: "A full-stack marketplace where neighbours lend items and skills — built end-to-end: OAuth sign-in, profiles, listings, map discovery, bookings, reviews, and Stripe payments. Shipped to production on Vercel with Neon Postgres and Blob storage.",
-    highlights: ["Stripe payments + escrow-style holds", "Leaflet map-based discovery", "Prisma schema: users · listings · bookings · reviews", "1100+ lines of booking/payment tests"],
-    frontend: ["Next.js 14", "Tailwind", "Leaflet"],
-    backend: ["Prisma", "Neon Postgres", "Stripe", "OAuth"],
+    liveUrl: "https://lendlocal-eight.vercel.app/browse",
+    blurb: "A production hyperlocal marketplace where neighbours lend tools, gear and skills. Built end-to-end: map discovery with geolocation and distance sorting, a full booking lifecycle, Stripe deposit holds, and a trust layer with ID verification and reputation — plus Arabic-RTL i18n, an installable PWA, and a 57-test suite. Live on Vercel + Neon Postgres.",
+    highlights: ["Leaflet map discovery — geolocation, distance-sorted", "Booking lifecycle: request → Stripe escrow → pickup → return", "Trust layer — ID verification, reputation & disputes", "57 Vitest tests across booking & payments"],
+    frontend: ["Next.js", "React 19", "Tailwind", "Leaflet", "PWA"],
+    backend: ["Prisma", "Neon Postgres", "Stripe", "NextAuth", "next-intl"],
   },
   {
     id: "near", name: "Near", tag: "Realtime app for long-distance couples", year: "2026",

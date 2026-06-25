@@ -5,31 +5,73 @@ const fill: CSSProperties = { position: "absolute", inset: 0, display: "flex", f
 const bricolage = "'Bricolage Grotesque', system-ui, sans-serif";
 const fraunces = "'Fraunces', Georgia, serif";
 
-/* ---- LendLocal: dark teal/cyan landing, matched to the live site ---- */
+/* ---- LendLocal: the live Browse view — the real marketplace product ---- */
 function LendLocalMock() {
-  const teal = "#2dd4bf", bg = "#0c0e13", card = "#15181e", text = "#f1f2f4", mute = "#8b929c", line = "rgba(255,255,255,0.07)";
+  const teal = "#2dd4bf", green = "#34d399", bg = "#0f1115", card = "#181a1f", chip = "#23262d", text = "#f1f2f4", mute = "#9ca3af", line = "#2a2d35";
+  const cats: [string, string, boolean][] = [["", "All", true], ["⚡", "Power Tools", false], ["🔨", "Hand Tools", false], ["🚗", "Automotive", false], ["🌿", "Garden", false], ["💻", "Tech", false]];
   return (
     <div style={{ ...fill, background: bg, fontFamily: "'Hanken Grotesk',sans-serif", color: text }}>
-      <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "55%", background: `radial-gradient(60% 80% at 50% -10%, ${teal}1f, transparent)`, pointerEvents: "none" }} />
-      <div style={{ position: "relative", display: "flex", alignItems: "center", gap: 8, padding: "4% 5%", borderBottom: `1px solid ${line}` }}>
-        <div style={{ width: 20, height: 20, borderRadius: 6, background: teal, color: "#06231f", display: "grid", placeItems: "center", fontFamily: bricolage, fontWeight: 800, fontSize: 9 }}>LL</div>
-        <div style={{ fontFamily: bricolage, fontWeight: 700, fontSize: 12 }}>LendLocal</div>
-        <div style={{ marginLeft: "auto", fontSize: 8.5, fontWeight: 700, color: "#06231f", background: teal, borderRadius: 8, padding: "5px 10px" }}>Sign up</div>
-      </div>
-      <div style={{ position: "relative", flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", padding: "0 9%" }}>
-        <div style={{ fontFamily: bricolage, fontWeight: 800, fontSize: 19, lineHeight: 1.1, letterSpacing: "-0.02em" }}>
-          Share Tools &amp; Skills<br /><span style={{ background: `linear-gradient(90deg,${teal},#5eead4)`, WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" }}>With Your Neighbors</span>
+      {/* top nav */}
+      <div style={{ display: "flex", alignItems: "center", gap: 7, padding: "2.6% 4%", borderBottom: `1px solid ${line}` }}>
+        <div style={{ width: 18, height: 18, borderRadius: 6, background: teal, color: "#06231f", display: "grid", placeItems: "center", fontFamily: bricolage, fontWeight: 800, fontSize: 8 }}>LL</div>
+        <div style={{ fontFamily: bricolage, fontWeight: 700, fontSize: 11 }}>LendLocal</div>
+        <div style={{ display: "flex", gap: 10, marginLeft: 14, fontSize: 8, color: mute }}>
+          {["Browse", "Search", "Skills", "Wanted", "Community"].map((n, i) => <span key={n} style={{ color: i === 0 ? text : mute, fontWeight: i === 0 ? 600 : 400 }}>{n}</span>)}
         </div>
-        <div style={{ fontSize: 9, color: mute, marginTop: 9, lineHeight: 1.5 }}>Borrow a drill, lend a ladder, teach a skill.</div>
-        <div style={{ marginTop: 13, fontSize: 9, fontWeight: 700, color: "#06231f", background: teal, borderRadius: 99, padding: "8px 15px", boxShadow: `0 8px 22px ${teal}44` }}>Browse Items Now →</div>
-        <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "6px 12px", marginTop: 14, fontSize: 8, color: mute }}>
-          {["Verified", "Hyperlocal", "Sustainable"].map((b) => <span key={b}><span style={{ color: teal }}>✓ </span>{b}</span>)}
-        </div>
+        <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 8, color: mute, fontSize: 9 }}>🌐 ☾</div>
+        <div style={{ fontSize: 8, fontWeight: 700, color: "#06231f", background: teal, borderRadius: 7, padding: "4px 9px" }}>Sign up</div>
       </div>
-      <div style={{ position: "relative", display: "flex", justifyContent: "space-around", padding: "4% 5%", borderTop: `1px solid ${line}`, background: card }}>
-        {[["$0", "to start"], ["15 min", "setup"], ["$3K+", "saved/yr"]].map(([v, k]) => (
-          <div key={k} style={{ textAlign: "center" }}><div style={{ fontFamily: bricolage, fontWeight: 800, fontSize: 12, color: teal }}>{v}</div><div style={{ fontSize: 7, color: mute }}>{k}</div></div>
-        ))}
+      {/* browse body */}
+      <div style={{ flex: 1, padding: "3.4% 4% 0", overflow: "hidden" }}>
+        <div style={{ display: "flex", alignItems: "flex-end", gap: 8 }}>
+          <div>
+            <div style={{ fontFamily: bricolage, fontWeight: 800, fontSize: 15, letterSpacing: "-0.02em", lineHeight: 1 }}>Browse Items</div>
+            <div style={{ fontSize: 7.5, color: mute, marginTop: 3 }}>1 item available</div>
+          </div>
+          <div style={{ marginLeft: "auto", display: "flex", gap: 6 }}>
+            <span style={{ fontSize: 7.5, color: text, border: `1px solid ${line}`, borderRadius: 7, padding: "4px 8px" }}>🗺 Map</span>
+            <span style={{ fontSize: 7.5, fontWeight: 700, color: "#06231f", background: teal, borderRadius: 7, padding: "4px 8px" }}>+ List Item</span>
+          </div>
+        </div>
+        {/* search */}
+        <div style={{ height: 24, marginTop: 9, borderRadius: 8, background: card, border: `1px solid ${line}`, display: "flex", alignItems: "center", gap: 6, padding: "0 10px", fontSize: 8.5, color: mute }}>
+          <span style={{ color: mute }}>🔍</span>Search for tools, equipment, skills…
+        </div>
+        {/* category pills */}
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 5, marginTop: 9 }}>
+          {cats.map(([e, n, on]) => (
+            <span key={n} style={{ display: "inline-flex", alignItems: "center", gap: 3, fontSize: 7.5, fontWeight: on ? 700 : 500, color: on ? "#06231f" : text, background: on ? teal : chip, border: `1px solid ${on ? teal : line}`, borderRadius: 99, padding: "3px 8px" }}>{e && <span>{e}</span>}{n}</span>
+          ))}
+        </div>
+        {/* condition filter */}
+        <div style={{ display: "flex", alignItems: "center", gap: 5, marginTop: 7, fontSize: 7 }}>
+          <span style={{ color: mute, fontWeight: 700, letterSpacing: "0.04em" }}>CONDITION</span>
+          {[["All", true], ["New", false], ["Good", false], ["Fair", false]].map(([t, on]) => (
+            <span key={t as string} style={{ fontSize: 7, fontWeight: on ? 700 : 500, color: on ? "#06231f" : text, background: on ? teal : chip, borderRadius: 99, padding: "2.5px 7px" }}>{t as string}</span>
+          ))}
+        </div>
+        {/* item grid */}
+        <div style={{ marginTop: 10, display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 8 }}>
+          <div style={{ borderRadius: 9, background: card, border: `1px solid ${line}`, overflow: "hidden" }}>
+            <div style={{ position: "relative", aspectRatio: "4 / 3", background: "linear-gradient(150deg,#23262d,#15181d)", display: "grid", placeItems: "center" }}>
+              <span style={{ fontSize: 20, color: "#fbbf24" }}>⚡</span>
+              <span style={{ position: "absolute", top: 5, left: 5, fontSize: 6.5, fontWeight: 600, background: "rgba(0,0,0,0.55)", borderRadius: 5, padding: "2px 6px" }}>⚡ Power Tools</span>
+              <span style={{ position: "absolute", bottom: 5, right: 5, fontSize: 7, fontWeight: 800, color: "#06231f", background: green, borderRadius: 5, padding: "2px 7px" }}>Free</span>
+            </div>
+            <div style={{ padding: "6px 7px 8px" }}>
+              <span style={{ fontSize: 6.5, fontWeight: 700, color: green, border: `1px solid ${green}55`, borderRadius: 5, padding: "1.5px 5px" }}>Good</span>
+              <div style={{ fontFamily: bricolage, fontWeight: 700, fontSize: 9.5, marginTop: 5 }}>Cordless Power Drill</div>
+              <div style={{ fontSize: 7, color: mute, marginTop: 3 }}>Alice Lender · 0.4 mi away</div>
+            </div>
+          </div>
+          {/* ghost cards hint a fuller catalog */}
+          {[0, 1].map((k) => (
+            <div key={k} style={{ borderRadius: 9, background: card, border: `1px dashed ${line}`, opacity: 0.5, display: "flex", flexDirection: "column" }}>
+              <div style={{ aspectRatio: "4 / 3", background: "linear-gradient(150deg,#1c1f25,#15181d)" }} />
+              <div style={{ padding: "6px 7px 8px" }}><div style={{ height: 6, width: "70%", borderRadius: 3, background: chip }} /><div style={{ height: 5, width: "45%", borderRadius: 3, background: chip, marginTop: 5 }} /></div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

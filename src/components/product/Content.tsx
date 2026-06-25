@@ -16,22 +16,6 @@ function Frame({ p, device }: { p: Project; device: Device }) {
   return device === "mobile" ? <Phone>{inner}</Phone> : <Browser url={p.liveUrl ? p.liveUrl.replace("https://", "") : `${p.id}.app`}>{inner}</Browser>;
 }
 
-function DeviceToggle({ p, device, onPick }: { p: Project; device: Device; onPick: (d: Device) => void }) {
-  if (p.devices.length < 2) return null;
-  return (
-    <div style={{ display: "flex", justifyContent: "center", marginTop: 18 }}>
-      <div style={{ display: "flex", gap: 2, padding: 3, borderRadius: 99, border: `1px solid ${C.line2}`, background: C.surface }}>
-        {(["desktop", "mobile"] as Device[]).filter((d) => p.devices.includes(d)).map((d) => (
-          <button key={d} onClick={() => onPick(d)}
-            style={{ fontFamily: F.mono, fontSize: 11, cursor: "pointer", border: "none", borderRadius: 99, padding: "5px 14px", background: device === d ? C.fg : "transparent", color: device === d ? C.bg : C.sub }}>
-            {d === "desktop" ? "🖥 web" : "📱 mobile"}
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 /* ---------- nav ---------- */
 const NAV = [{ href: "#work", l: "work" }, { href: "#about", l: "about" }, { href: "#stack", l: "stack" }, { href: "#contact", l: "contact" }];
 const PORT = [{ href: "/", l: "ai" }, { href: "/backend", l: "backend" }, { href: "/full-stack", l: "full-stack", on: true }];
@@ -88,7 +72,7 @@ function Hero() {
 
 /* ---------- shipped products ---------- */
 function Showcase({ p, i }: { p: Project; i: number }) {
-  const [device, setDevice] = useState<Device>(p.devices[0]);
+  const device = p.devices[0];
   return (
     <Reveal delay={0.04}>
       <div className={`pk-row${i % 2 ? " rev" : ""}`} style={{ marginTop: i === 0 ? 56 : "clamp(64px,10vh,120px)" }}>
@@ -97,7 +81,6 @@ function Showcase({ p, i }: { p: Project; i: number }) {
             <div style={{ position: "absolute", inset: "-6% -3% -10%", background: `radial-gradient(closest-side, ${p.accent}22, transparent 75%)`, filter: "blur(16px)", pointerEvents: "none" }} />
             <div style={{ position: "relative" }}><Frame p={p} device={device} /></div>
           </div>
-          <DeviceToggle p={p} device={device} onPick={setDevice} />
         </div>
         <div style={{ minWidth: 0 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
