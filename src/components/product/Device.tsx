@@ -5,9 +5,34 @@ const fill: CSSProperties = { position: "absolute", inset: 0, display: "flex", f
 const bricolage = "'Bricolage Grotesque', system-ui, sans-serif";
 const fraunces = "'Fraunces', Georgia, serif";
 
-/* ---- LendLocal: a real screenshot of the LIVE deployed site (the site blocks iframes) ---- */
+/* ---- LendLocal: dark teal/cyan landing, matched to the live site ---- */
 function LendLocalMock() {
-  return <img src="/previews/lendlocal.png" alt="LendLocal — the live site" loading="lazy" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "top" }} />;
+  const teal = "#2dd4bf", bg = "#0c0e13", card = "#15181e", text = "#f1f2f4", mute = "#8b929c", line = "rgba(255,255,255,0.07)";
+  return (
+    <div style={{ ...fill, background: bg, fontFamily: "'Hanken Grotesk',sans-serif", color: text }}>
+      <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "55%", background: `radial-gradient(60% 80% at 50% -10%, ${teal}1f, transparent)`, pointerEvents: "none" }} />
+      <div style={{ position: "relative", display: "flex", alignItems: "center", gap: 8, padding: "4% 5%", borderBottom: `1px solid ${line}` }}>
+        <div style={{ width: 20, height: 20, borderRadius: 6, background: teal, color: "#06231f", display: "grid", placeItems: "center", fontFamily: bricolage, fontWeight: 800, fontSize: 9 }}>LL</div>
+        <div style={{ fontFamily: bricolage, fontWeight: 700, fontSize: 12 }}>LendLocal</div>
+        <div style={{ marginLeft: "auto", fontSize: 8.5, fontWeight: 700, color: "#06231f", background: teal, borderRadius: 8, padding: "5px 10px" }}>Sign up</div>
+      </div>
+      <div style={{ position: "relative", flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", padding: "0 9%" }}>
+        <div style={{ fontFamily: bricolage, fontWeight: 800, fontSize: 19, lineHeight: 1.1, letterSpacing: "-0.02em" }}>
+          Share Tools &amp; Skills<br /><span style={{ background: `linear-gradient(90deg,${teal},#5eead4)`, WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" }}>With Your Neighbors</span>
+        </div>
+        <div style={{ fontSize: 9, color: mute, marginTop: 9, lineHeight: 1.5 }}>Borrow a drill, lend a ladder, teach a skill.</div>
+        <div style={{ marginTop: 13, fontSize: 9, fontWeight: 700, color: "#06231f", background: teal, borderRadius: 99, padding: "8px 15px", boxShadow: `0 8px 22px ${teal}44` }}>Browse Items Now →</div>
+        <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "6px 12px", marginTop: 14, fontSize: 8, color: mute }}>
+          {["Verified", "Hyperlocal", "Sustainable"].map((b) => <span key={b}><span style={{ color: teal }}>✓ </span>{b}</span>)}
+        </div>
+      </div>
+      <div style={{ position: "relative", display: "flex", justifyContent: "space-around", padding: "4% 5%", borderTop: `1px solid ${line}`, background: card }}>
+        {[["$0", "to start"], ["15 min", "setup"], ["$3K+", "saved/yr"]].map(([v, k]) => (
+          <div key={k} style={{ textAlign: "center" }}><div style={{ fontFamily: bricolage, fontWeight: 800, fontSize: 12, color: teal }}>{v}</div><div style={{ fontSize: 7, color: mute }}>{k}</div></div>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 /* ---- Near: dark "dusk" chat, rose→peach gradient (React PWA) ---- */

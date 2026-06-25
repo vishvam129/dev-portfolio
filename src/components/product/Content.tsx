@@ -2,7 +2,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { motion } from "framer-motion";
 import { C, F } from "./theme";
 import { Browser, Phone, Mock } from "./Device";
-import { FS_PROFILE, FS_PROJECTS, FS_EXPERIENCE, FS_EDUCATION, FS_STACK, type Project } from "@/data/fullstack";
+import { FS_PROFILE, FS_PROJECTS, FS_EXPERIENCE, FS_EDUCATION, FS_STACK, type Project, type Device } from "@/data/fullstack";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 const flagship = FS_PROJECTS.find((p) => p.id === "lendlocal")!;
@@ -11,10 +11,25 @@ function Reveal({ children, delay = 0, y = 26 }: { children: ReactNode; delay?: 
   return <motion.div initial={{ opacity: 0, y }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-80px" }} transition={{ duration: 0.7, delay, ease }}>{children}</motion.div>;
 }
 
-function Frame({ p }: { p: Project }) {
-  const phone = p.devices[0] === "mobile";
+function Frame({ p, device }: { p: Project; device: Device }) {
   const inner = <Mock id={p.id} />;
-  return phone ? <Phone>{inner}</Phone> : <Browser url={p.liveUrl ? p.liveUrl.replace("https://", "") : `${p.id}.app`}>{inner}</Browser>;
+  return device === "mobile" ? <Phone>{inner}</Phone> : <Browser url={p.liveUrl ? p.liveUrl.replace("https://", "") : `${p.id}.app`}>{inner}</Browser>;
+}
+
+function DeviceToggle({ p, device, onPick }: { p: Project; device: Device; onPick: (d: Device) => void }) {
+  if (p.devices.length < 2) return null;
+  return (
+    <div style={{ display: "flex", justifyContent: "center", marginTop: 18 }}>
+      <div style={{ display: "flex", gap: 2, padding: 3, borderRadius: 99, border: `1px solid ${C.line2}`, background: C.surface }}>
+        {(["desktop", "mobile"] as Device[]).filter((d) => p.devices.includes(d)).map((d) => (
+          <button key={d} onClick={() => onPick(d)}
+            style={{ fontFamily: F.mono, fontSize: 11, cursor: "pointer", border: "none", borderRadius: 99, padding: "5px 14px", background: device === d ? C.fg : "transparent", color: device === d ? C.bg : C.sub }}>
+            {d === "desktop" ? "🖥 web" : "📱 mobile"}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 /* ---------- nav ---------- */
@@ -61,7 +76,7 @@ function Hero() {
       <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: 0.9, ease, delay: 0.2 }}
         style={{ position: "relative", maxWidth: 880, margin: "clamp(40px,6vw,72px) auto 0" }}>
         <div style={{ position: "absolute", inset: "-8% -4% -12%", background: `radial-gradient(closest-side, ${flagship.accent}26, transparent 75%)`, filter: "blur(20px)", pointerEvents: "none" }} />
-        <div style={{ position: "relative" }}><Frame p={flagship} /></div>
+        <div style={{ position: "relative" }}><Frame p={flagship} device="desktop" /></div>
         <div style={{ display: "flex", justifyContent: "center", gap: 18, marginTop: 22, fontFamily: F.mono, fontSize: 12.5 }}>
           <span style={{ color: C.fg }}><span style={{ color: C.ok }}>● </span>{flagship.name} — {flagship.tag}</span>
           {flagship.liveUrl && <a href={flagship.liveUrl} target="_blank" rel="noopener noreferrer" style={{ color: flagship.accent, textDecoration: "none" }}>open live ↗</a>}
@@ -72,23 +87,19 @@ function Hero() {
 }
 
 /* ---------- shipped products ---------- */
-function Work() {
+function Showcase({ p, i }: { p: Project; i: number }) {
+  const [device, setDevice] = useState<Device>(p.devices[0]);
   return (
-    <section id="work" style={{ maxWidth: 1140, margin: "0 auto", padding: "clamp(70px,10vh,130px) clamp(20px,5vw,48px) clamp(30px,5vh,60px)" }}>
-      <Reveal>
-        <div style={{ fontFamily: F.mono, fontSize: 12, letterSpacing: "0.2em", textTransform: "uppercase", color: C.accent }}>// shipped products</div>
-        <h2 style={{ fontFamily: F.display, fontWeight: 700, fontSize: "clamp(2rem,4.6vw,3.3rem)", letterSpacing: "-0.03em", color: C.fg, margin: "14px 0 0" }}>Three, end to end.</h2>
-      </Reveal>
-      {FS_PROJECTS.map((p, i) => (
-        <Reveal key={p.id} delay={0.04}>
-          <div className={`pk-row${i % 2 ? " rev" : ""}`} style={{ marginTop: i === 0 ? 56 : "clamp(64px,10vh,120px)" }}>
-            <div style={{ minWidth: 0 }}>
-              <div style={{ position: "relative" }}>
-                <div style={{ position: "absolute", inset: "-6% -3% -10%", background: `radial-gradient(closest-side, ${p.accent}22, transparent 75%)`, filter: "blur(16px)", pointerEvents: "none" }} />
-                <div style={{ position: "relative" }}><Frame p={p} /></div>
-              </div>
-            </div>
-            <div style={{ minWidth: 0 }}>
+    <Reveal delay={0.04}>
+      <div className={`pk-row${i % 2 ? " rev" : ""}`} style={{ marginTop: i === 0 ? 56 : "clamp(64px,10vh,120px)" }}>
+        <div style={{ minWidth: 0 }}>
+          <div style={{ position: "relative", maxWidth: device === "mobile" ? 240 : "none", margin: device === "mobile" ? "0 auto" : undefined }}>
+            <div style={{ position: "absolute", inset: "-6% -3% -10%", background: `radial-gradient(closest-side, ${p.accent}22, transparent 75%)`, filter: "blur(16px)", pointerEvents: "none" }} />
+            <div style={{ position: "relative" }}><Frame p={p} device={device} /></div>
+          </div>
+          <DeviceToggle p={p} device={device} onPick={setDevice} />
+        </div>
+        <div style={{ minWidth: 0 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
                 <span style={{ fontFamily: F.mono, fontSize: 11, color: p.status === "live" ? C.ok : p.status === "building" ? "#ffb454" : C.sub }}>● {p.status}</span>
                 <span style={{ fontFamily: F.mono, fontSize: 11, color: C.faint }}>{p.year}</span>
@@ -106,7 +117,17 @@ function Work() {
             </div>
           </div>
         </Reveal>
-      ))}
+  );
+}
+
+function Work() {
+  return (
+    <section id="work" style={{ maxWidth: 1140, margin: "0 auto", padding: "clamp(70px,10vh,130px) clamp(20px,5vw,48px) clamp(30px,5vh,60px)" }}>
+      <Reveal>
+        <div style={{ fontFamily: F.mono, fontSize: 12, letterSpacing: "0.2em", textTransform: "uppercase", color: C.accent }}>// shipped products</div>
+        <h2 style={{ fontFamily: F.display, fontWeight: 700, fontSize: "clamp(2rem,4.6vw,3.3rem)", letterSpacing: "-0.03em", color: C.fg, margin: "14px 0 0" }}>Three, end to end.</h2>
+      </Reveal>
+      {FS_PROJECTS.map((p, i) => <Showcase key={p.id} p={p} i={i} />)}
     </section>
   );
 }
