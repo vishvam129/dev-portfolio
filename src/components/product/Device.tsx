@@ -5,40 +5,34 @@ const fill: CSSProperties = { position: "absolute", inset: 0, display: "flex", f
 const bricolage = "'Bricolage Grotesque', system-ui, sans-serif";
 const fraunces = "'Fraunces', Georgia, serif";
 
-/* ---- LendLocal: light teal/amber marketplace (Next.js + Tailwind) ---- */
+/* ---- LendLocal: the LIVE deployed landing — dark, teal/cyan (lendlocal-eight.vercel.app) ---- */
 function LendLocalMock() {
-  const teal = "#0d9488", stone = "#fafaf9", ink = "#1c1917", mute = "#78716c", line = "#e7e5e4";
-  const items = [
-    { t: "Cordless drill", who: "Riya · Satellite", price: "$9/day", free: false, g: "linear-gradient(135deg,#5eead4,#0d9488)" },
-    { t: "Camping tent", who: "Arjun · Bodakdev", price: "Free", free: true, g: "linear-gradient(135deg,#fde68a,#f59e0b)" },
-  ];
+  const teal = "#2dd4bf", bg = "#0c0e13", card = "#15181e", text = "#f1f2f4", mute = "#8b929c", line = "rgba(255,255,255,0.07)";
   return (
-    <div style={{ ...fill, background: stone, fontFamily: "'Hanken Grotesk',sans-serif", color: ink }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "3.5% 5%", background: "#fff", borderBottom: `1px solid ${line}` }}>
-        <div style={{ width: 22, height: 22, borderRadius: 6, background: teal, color: "#fff", display: "grid", placeItems: "center", fontFamily: bricolage, fontWeight: 800, fontSize: 10 }}>LL</div>
-        <div style={{ fontFamily: bricolage, fontWeight: 700, fontSize: 13 }}>LendLocal</div>
-        <div style={{ marginLeft: "auto", fontSize: 9, fontWeight: 700, color: "#fff", background: teal, borderRadius: 8, padding: "5px 10px" }}>List item</div>
+    <div style={{ ...fill, background: bg, fontFamily: "'Hanken Grotesk',sans-serif", color: text }}>
+      <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "55%", background: `radial-gradient(60% 80% at 50% -10%, ${teal}1f, transparent)`, pointerEvents: "none" }} />
+      {/* header */}
+      <div style={{ position: "relative", display: "flex", alignItems: "center", gap: 8, padding: "3% 5%", borderBottom: `1px solid ${line}` }}>
+        <div style={{ width: 22, height: 22, borderRadius: 7, background: teal, color: "#06231f", display: "grid", placeItems: "center", fontFamily: bricolage, fontWeight: 800, fontSize: 10 }}>LL</div>
+        <div style={{ fontFamily: bricolage, fontWeight: 700, fontSize: 12.5 }}>LendLocal</div>
+        <div className="ll-nav" style={{ marginLeft: 14, display: "flex", gap: 12, fontSize: 9, color: mute }}>{["Browse", "Skills", "Community", "Pricing"].map((n) => <span key={n}>{n}</span>)}</div>
+        <div style={{ marginLeft: "auto", fontSize: 9, fontWeight: 700, color: "#06231f", background: teal, borderRadius: 8, padding: "5px 11px" }}>Sign up</div>
       </div>
-      <div style={{ padding: "4% 5% 0" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 6, background: "#fff", border: `1px solid ${line}`, borderRadius: 9, padding: "7px 10px", fontSize: 9.5, color: mute }}><span>🔍</span>Search tools, skills…</div>
-        <div style={{ display: "flex", gap: 6, marginTop: 9 }}>
-          {[["🔨 Tools", true], ["⛺ Outdoor", false], ["🎸 Skills", false]].map(([t, on], i) => (
-            <div key={i} style={{ fontSize: 8.5, fontWeight: 600, borderRadius: 8, padding: "4px 9px", color: on ? "#fff" : mute, background: on ? teal : "transparent", border: `1px solid ${on ? teal : line}` }}>{t as string}</div>
-          ))}
+      {/* hero */}
+      <div style={{ position: "relative", flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", padding: "0 8%" }}>
+        <div style={{ fontFamily: bricolage, fontWeight: 800, fontSize: 22, lineHeight: 1.08, letterSpacing: "-0.02em" }}>
+          Share Tools &amp; Skills<br /><span style={{ background: `linear-gradient(90deg,${teal},#5eead4)`, WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" }}>With Your Neighbors</span>
+        </div>
+        <div style={{ fontSize: 9.5, color: mute, marginTop: 10, maxWidth: "78%", lineHeight: 1.5 }}>Borrow a drill, lend a ladder, teach a skill — LendLocal connects you with neighbors to share resources and save money.</div>
+        <div style={{ marginTop: 14, fontSize: 9.5, fontWeight: 700, color: "#06231f", background: teal, borderRadius: 99, padding: "8px 16px", boxShadow: `0 8px 22px ${teal}44` }}>Browse Items Now →</div>
+        <div style={{ display: "flex", gap: 14, marginTop: 16, fontSize: 8.5, color: mute }}>
+          {["Verified members", "Hyperlocal", "Sustainable"].map((b) => <span key={b}><span style={{ color: teal }}>✓ </span>{b}</span>)}
         </div>
       </div>
-      <div style={{ flex: 1, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 9, padding: "4% 5% 5%" }}>
-        {items.map((it) => (
-          <div key={it.t} style={{ background: "#fff", border: `1px solid ${line}`, borderRadius: 11, overflow: "hidden", boxShadow: "0 4px 12px rgba(28,25,23,0.05)" }}>
-            <div style={{ position: "relative", aspectRatio: "4/3", background: it.g }}>
-              <div style={{ position: "absolute", top: 5, left: 5, fontSize: 7.5, fontWeight: 600, background: "rgba(255,255,255,0.85)", borderRadius: 99, padding: "2px 6px" }}>🔨 Tools</div>
-              <div style={{ position: "absolute", bottom: 5, right: 5, fontSize: 8, fontWeight: 700, color: it.free ? "#fff" : ink, background: it.free ? "#10b981" : "rgba(255,255,255,0.92)", borderRadius: 99, padding: "3px 8px" }}>{it.price}</div>
-            </div>
-            <div style={{ padding: "7px 8px 9px" }}>
-              <div style={{ fontSize: 10.5, fontWeight: 700 }}>{it.t}</div>
-              <div style={{ fontSize: 8, color: mute, marginTop: 2 }}>📍 {it.who}</div>
-            </div>
-          </div>
+      {/* stat strip */}
+      <div style={{ position: "relative", display: "flex", justifyContent: "space-around", padding: "3.5% 5%", borderTop: `1px solid ${line}`, background: card }}>
+        {[["$0", "to start"], ["15 min", "avg setup"], ["$3K+", "saved / yr"]].map(([v, k]) => (
+          <div key={k} style={{ textAlign: "center" }}><div style={{ fontFamily: bricolage, fontWeight: 800, fontSize: 13, color: teal }}>{v}</div><div style={{ fontSize: 7.5, color: mute }}>{k}</div></div>
         ))}
       </div>
     </div>

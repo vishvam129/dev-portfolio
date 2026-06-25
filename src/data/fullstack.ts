@@ -34,7 +34,7 @@ export type Project = {
 export const FS_PROJECTS: Project[] = [
   {
     id: "lendlocal", name: "LendLocal", tag: "Hyperlocal sharing marketplace", year: "2025",
-    status: "live", devices: ["desktop", "mobile"], preview: "map", accent: "#0d9488",
+    status: "live", devices: ["desktop", "mobile"], preview: "map", accent: "#2dd4bf",
     liveUrl: "https://lendlocal-eight.vercel.app",
     blurb: "A full-stack marketplace where neighbours lend items and skills — built end-to-end: OAuth sign-in, profiles, listings, map discovery, bookings, reviews, and Stripe payments. Shipped to production on Vercel with Neon Postgres and Blob storage.",
     highlights: ["Stripe payments + escrow-style holds", "Leaflet map-based discovery", "Prisma schema: users · listings · bookings · reviews", "1100+ lines of booking/payment tests"],
