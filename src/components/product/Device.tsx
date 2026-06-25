@@ -5,38 +5,9 @@ const fill: CSSProperties = { position: "absolute", inset: 0, display: "flex", f
 const bricolage = "'Bricolage Grotesque', system-ui, sans-serif";
 const fraunces = "'Fraunces', Georgia, serif";
 
-/* ---- LendLocal: the LIVE deployed landing — dark, teal/cyan (lendlocal-eight.vercel.app) ---- */
+/* ---- LendLocal: a real screenshot of the LIVE deployed site (the site blocks iframes) ---- */
 function LendLocalMock() {
-  const teal = "#2dd4bf", bg = "#0c0e13", card = "#15181e", text = "#f1f2f4", mute = "#8b929c", line = "rgba(255,255,255,0.07)";
-  return (
-    <div style={{ ...fill, background: bg, fontFamily: "'Hanken Grotesk',sans-serif", color: text }}>
-      <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "55%", background: `radial-gradient(60% 80% at 50% -10%, ${teal}1f, transparent)`, pointerEvents: "none" }} />
-      {/* header */}
-      <div style={{ position: "relative", display: "flex", alignItems: "center", gap: 8, padding: "3% 5%", borderBottom: `1px solid ${line}` }}>
-        <div style={{ width: 22, height: 22, borderRadius: 7, background: teal, color: "#06231f", display: "grid", placeItems: "center", fontFamily: bricolage, fontWeight: 800, fontSize: 10 }}>LL</div>
-        <div style={{ fontFamily: bricolage, fontWeight: 700, fontSize: 12.5 }}>LendLocal</div>
-        <div className="ll-nav" style={{ marginLeft: 14, display: "flex", gap: 12, fontSize: 9, color: mute }}>{["Browse", "Skills", "Community", "Pricing"].map((n) => <span key={n}>{n}</span>)}</div>
-        <div style={{ marginLeft: "auto", fontSize: 9, fontWeight: 700, color: "#06231f", background: teal, borderRadius: 8, padding: "5px 11px" }}>Sign up</div>
-      </div>
-      {/* hero */}
-      <div style={{ position: "relative", flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", padding: "0 8%" }}>
-        <div style={{ fontFamily: bricolage, fontWeight: 800, fontSize: 22, lineHeight: 1.08, letterSpacing: "-0.02em" }}>
-          Share Tools &amp; Skills<br /><span style={{ background: `linear-gradient(90deg,${teal},#5eead4)`, WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" }}>With Your Neighbors</span>
-        </div>
-        <div style={{ fontSize: 9.5, color: mute, marginTop: 10, maxWidth: "78%", lineHeight: 1.5 }}>Borrow a drill, lend a ladder, teach a skill — LendLocal connects you with neighbors to share resources and save money.</div>
-        <div style={{ marginTop: 14, fontSize: 9.5, fontWeight: 700, color: "#06231f", background: teal, borderRadius: 99, padding: "8px 16px", boxShadow: `0 8px 22px ${teal}44` }}>Browse Items Now →</div>
-        <div style={{ display: "flex", gap: 14, marginTop: 16, fontSize: 8.5, color: mute }}>
-          {["Verified members", "Hyperlocal", "Sustainable"].map((b) => <span key={b}><span style={{ color: teal }}>✓ </span>{b}</span>)}
-        </div>
-      </div>
-      {/* stat strip */}
-      <div style={{ position: "relative", display: "flex", justifyContent: "space-around", padding: "3.5% 5%", borderTop: `1px solid ${line}`, background: card }}>
-        {[["$0", "to start"], ["15 min", "avg setup"], ["$3K+", "saved / yr"]].map(([v, k]) => (
-          <div key={k} style={{ textAlign: "center" }}><div style={{ fontFamily: bricolage, fontWeight: 800, fontSize: 13, color: teal }}>{v}</div><div style={{ fontSize: 7.5, color: mute }}>{k}</div></div>
-        ))}
-      </div>
-    </div>
-  );
+  return <img src="/previews/lendlocal.png" alt="LendLocal — the live site" loading="lazy" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "top" }} />;
 }
 
 /* ---- Near: dark "dusk" chat, rose→peach gradient (React PWA) ---- */
