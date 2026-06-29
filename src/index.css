@@ -247,6 +247,10 @@ body::after {
 .ticker-track { display: inline-flex; white-space: nowrap; animation: ticker 30s linear infinite; }
 @keyframes float-y { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 
+/* live product demos (full-stack page) */
+@keyframes ll-pop { from { opacity: 0; transform: translateY(4px) scale(0.98); } to { opacity: 1; transform: none; } }
+@keyframes near-dot { 0%, 100% { opacity: 0.35; transform: translateY(0); } 50% { opacity: 1; transform: translateY(-2px); } }
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
   .cursor-dot, .cursor-ring { display: none !important; }

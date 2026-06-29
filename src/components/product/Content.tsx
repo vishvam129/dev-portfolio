@@ -11,9 +11,33 @@ function Reveal({ children, delay = 0, y = 26 }: { children: ReactNode; delay?: 
   return <motion.div initial={{ opacity: 0, y }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-80px" }} transition={{ duration: 0.7, delay, ease }}>{children}</motion.div>;
 }
 
+/* hint shown on each live demo so visitors know it actually works */
+const HINTS: Record<string, string> = { lendlocal: "filter the catalog", near: "send a message", vrixo: "drag to compare" };
+
+function LiveBadge({ accent, hint }: { accent: string; hint: string }) {
+  return (
+    <div style={{ position: "absolute", top: -11, right: 16, zIndex: 6, display: "inline-flex", alignItems: "center", gap: 7, fontFamily: F.mono, fontSize: 11, color: C.fg, background: "rgba(10,10,15,0.82)", border: `1px solid ${accent}`, borderRadius: 99, padding: "4px 11px 4px 9px", backdropFilter: "blur(8px)", boxShadow: `0 6px 20px ${accent}38` }}>
+      <span style={{ width: 7, height: 7, borderRadius: 99, background: accent, boxShadow: `0 0 0 0 ${accent}`, animation: "pulse-ring 2.4s ease-out infinite" }} />
+      <span style={{ color: C.sub }}>live</span> · {hint}
+    </div>
+  );
+}
+
+/* cursor-following spotlight — purely cosmetic, never blocks the demo under it */
+function Spotlight({ accent, children }: { accent: string; children: ReactNode }) {
+  const [p, setP] = useState({ x: 50, y: 40, on: false });
+  return (
+    <div onMouseMove={(e) => { const r = e.currentTarget.getBoundingClientRect(); setP({ x: ((e.clientX - r.left) / r.width) * 100, y: ((e.clientY - r.top) / r.height) * 100, on: true }); }} onMouseLeave={() => setP((s) => ({ ...s, on: false }))} style={{ position: "relative" }}>
+      {children}
+      <div aria-hidden style={{ position: "absolute", inset: 0, borderRadius: 16, pointerEvents: "none", opacity: p.on ? 1 : 0, transition: "opacity .35s", background: `radial-gradient(240px circle at ${p.x}% ${p.y}%, ${accent}26, transparent 62%)`, mixBlendMode: "screen" }} />
+    </div>
+  );
+}
+
 function Frame({ p, device }: { p: Project; device: Device }) {
   const inner = <Mock id={p.id} />;
-  return device === "mobile" ? <Phone>{inner}</Phone> : <Browser url={p.liveUrl ? p.liveUrl.replace("https://", "") : `${p.id}.app`}>{inner}</Browser>;
+  const frame = device === "mobile" ? <Phone>{inner}</Phone> : <Browser url={p.liveUrl ? p.liveUrl.replace("https://", "") : `${p.id}.app`}>{inner}</Browser>;
+  return <div style={{ position: "relative" }}><LiveBadge accent={p.accent} hint={HINTS[p.id] ?? "try it"} />{frame}</div>;
 }
 
 /* ---------- nav ---------- */
@@ -60,9 +84,10 @@ function Hero() {
       <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: 0.9, ease, delay: 0.2 }}
         style={{ position: "relative", maxWidth: 880, margin: "clamp(40px,6vw,72px) auto 0" }}>
         <div style={{ position: "absolute", inset: "-8% -4% -12%", background: `radial-gradient(closest-side, ${flagship.accent}26, transparent 75%)`, filter: "blur(20px)", pointerEvents: "none" }} />
-        <div style={{ position: "relative" }}><Frame p={flagship} device="desktop" /></div>
-        <div style={{ display: "flex", justifyContent: "center", gap: 18, marginTop: 22, fontFamily: F.mono, fontSize: 12.5 }}>
+        <Spotlight accent={flagship.accent}><Frame p={flagship} device="desktop" /></Spotlight>
+        <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "8px 18px", marginTop: 26, fontFamily: F.mono, fontSize: 12.5 }}>
           <span style={{ color: C.fg }}><span style={{ color: C.ok }}>● </span>{flagship.name} — {flagship.tag}</span>
+          <span style={{ color: C.faint }}>not a screenshot — tap the filters, it&apos;s running</span>
           {flagship.liveUrl && <a href={flagship.liveUrl} target="_blank" rel="noopener noreferrer" style={{ color: flagship.accent, textDecoration: "none" }}>open live ↗</a>}
         </div>
       </motion.div>
@@ -109,6 +134,9 @@ function Work() {
       <Reveal>
         <div style={{ fontFamily: F.mono, fontSize: 12, letterSpacing: "0.2em", textTransform: "uppercase", color: C.accent }}>// shipped products</div>
         <h2 style={{ fontFamily: F.display, fontWeight: 700, fontSize: "clamp(2rem,4.6vw,3.3rem)", letterSpacing: "-0.03em", color: C.fg, margin: "14px 0 0" }}>Three, end to end.</h2>
+        <p style={{ fontFamily: F.body, fontSize: "clamp(14px,1.5vw,16px)", lineHeight: 1.6, color: C.sub, maxWidth: 540, margin: "14px 0 0" }}>
+          Each frame below is the real interface, rebuilt and running in this page — filter the marketplace, send a message, drag a photo. Go ahead and use them.
+        </p>
       </Reveal>
       {FS_PROJECTS.map((p, i) => <Showcase key={p.id} p={p} i={i} />)}
     </section>
@@ -160,16 +188,43 @@ function About() {
   );
 }
 
+/* which shipped products each tool appears in — built from the real project data */
+const TECH_USE: Record<string, string[]> = {};
+FS_PROJECTS.forEach((p) => [...p.frontend, ...p.backend].forEach((t) => {
+  const list = (TECH_USE[t] ||= []);
+  if (!list.includes(p.name)) list.push(p.name);
+}));
+
 function Stack() {
+  const [hot, setHot] = useState<string | null>(null);
+  const used = hot ? TECH_USE[hot] : null;
   return (
     <Wrap id="stack" eyebrow="// toolkit" title="The whole stack.">
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(230px,1fr))", gap: 16, marginTop: 42 }}>
+      <Reveal delay={0.04}>
+        <div style={{ marginTop: 16, minHeight: 22, fontFamily: F.mono, fontSize: 13, color: C.sub }}>
+          {hot ? (
+            used && used.length
+              ? <span><span style={{ color: C.fg }}>{hot}</span> <span style={{ color: C.faint }}>→ shipped in</span> <span style={{ color: C.accent }}>{used.join(" · ")}</span></span>
+              : <span><span style={{ color: C.fg }}>{hot}</span> <span style={{ color: C.faint }}>— part of my standard toolkit</span></span>
+          ) : <span style={{ color: C.faint }}>Hover a tool to trace where it actually shipped.</span>}
+        </div>
+      </Reveal>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(230px,1fr))", gap: 16, marginTop: 22 }}>
         {FS_STACK.map((g, i) => (
           <Reveal key={g.label} delay={i * 0.05}>
             <div style={{ background: C.card, border: `1px solid ${C.line}`, borderRadius: 14, padding: "20px 20px 22px", height: "100%" }}>
               <div style={{ fontFamily: F.display, fontWeight: 600, fontSize: 18, color: C.fg }}>{g.label}</div>
               <div style={{ width: 24, height: 2, background: C.accent, margin: "9px 0 15px" }} />
-              <div style={{ display: "flex", flexWrap: "wrap", gap: "7px 9px" }}>{g.items.map((it) => <span key={it} style={{ fontFamily: F.body, fontSize: 13.5, color: C.sub }}>{it}</span>)}</div>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "7px 9px" }}>
+                {g.items.map((it) => {
+                  const shipped = (TECH_USE[it]?.length ?? 0) > 0;
+                  const on = hot === it;
+                  return (
+                    <span key={it} onMouseEnter={() => setHot(it)} onMouseLeave={() => setHot((h) => (h === it ? null : h))}
+                      style={{ fontFamily: F.body, fontSize: 13.5, cursor: "default", borderRadius: 6, padding: "1px 6px", margin: "-1px -6px", transition: "all .15s", color: on ? (shipped ? C.bg : C.fg) : C.sub, background: on ? (shipped ? C.accent : C.surface) : "transparent", fontWeight: on ? 600 : 400, boxShadow: !on && shipped ? `inset 0 -2px 0 ${C.accent}55` : "none" }}>{it}</span>
+                  );
+                })}
+              </div>
             </div>
           </Reveal>
         ))}
