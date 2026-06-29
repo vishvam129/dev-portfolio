@@ -8,7 +8,7 @@ export const C = {
   amber: "#ffb454",
   fg: "#dcebf4",
   muted: "#93a6b4",
-  faint: "#566571",
+  faint: "#6d8090",
   line: "rgba(120,160,180,0.16)",
   line2: "rgba(120,160,180,0.28)",
 };

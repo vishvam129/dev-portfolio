@@ -1,4 +1,4 @@
-import { useRef, useState, type CSSProperties, type ReactNode } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { C, F } from "./theme";
 
 const fill: CSSProperties = { position: "absolute", inset: 0, display: "flex", flexDirection: "column", overflow: "hidden" };
@@ -43,7 +43,7 @@ function LendLocalMock() {
         <div style={{ display: "flex", alignItems: "flex-end", gap: 8, flexShrink: 0 }}>
           <div>
             <div style={{ fontFamily: bricolage, fontWeight: 800, fontSize: 15, letterSpacing: "-0.02em", lineHeight: 1 }}>Browse Items</div>
-            <div style={{ fontSize: 7.5, color: mute, marginTop: 3 }}><b style={{ color: teal }}>{shown.length}</b> {shown.length === 1 ? "item" : "items"} available</div>
+            <div style={{ fontSize: 7.5, color: mute, marginTop: 3 }}><b style={{ color: teal }}>{shown.length}</b> {shown.length === 1 ? "item" : "items"} available{shown.length > 3 ? " · showing 3" : ""}</div>
           </div>
           <div style={{ marginLeft: "auto", display: "flex", gap: 6 }}>
             <span style={{ fontSize: 7.5, color: text, border: `1px solid ${line}`, borderRadius: 7, padding: "4px 8px" }}>🗺 Map</span>
@@ -99,21 +99,24 @@ function LendLocalMock() {
    pulse, and a reply comes back. Tabs swap chat / album / watch.
    ========================================================================= */
 const NEAR_REPLIES = ["miss you 🌙", "9pm works ♥", "sending a pic 📷", "can't wait 💞", "call me after?"];
-type Msg = { me: boolean; t: string };
+type Msg = { id: number; me: boolean; t: string };
 function NearMock() {
   const bg = "#16121d", panel = "#221b2c", text = "#f6ece8", mute = "#b3a6b3", grad = "linear-gradient(120deg,#ff7da6,#ffb27a)", line = "rgba(255,232,224,0.1)";
   const [tab, setTab] = useState(1);
-  const [msgs, setMsgs] = useState<Msg[]>([{ me: false, t: "miss you 🌙" }, { me: true, t: "2 days left ♥" }, { me: false, t: "watch-party tonight?" }]);
+  const [msgs, setMsgs] = useState<Msg[]>([{ id: 1, me: false, t: "miss you 🌙" }, { id: 2, me: true, t: "2 days left ♥" }, { id: 3, me: false, t: "watch-party tonight?" }]);
   const [val, setVal] = useState("");
   const [typing, setTyping] = useState(false);
   const nRef = useRef(0);
+  const idRef = useRef(3);
+  const timers = useRef<number[]>([]);
+  useEffect(() => () => timers.current.forEach(clearTimeout), []);
   const send = () => {
     const t = val.trim() || "yes! 9pm ♥";
     setVal("");
-    setMsgs((m) => [...m, { me: true, t }]);
+    setMsgs((m) => [...m, { id: ++idRef.current, me: true, t }]);
     setTyping(true);
     const reply = NEAR_REPLIES[nRef.current++ % NEAR_REPLIES.length];
-    window.setTimeout(() => { setTyping(false); setMsgs((m) => [...m, { me: false, t: reply }]); }, 900);
+    timers.current.push(window.setTimeout(() => { setTyping(false); setMsgs((m) => [...m, { id: ++idRef.current, me: false, t: reply }]); }, 900));
   };
   return (
     <div style={{ ...fill, background: bg, fontFamily: "'Hanken Grotesk',sans-serif", color: text }}>
@@ -128,8 +131,8 @@ function NearMock() {
 
       {tab === 1 && (
         <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 7, padding: "6%", justifyContent: "flex-end", overflow: "hidden" }}>
-          {msgs.slice(-5).map((m, i) => (
-            <div key={i} style={{ alignSelf: m.me ? "flex-end" : "flex-start", maxWidth: "78%", fontSize: 10, padding: "8px 11px", color: m.me ? "#3a1020" : text, background: m.me ? grad : panel, border: m.me ? "none" : `1px solid ${line}`, borderRadius: 14, borderBottomRightRadius: m.me ? 5 : 14, borderBottomLeftRadius: m.me ? 14 : 5, fontWeight: m.me ? 600 : 400, animation: "ll-pop .2s ease" }}>{m.t}</div>
+          {msgs.slice(-5).map((m) => (
+            <div key={m.id} style={{ alignSelf: m.me ? "flex-end" : "flex-start", maxWidth: "78%", fontSize: 10, padding: "8px 11px", color: m.me ? "#3a1020" : text, background: m.me ? grad : panel, border: m.me ? "none" : `1px solid ${line}`, borderRadius: 14, borderBottomRightRadius: m.me ? 5 : 14, borderBottomLeftRadius: m.me ? 14 : 5, fontWeight: m.me ? 600 : 400, animation: "ll-pop .2s ease" }}>{m.t}</div>
           ))}
           {typing && <div style={{ alignSelf: "flex-start", background: panel, border: `1px solid ${line}`, borderRadius: 14, borderBottomLeftRadius: 5, padding: "8px 12px", display: "flex", gap: 3 }}>{[0, 1, 2].map((d) => <span key={d} style={{ width: 4, height: 4, borderRadius: 99, background: mute, animation: `near-dot 1s ${d * 0.18}s infinite` }} />)}</div>}
         </div>
@@ -148,16 +151,18 @@ function NearMock() {
 
       {tab === 1 && (
         <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "4% 6% 3%", flexShrink: 0 }}>
-          <input value={val} onChange={(e) => setVal(e.target.value)} onKeyDown={(e) => e.key === "Enter" && send()} placeholder="Message…" style={{ flex: 1, height: 28, borderRadius: 99, background: panel, border: `1px solid ${line}`, padding: "0 12px", fontSize: 10, color: text, outline: "none", fontFamily: "inherit" }} />
-          <button onClick={send} style={{ width: 28, height: 28, borderRadius: 99, background: grad, display: "grid", placeItems: "center", fontSize: 11, border: "none", cursor: "pointer" }}>✉️</button>
+          <input value={val} onChange={(e) => setVal(e.target.value)} onKeyDown={(e) => e.key === "Enter" && send()} placeholder="Message…" aria-label="Type a message" style={{ flex: 1, height: 28, borderRadius: 99, background: panel, border: `1px solid ${line}`, padding: "0 12px", fontSize: 10, color: text, outline: "none", fontFamily: "inherit" }} />
+          <button onClick={send} aria-label="Send message" style={{ width: 28, height: 28, borderRadius: 99, background: grad, display: "grid", placeItems: "center", fontSize: 11, border: "none", cursor: "pointer" }}>✉️</button>
         </div>
       )}
       <div style={{ display: "flex", justifyContent: "space-around", padding: "8px 0 11px", borderTop: `1px solid ${line}`, fontSize: 14, flexShrink: 0 }}>
         {["🏠", "💬", "🍿", "🎮", "✨"].map((e, i) => {
           const TAB_OF: Record<number, number> = { 1: 1, 2: 3, 4: 2 }; // 💬→chat · 🍿→watch · ✨→album
+          const LABELS = ["Home", "Chat", "Watch together", "Games", "Shared album"];
           const target = TAB_OF[i];
+          const live = target !== undefined;
           const active = target === tab;
-          return <button key={i} onClick={() => target !== undefined && setTab(target)} style={{ background: "none", border: "none", cursor: target !== undefined ? "pointer" : "default", fontSize: 14, opacity: active ? 1 : 0.4, filter: active ? "drop-shadow(0 0 6px #ff7da6)" : "none", transition: "all .15s" }}>{e}</button>;
+          return <button key={i} onClick={() => live && setTab(target)} aria-label={LABELS[i]} aria-disabled={!live} title={live ? LABELS[i] : `${LABELS[i]} — coming soon`} style={{ background: "none", border: "none", cursor: live ? "pointer" : "default", fontSize: 14, opacity: active ? 1 : live ? 0.55 : 0.3, filter: active ? "drop-shadow(0 0 6px #ff7da6)" : "none", transition: "all .15s" }}>{e}</button>;
         })}
       </div>
     </div>
@@ -174,12 +179,15 @@ function VrixoMock() {
   const [busy, setBusy] = useState(false);
   const wrap = useRef<HTMLDivElement>(null);
   const drag = useRef(false);
+  const timers = useRef<number[]>([]);
+  useEffect(() => () => timers.current.forEach(clearTimeout), []);
   const move = (clientX: number) => {
     const el = wrap.current; if (!el) return;
     const r = el.getBoundingClientRect();
     setPos(Math.max(4, Math.min(96, ((clientX - r.left) / r.width) * 100)));
   };
-  const enhance = () => { setBusy(true); setPos(12); window.setTimeout(() => setBusy(false), 950); };
+  const nudge = (d: number) => setPos((p) => Math.max(4, Math.min(96, p + d)));
+  const enhance = () => { setBusy(true); setPos(12); timers.current.push(window.setTimeout(() => setBusy(false), 950)); };
   return (
     <div style={{ ...fill, background: bg, fontFamily: "'Hanken Grotesk',sans-serif", color: text }}>
       <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "4% 5%", borderBottom: `1px solid ${line}`, flexShrink: 0 }}>
@@ -192,7 +200,9 @@ function VrixoMock() {
         </div>
       </div>
       {/* before/after compare — draggable */}
-      <div ref={wrap} onPointerDown={(e) => { drag.current = true; (e.target as HTMLElement).setPointerCapture?.(e.pointerId); move(e.clientX); }} onPointerMove={(e) => drag.current && move(e.clientX)} onPointerUp={() => (drag.current = false)}
+      <div ref={wrap} role="slider" tabIndex={0} aria-label="Compare before and after — drag or use arrow keys" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(pos)}
+        onPointerDown={(e) => { drag.current = true; (e.target as HTMLElement).setPointerCapture?.(e.pointerId); move(e.clientX); }} onPointerMove={(e) => drag.current && move(e.clientX)} onPointerUp={() => (drag.current = false)} onPointerCancel={() => (drag.current = false)} onPointerLeave={() => (drag.current = false)}
+        onKeyDown={(e) => { if (e.key === "ArrowLeft") { e.preventDefault(); nudge(-6); } else if (e.key === "ArrowRight") { e.preventDefault(); nudge(6); } else if (e.key === "Home") { e.preventDefault(); setPos(4); } else if (e.key === "End") { e.preventDefault(); setPos(96); } }}
         style={{ position: "relative", flex: 1, margin: "4% 5%", borderRadius: 10, overflow: "hidden", border: `1px solid ${line}`, cursor: "ew-resize", touchAction: "none", userSelect: "none" }}>
         {/* after (vivid) — full base layer */}
         <div style={{ position: "absolute", inset: 0, background: "linear-gradient(135deg,#7db4ff,#2b3a55)", display: "grid", placeItems: "center", fontSize: 30 }}>🏔️</div>
@@ -220,13 +230,13 @@ export function Mock({ id }: { id: string }) {
 }
 
 /* ---- frames ---- */
-export function Browser({ url, children }: { url: string; children: ReactNode }) {
+export function Browser({ url, secure = true, children }: { url: string; secure?: boolean; children: ReactNode }) {
   return (
     <div style={{ borderRadius: 14, overflow: "hidden", background: "#0d0d14", border: `1px solid ${C.line2}`, boxShadow: "0 50px 100px -30px rgba(0,0,0,0.8)" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 8, height: 40, padding: "0 14px", background: "#15151e", borderBottom: `1px solid ${C.line}` }}>
         <span style={{ display: "flex", gap: 7 }}>{["#ff5f57", "#febc2e", "#28c840"].map((c) => <i key={c} style={{ width: 11, height: 11, borderRadius: 99, background: c, opacity: 0.9 }} />)}</span>
         <div style={{ flex: 1, maxWidth: 320, margin: "0 auto", height: 22, borderRadius: 99, background: "#0d0d14", border: `1px solid ${C.line}`, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, fontFamily: F.mono, fontSize: 11, color: C.sub }}>
-          <span style={{ color: C.faint }}>🔒</span>{url}
+          <span style={{ color: C.faint }}>{secure ? "🔒" : "◉"}</span>{url}
         </div>
         <span style={{ width: 44 }} />
       </div>

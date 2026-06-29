@@ -9,7 +9,7 @@ export const C = {
   line2: "rgba(255,255,255,0.15)",
   fg: "#f6f6fa",
   sub: "#9a9aac",
-  faint: "#5d5d70",
+  faint: "#76768c",
   accent: "#6d83ff",     // restrained UI accent
   ok: "#4ee0a0",
 };

@@ -104,6 +104,9 @@ export function Scene({
 }) {
   const N = SERVICES.length;
   const idle = !hovered && !selected;
+  // touch devices: the hero fills the viewport, so let one-finger gestures
+  // scroll the page instead of rotating the camera (autoRotate still showcases it)
+  const coarse = typeof window !== "undefined" && !!window.matchMedia?.("(pointer: coarse)").matches;
   const xs = SERVICES.map((_, i) => (i - (N - 1) / 2) * 2.0);
   const focusX = hovered ? (xs[SERVICES.findIndex((s) => s.id === hovered)] ?? 0) * 0.55 : 0;
   return (
@@ -170,6 +173,7 @@ export function Scene({
       <OrbitControls
         makeDefault
         target={[0, 1.0, 0]} enablePan={false} enableZoom={false} enableDamping dampingFactor={0.08}
+        enableRotate={!coarse}
         minPolarAngle={0.25} maxPolarAngle={Math.PI / 2 - 0.04}
         autoRotate={idle} autoRotateSpeed={0.45} />
 

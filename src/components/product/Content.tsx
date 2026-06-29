@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type MouseEvent as ReactMouseEvent, type ReactNode } from "react";
 import { motion } from "framer-motion";
 import { C, F } from "./theme";
 import { Browser, Phone, Mock } from "./Device";
@@ -23,20 +23,32 @@ function LiveBadge({ accent, hint }: { accent: string; hint: string }) {
   );
 }
 
-/* cursor-following spotlight — purely cosmetic, never blocks the demo under it */
+/* cursor-following spotlight — drives a CSS var on the glow layer directly, so
+   mousemove never triggers a React re-render (the demo underneath stays cheap). */
 function Spotlight({ accent, children }: { accent: string; children: ReactNode }) {
-  const [p, setP] = useState({ x: 50, y: 40, on: false });
+  const box = useRef<HTMLDivElement>(null);
+  const glow = useRef<HTMLDivElement>(null);
+  const onMove = (e: ReactMouseEvent<HTMLDivElement>) => {
+    const el = box.current, g = glow.current; if (!el || !g) return;
+    const r = el.getBoundingClientRect();
+    g.style.setProperty("--mx", `${((e.clientX - r.left) / r.width) * 100}%`);
+    g.style.setProperty("--my", `${((e.clientY - r.top) / r.height) * 100}%`);
+    g.style.opacity = "1";
+  };
   return (
-    <div onMouseMove={(e) => { const r = e.currentTarget.getBoundingClientRect(); setP({ x: ((e.clientX - r.left) / r.width) * 100, y: ((e.clientY - r.top) / r.height) * 100, on: true }); }} onMouseLeave={() => setP((s) => ({ ...s, on: false }))} style={{ position: "relative" }}>
+    <div ref={box} onMouseMove={onMove} onMouseLeave={() => { if (glow.current) glow.current.style.opacity = "0"; }} style={{ position: "relative" }}>
       {children}
-      <div aria-hidden style={{ position: "absolute", inset: 0, borderRadius: 16, pointerEvents: "none", opacity: p.on ? 1 : 0, transition: "opacity .35s", background: `radial-gradient(240px circle at ${p.x}% ${p.y}%, ${accent}26, transparent 62%)`, mixBlendMode: "screen" }} />
+      <div ref={glow} aria-hidden style={{ position: "absolute", inset: 0, borderRadius: 16, pointerEvents: "none", opacity: 0, transition: "opacity .35s", background: `radial-gradient(240px circle at var(--mx,50%) var(--my,40%), ${accent}26, transparent 62%)`, mixBlendMode: "screen" }} />
     </div>
   );
 }
 
 function Frame({ p, device }: { p: Project; device: Device }) {
   const inner = <Mock id={p.id} />;
-  const frame = device === "mobile" ? <Phone>{inner}</Phone> : <Browser url={p.liveUrl ? p.liveUrl.replace("https://", "") : `${p.id}.app`}>{inner}</Browser>;
+  const real = !!p.liveUrl;
+  const frame = device === "mobile"
+    ? <Phone>{inner}</Phone>
+    : <Browser url={real ? p.liveUrl!.replace("https://", "") : `${p.name.toLowerCase()} · preview`} secure={real}>{inner}</Browser>;
   return <div style={{ position: "relative" }}><LiveBadge accent={p.accent} hint={HINTS[p.id] ?? "try it"} />{frame}</div>;
 }
 
@@ -68,7 +80,7 @@ function Hero() {
       <div style={{ position: "relative", maxWidth: 1080, margin: "0 auto", textAlign: "center" }}>
         <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease }}
           style={{ display: "inline-flex", alignItems: "center", gap: 8, fontFamily: F.mono, fontSize: 12, letterSpacing: "0.14em", textTransform: "uppercase", color: C.sub, border: `1px solid ${C.line}`, borderRadius: 99, padding: "6px 14px" }}>
-          <span style={{ width: 6, height: 6, borderRadius: 99, background: C.ok, boxShadow: `0 0 8px ${C.ok}` }} /> Full-stack engineer · 3 products live
+          <span style={{ width: 6, height: 6, borderRadius: 99, background: C.ok, boxShadow: `0 0 8px ${C.ok}` }} /> Full-stack engineer · 3 products shipped, 1 live
         </motion.div>
         <motion.h1 initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease, delay: 0.06 }}
           style={{ fontFamily: F.display, fontWeight: 700, fontSize: "clamp(2.7rem,8vw,6rem)", lineHeight: 0.96, letterSpacing: "-0.04em", color: C.fg, margin: "26px 0 0" }}>
@@ -220,7 +232,7 @@ function Stack() {
                   const shipped = (TECH_USE[it]?.length ?? 0) > 0;
                   const on = hot === it;
                   return (
-                    <span key={it} onMouseEnter={() => setHot(it)} onMouseLeave={() => setHot((h) => (h === it ? null : h))}
+                    <span key={it} onMouseEnter={() => setHot(it)} onMouseLeave={() => setHot((h) => (h === it ? null : h))} onClick={() => setHot((h) => (h === it ? null : it))}
                       style={{ fontFamily: F.body, fontSize: 13.5, cursor: "default", borderRadius: 6, padding: "1px 6px", margin: "-1px -6px", transition: "all .15s", color: on ? (shipped ? C.bg : C.fg) : C.sub, background: on ? (shipped ? C.accent : C.surface) : "transparent", fontWeight: on ? 600 : 400, boxShadow: !on && shipped ? `inset 0 -2px 0 ${C.accent}55` : "none" }}>{it}</span>
                   );
                 })}

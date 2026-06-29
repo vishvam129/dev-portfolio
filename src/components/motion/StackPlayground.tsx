@@ -119,7 +119,7 @@ export function StackPlayground() {
   }, []);
 
   return (
-    <div ref={box} className="relative overflow-hidden rounded-[4px] border" style={{ height: 400, borderColor: "var(--line-2)", background: "var(--surface)", touchAction: "none" }}>
+    <div ref={box} className="relative overflow-hidden rounded-[4px] border" style={{ height: 400, borderColor: "var(--line-2)", background: "var(--surface)", touchAction: "pan-y" }}>
       <span className="pointer-events-none absolute left-4 top-3 kicker" style={{ color: "var(--faint)", fontSize: "0.58rem" }}>grab &amp; throw</span>
       <button onClick={() => resetRef.current()} className="absolute right-3 top-2.5 z-[40] rounded-full border px-2.5 py-1 font-mono text-[11px] transition-colors hover:opacity-80"
         style={{ borderColor: "var(--line-2)", background: "var(--bg-2)", color: "var(--accent)" }}>↺ reset</button>

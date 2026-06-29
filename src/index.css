@@ -18,7 +18,7 @@
   /* defaults = motion */
   --bg: #070709; --bg-2: #0b0c0f; --surface: #101216; --surface-2: #16191f;
   --line: #1d2026; --line-2: #2c3038;
-  --fg: #f3f4ef; --muted: #9aa0ad; --faint: #585d68;
+  --fg: #f3f4ef; --muted: #9aa0ad; --faint: #6e7480;
   --accent: #ceff2e; --accent-press: #b9ec00; --accent-ink: #0a0b07;
   --accent-2: #4ee6ff;
   --ok: #ceff2e; --warn: #ffcf5e; --err: #ff6a5a;
@@ -107,7 +107,7 @@ html.lenis, html.lenis body { height: auto; }
 [data-variant="motion"] {
   --bg: #070709; --bg-2: #0b0c0f; --surface: #101216; --surface-2: #16191f;
   --line: #1d2026; --line-2: #2c3038;
-  --fg: #f3f4ef; --muted: #9aa0ad; --faint: #585d68;
+  --fg: #f3f4ef; --muted: #9aa0ad; --faint: #6e7480;
   --accent: #ceff2e; --accent-press: #b9ec00; --accent-ink: #0a0b07;
   --accent-2: #4ee6ff; /* secondary electric-cyan for data/telemetry */
   --f-display: "Bricolage Grotesque", sans-serif; --disp-weight: 800; --disp-track: -0.03em; --disp-lh: 0.9;
@@ -250,6 +250,11 @@ body::after {
 /* live product demos (full-stack page) */
 @keyframes ll-pop { from { opacity: 0; transform: translateY(4px) scale(0.98); } to { opacity: 1; transform: none; } }
 @keyframes near-dot { 0%, 100% { opacity: 0.35; transform: translateY(0); } 50% { opacity: 1; transform: translateY(-2px); } }
+
+/* keyboard focus — visible on every dark page; overrides any outline-none.
+   light ring is page-agnostic (all three pages are dark). pointer clicks
+   don't trigger :focus-visible, so it never shows on mouse use. */
+:focus-visible { outline: 2px solid #e8f0ff !important; outline-offset: 2px; border-radius: 3px; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }

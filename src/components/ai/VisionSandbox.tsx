@@ -12,7 +12,15 @@ export function VisionSandbox() {
   const [split, setSplit] = useState(50);
   const idRef = useRef(0);
 
-  useEffect(() => () => { workerRef.current?.terminate(); }, []);
+  // track the live object URLs so we can revoke them (replace + unmount) — no blob leak
+  const urls = useRef<{ original: string | null; cutout: string | null }>({ original: null, cutout: null });
+  useEffect(() => { urls.current.original = original; }, [original]);
+  useEffect(() => { urls.current.cutout = cutout; }, [cutout]);
+  useEffect(() => () => {
+    workerRef.current?.terminate();
+    if (urls.current.original) URL.revokeObjectURL(urls.current.original);
+    if (urls.current.cutout) URL.revokeObjectURL(urls.current.cutout);
+  }, []);
 
   const load = useCallback(() => {
     if (workerRef.current) return;
@@ -23,7 +31,7 @@ export function VisionSandbox() {
       const m = e.data;
       if (m.type === "progress") setProgress({ detail: m.detail, pct: m.pct });
       else if (m.type === "ready") setStage("ready");
-      else if (m.type === "result") { setCutout(URL.createObjectURL(m.blob)); setStage("ready"); setSplit(50); }
+      else if (m.type === "result") { setCutout((old) => { if (old) URL.revokeObjectURL(old); return URL.createObjectURL(m.blob); }); setStage("ready"); setSplit(50); }
       else if (m.type === "error") setStage("error");
     };
     w.onerror = () => setStage("error");
@@ -33,7 +41,8 @@ export function VisionSandbox() {
   const handleFile = useCallback((file: File) => {
     if (!file.type.startsWith("image/")) return;
     const url = URL.createObjectURL(file);
-    setOriginal(url); setCutout(null);
+    setOriginal((old) => { if (old) URL.revokeObjectURL(old); return url; });
+    setCutout((old) => { if (old) URL.revokeObjectURL(old); return null; });
     if (workerRef.current && (stage === "ready" || stage === "processing")) {
       setStage("processing");
       workerRef.current.postMessage({ type: "process", url, id: ++idRef.current });

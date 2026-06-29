@@ -19,7 +19,7 @@ function TopBar() {
             <kbd className="rounded border px-1.5 py-0.5 text-[10px]" style={{ borderColor: "var(--line-2)" }}>⌘K</kbd>
           </button>
           <a data-hover href={PROFILE.github} target="_blank" rel="noopener noreferrer" style={{ color: "var(--muted)" }}><span className="ulink">github</span></a>
-          <a data-hover href={PROFILE.resume} style={{ color: "var(--accent)" }}><span className="ulink">résumé ↓</span></a>
+          <a data-hover href={PROFILE.resume} target="_blank" rel="noopener noreferrer" style={{ color: "var(--accent)" }}><span className="ulink">résumé ↓</span></a>
         </div>
       </div>
     </header>
